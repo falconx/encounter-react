@@ -10,7 +10,7 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 var webpack = require('webpack');
-var WebpackDevServer = require('../webpack.dev.config');
+var WebpackDevServer = require('../webpack.dev-config');
 var webpackConfig = require('../webpack.config');
 
 // Transparently require() jsx

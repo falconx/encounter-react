@@ -7,8 +7,8 @@ var RouteHandler = Router.RouteHandler;
 var DefaultRoute = Router.DefaultRoute;
 var NotFoundRoute = Router.NotFoundRoute;
 
-var App = require('./component/app.jsx');
-var Profile = require('./component/profile.jsx');
+var App = require('./component/app');
+var Profile = require('./component/profile');
 
 var routes = (
   <Route name="app" path="/" handler={App}>

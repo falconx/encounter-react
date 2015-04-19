@@ -1,6 +1,6 @@
 var React = require('react');
 
-var Login = require('./login.jsx');
+var Login = require('./login');
 
 var Profile = React.createClass({
   getInitialState: function() {

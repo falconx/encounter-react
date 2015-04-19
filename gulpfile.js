@@ -6,12 +6,12 @@ var gutil = require('gutil');
 
 var webpack = require('webpack');
 var buildCfg = require('./webpack.config');
-var buildDevCfg = require('./webpack.dev.config');
+var buildDevCfg = require('./webpack.dev-config');
 
 // Clean
 
 gulp.task('clean:prod', function() {
-  // del(['public/**/*']);
+  del(['public/**/*']);
 });
 
 // Build
@@ -60,9 +60,6 @@ gulp.task('server', function() {
   });
 });
 
-// Webpack hot-reload server
-// gulp.task('webpack-server', shell.task(['node ./hot/server']));
-
 // Source maps server
 // gulp.task('server:sources', function () {
 //   connect.server({
@@ -74,8 +71,6 @@ gulp.task('server', function() {
 // Aliases
 
 gulp.task('dev', ['build:dev', 'watch:dev', 'server']);
-
-// gulp.task('hot', ['webpack-server']);
 
 gulp.task('prod', ['build:prod', 'watch:prod', 'server']);
 
