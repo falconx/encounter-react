@@ -12,17 +12,15 @@
     "gulp-nodemon": "^2.0.2",
     "gulp-shell": "^0.4.1",
     "gutil": "^1.6.4",
+    "jsx-loader": "^0.13.1",
     "mcfly": "0.0.10",
     "mongoose": "^4.0.1",
     "node-jsx": "^0.12.4",
     "passport": "^0.2.1",
     "passport-facebook": "^2.0.0",
+    "react": "^0.13.2",
     "react-router": "^0.13.2",
     "webpack": "^1.8.5"
-  },
-  "devDependencies": {
-    "jsx-loader": "^0.13.1",
-    "react": "^0.13.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
