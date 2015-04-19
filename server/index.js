@@ -10,8 +10,8 @@ var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
 var webpack = require('webpack');
-var WebpackDevServer = require('webpack-dev-server');
-var webpackConfig = require('./webpack.config');
+var WebpackDevServer = require('../webpack.dev.config');
+var webpackConfig = require('../webpack.config');
 
 // User model for Passport
 var User = require('./models/user');
@@ -19,9 +19,12 @@ var User = require('./models/user');
 // App config
 app.set('port', process.env.PORT || 3000);
 
-app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Routes
+// app.use('/', express.static(path.resolve(__dirname + '/../public')));
+app.use('/', express.static(path.resolve(__dirname + '/../src')));
 
 // Express session
 app.use(session({ secret: 'secret-encounter' }));
@@ -30,7 +33,7 @@ app.use(session({ secret: 'secret-encounter' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-var facebookAuth = require('./server/config/providers.json').facebook;
+var facebookAuth = require('./config/providers.json').facebook;
 
 // Connect to data store
 mongoose.connect('mongodb://localhost/encounter-react');

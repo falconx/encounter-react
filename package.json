@@ -8,14 +8,16 @@
     "body-parser": "^1.4.3",
     "cookie-session": "^1.1.0",
     "express": "^4.4.5",
+    "gulp-nodemon": "^2.0.2",
+    "gulp-shell": "^0.4.1",
     "gutil": "^1.6.4",
     "mongoose": "^4.0.1",
     "passport": "^0.2.1",
     "passport-facebook": "^2.0.0",
-    "webpack": "^1.8.5"
+    "webpack": "^1.8.5",
+    "del": "^1.1.1"
   },
   "devDependencies": {
-    "del": "^1.1.1",
     "jsx-loader": "^0.13.1",
     "react": "^0.13.2",
     "react-hot-loader": "^1.2.5",
@@ -23,8 +25,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "webpack-dev-server --progress --colors --port 3000"
+    "start": "gulp prod",
+    "dev": "gulp"
   },
   "engines": {
     "node": "0.12.x"

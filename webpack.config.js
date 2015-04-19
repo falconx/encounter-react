@@ -7,7 +7,7 @@ module.exports = {
     './src/js/main.jsx' // App entry point
   ],
   output: {
-    path: __dirname + '/public/',
+    path: __dirname + '/src/',
     publicPath: '/assets',
     filename: 'bundle.js'
   },
