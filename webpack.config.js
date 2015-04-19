@@ -1,13 +1,14 @@
 var webpack = require('webpack');
 
 module.exports = {
+  cache: true,
   entry: [
     'webpack-dev-server/client?http://localhost:3000', // WebpackDevServer host and port
     'webpack/hot/only-dev-server',
-    './src/js/main.jsx' // App entry point
+    './src/app.js' // App entry point
   ],
   output: {
-    path: __dirname + '/src/',
+    path: __dirname + '/public/',
     publicPath: '/assets',
     filename: 'bundle.js'
   },

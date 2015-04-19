@@ -13,6 +13,12 @@ var webpack = require('webpack');
 var WebpackDevServer = require('../webpack.dev.config');
 var webpackConfig = require('../webpack.config');
 
+// Transparently require() jsx
+require('node-jsx').install({
+  extension: '.jsx',
+  harmony: true
+});
+
 // User model for Passport
 var User = require('./models/user');
 
@@ -23,8 +29,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-// app.use('/', express.static(path.resolve(__dirname + '/../public')));
-app.use('/', express.static(path.resolve(__dirname + '/../src')));
+app.use('/', express.static(path.resolve(__dirname + '/../templates')));
+app.use('/public', express.static(path.resolve(__dirname + '/../public')));
 
 // Express session
 app.use(session({ secret: 'secret-encounter' }));
