@@ -29,8 +29,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
-app.use('/', express.static(path.resolve(__dirname + '/../templates')));
-app.use('/public', express.static(path.resolve(__dirname + '/../public')));
+app.use('/', express.static(path.resolve(__dirname + '/../public')));
 
 // Express session
 app.use(session({ secret: 'secret-encounter' }));

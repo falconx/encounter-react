@@ -13,7 +13,7 @@ var FRONTEND_FILES = ['src/**/*.{js,jsx}'];
 // Clean
 
 gulp.task('clean:prod', function() {
-  del(['public/**/*']);
+  del(['public/bundle.js']);
 });
 
 // Build
