@@ -5,4 +5,4 @@
 
 # Todo
 - Copy contents to /public
-- Remove jsx script tags from index.html
+- Sourcemaps

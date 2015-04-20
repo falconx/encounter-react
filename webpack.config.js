@@ -1,30 +1,26 @@
 var webpack = require('webpack');
+var path = require('path');
 
 module.exports = {
   cache: true,
-  entry: [
-    './src/app.js' // App entry point
-  ],
+  context: path.join(__dirname, 'src'),
+  entry: './app.js',
   output: {
-    path: __dirname + '/public/',
-    publicPath: '/assets',
+    path: path.join(__dirname, 'public'),
     filename: 'bundle.js'
   },
   module: {
   	loaders: [
-  		{
-  			test: /\.jsx$/,
-  			loaders: [
-          'jsx-loader?harmony'
-        ],
-  			exclude: /node_modules/
-  		}
+  		{ test: /\.jsx$/, loaders: ['jsx-loader?harmony'] }
   	]
+  },
+  resolve: {
+    extensions: ['', '.js', '.jsx']
   },
   plugins: [
     new webpack.NoErrorsPlugin()
-  ],
-  resolve: {
-    extensions: ['', '.js', '.jsx']
-  }
+    // Optimize
+    // new webpack.optimize.DedupePlugin(),
+    // new webpack.optimize.UglifyJsPlugin()
+  ]
 };

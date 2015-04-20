@@ -8,6 +8,8 @@ var webpack = require('webpack');
 var buildCfg = require('./webpack.config');
 var buildDevCfg = require('./webpack.dev-config');
 
+var FRONTEND_FILES = ['src/**/*.{js,jsx}'];
+
 // Clean
 
 gulp.task('clean:prod', function() {
@@ -43,11 +45,11 @@ gulp.task('build:prod', ['clean:prod'], function( done ) {
 // Watch
 
 gulp.task('watch:dev', function() {
-  gulp.watch(['scr/**/*.{js,jsx}'], ['build:dev']);
+  gulp.watch(FRONTEND_FILES, ['build:dev']);
 });
 
 gulp.task('watch:prod', function() {
-  gulp.watch(['scr/**/*.{js,jsx}'], ['build:prod']);
+  gulp.watch(FRONTEND_FILES, ['build:prod']);
 });
 
 // Serve
