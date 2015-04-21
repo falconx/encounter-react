@@ -6,14 +6,14 @@ var DefaultRoute = Router.DefaultRoute;
 var NotFoundRoute = Router.NotFoundRoute;
 
 var App = require('./component/app');
-var Profile = require('./component/profile');
+var Dashboard = require('./component/dashboard');
 
 var AccountActions = require('./action/account');
 
 var routes = (
   <Route name="app" path="/" handler={App}>
-    <DefaultRoute handler={Profile} />
-    <NotFoundRoute handler={Profile} />
+    <DefaultRoute handler={Dashboard} />
+    <NotFoundRoute handler={Dashboard} />
   </Route>
 );
 
