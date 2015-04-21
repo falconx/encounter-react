@@ -1,6 +1,8 @@
 var React = require('react');
 
-var RouteHandler = require('react-router').RouteHandler;
+var Router = require('react-router');
+var RouteHandler = Router.RouteHandler;
+var Link = Router.Link;
 
 var Login = require('./login');
 var AccountStore = require('../store/account');
@@ -26,7 +28,10 @@ var App = React.createClass({
     }
 
     return (
-      <RouteHandler account={this.state.account} />
+      <div>
+        <Link to="dashboard">Dashboard</Link>
+        <RouteHandler account={this.state.account} />
+      </div>
     );
   }
 });
