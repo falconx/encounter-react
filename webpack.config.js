@@ -10,7 +10,7 @@ module.exports = {
   		{
         test: /\.jsx$/,
         loader: 'jsx-loader?harmony'
-      }
+      },
   	]
   },
   resolve: {

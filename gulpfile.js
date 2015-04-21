@@ -56,7 +56,7 @@ gulp.task('watch:prod', function() {
 
 gulp.task('server', function() {
   nodemon({
-    script: 'server/index.js',
+    script: './server/index.js',
     ext: 'js,jsx',
     watch: ['server', 'src']
   });
