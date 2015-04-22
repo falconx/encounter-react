@@ -5,11 +5,11 @@ var Route = Router.Route;
 var DefaultRoute = Router.DefaultRoute;
 var NotFoundRoute = Router.NotFoundRoute;
 
-var App = require('./component/app');
-var Dashboard = require('./component/dashboard');
-var MapEncounter = require('./component/map-encounter');
+var App = require('./components/app');
+var Dashboard = require('./components/dashboard');
+var MapEncounter = require('./components/map-encounter');
 
-var AccountActions = require('./action/account');
+var AccountActions = require('./actions/account');
 
 var routes = (
   <Route name="app" path="/" handler={App}>

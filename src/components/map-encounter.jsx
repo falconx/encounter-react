@@ -1,5 +1,7 @@
 var React = require('react');
 
+var socket = io.connect();
+
 var MapEncounter = React.createClass({
   getDefaultProps: function() {
     return {
@@ -21,6 +23,22 @@ var MapEncounter = React.createClass({
           position: new google.maps.LatLng( this.props.lat, this.props.lng ),
           map: map
         });
+
+    google.maps.event.addListener(map, 'click', function( e ) {
+      var [lat, lng] = [ e.latLng.lat(), e.latLng.lng() ];
+
+      socket.emit('presence:dropped', {
+        user: null,
+        position: { lat: lat, lng: lng }
+      });
+    });
+
+    socket.on('presence:dropped', function( data ) {
+      new google.maps.Marker({
+            position: new google.maps.LatLng( data.position.lat, data.position.lng ),
+            map: map
+          });
+    });
   },
 
   render: function() {

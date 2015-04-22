@@ -119,9 +119,11 @@ app.get('/auth/logout', isAuthenticated, function( req, res ) {
 
 // Start server
 
-app.listen(app.get('port'), function() {
-  console.log('Server started: http://localhost:' + app.get('port') + '/');
-});
+app.start = function() {
+  return app.listen(app.get('port'), function() {
+    console.log('Server started: http://localhost:' + app.get('port') + '/');
+  });
+};
 
 // new WebpackDevServer(webpack( webpackConfig ), {
 //   publicPath: webpackConfig.output.publicPath,
@@ -134,3 +136,18 @@ app.listen(app.get('port'), function() {
 
 //   console.log('Listening at localhost:' + app.get('port') + '/');
 // });
+
+var server = app.start();
+var io = require('socket.io').listen( server );
+
+io.sockets.on('connection', function( socket ) {
+  // Presence dropped
+  socket.on('presence:dropped', function( data ) {
+      io.sockets.emit('presence:dropped', data);
+  });
+
+  // Presence expired
+  socket.on('presence:expired', function( data ) {
+      io.sockets.emit('presence:expired', data);
+  });
+});

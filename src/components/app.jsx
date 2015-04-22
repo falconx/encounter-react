@@ -5,7 +5,7 @@ var RouteHandler = Router.RouteHandler;
 var Link = Router.Link;
 
 var Login = require('./login');
-var AccountStore = require('../store/account');
+var AccountStore = require('../stores/account');
 
 var App = React.createClass({
 	mixins: [AccountStore.mixin],
