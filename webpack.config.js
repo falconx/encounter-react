@@ -8,13 +8,19 @@ module.exports = {
   module: {
   	loaders: [
   		{
-        test: /\.jsx$/,
-        loader: 'jsx-loader?harmony'
+        test: /\.jsx$|node_modules\/react-googlemaps\/.*.js/,
+        loader: 'jsx-loader?harmony',
       },
-  	]
+      {
+        test: /\.json$/,
+        loader: 'json'
+      }
+    ],
+    noParse: /\.min\.js/
   },
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    extensions: ['', '.js', '.jsx'],
+    modulesDirectories: ['node_modules'],
   },
   plugins: [
     new webpack.NoErrorsPlugin()
