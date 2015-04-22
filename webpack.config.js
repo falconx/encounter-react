@@ -8,7 +8,7 @@ module.exports = {
   module: {
   	loaders: [
   		{
-        test: /\.jsx$|node_modules\/react-googlemaps\/.*.js/,
+        test: /\.jsx$/,
         loader: 'jsx-loader?harmony',
       },
       {

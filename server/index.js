@@ -20,7 +20,7 @@ require('node-jsx').install({
 });
 
 // User model for Passport
-var User = require('./models/user');
+var User = require('../models/user');
 
 // App config
 app.set('port', process.env.PORT || 3000);
@@ -30,6 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Routes
 app.use('/', express.static(path.resolve(__dirname + '/../public')));
+app.use('/images', express.static(path.resolve(__dirname + '/../public/images')));
 
 // Express session
 app.use(session({ secret: 'secret-encounter' }));
@@ -138,6 +139,9 @@ app.start = function() {
 // });
 
 var server = app.start();
+
+// Socket.IO
+
 var io = require('socket.io').listen( server );
 
 io.sockets.on('connection', function( socket ) {

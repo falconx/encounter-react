@@ -58,7 +58,7 @@ gulp.task('server', function() {
   nodemon({
     script: './server/index.js',
     ext: 'js,jsx',
-    watch: ['server', 'src']
+    watch: ['server', 'models', 'src']
   });
 });
 
