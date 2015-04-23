@@ -3,12 +3,12 @@ var Flux = require('../flux');
 var Promise = require('es6-promise').Promise;
 var request = require('superagent');
 
-var AccountActions = Flux.createActions({
-	loadAccount: function() {
+var PresenceActions = Flux.createActions({
+	dropPresence: function( presence ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.get('/api/account')
-				.set('Accept', 'application/json')
+				.post('/api/presences/dropped')
+				.send({ presence: presence })
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
 						resolve(JSON.parse( res.text ));
@@ -18,11 +18,11 @@ var AccountActions = Flux.createActions({
 				});
 		}).then(function( data ) {
 			return {
-				actionType: 'LOAD_ACCOUNT',
-				account: data
+				actionType: 'DROP_PRESENCE',
+				presence: data
 			};
 		});
 	}
 });
 
-module.exports = AccountActions;
+module.exports = PresenceActions;

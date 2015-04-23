@@ -9,9 +9,7 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
-// var webpack = require('webpack');
-// var WebpackDevServer = require('../webpack.dev-config');
-// var webpackConfig = require('../webpack.config');
+var facebookAuth = require('./config/providers.json').facebook;
 
 // Transparently require() jsx
 require('node-jsx').install({
@@ -19,8 +17,12 @@ require('node-jsx').install({
   harmony: true
 });
 
-// User model for Passport
-var User = require('../models/user');
+// Models
+var User = require('./models/user');
+var Presence = require('./models/presence');
+
+// Connect to data store
+mongoose.connect('mongodb://localhost/encounter-react');
 
 // App config
 app.set('port', process.env.PORT || 3000);
@@ -38,11 +40,6 @@ app.use(session({ secret: 'secret-encounter' }));
 // Passport config
 app.use(passport.initialize());
 app.use(passport.session());
-
-var facebookAuth = require('./config/providers.json').facebook;
-
-// Connect to data store
-mongoose.connect('mongodb://localhost/encounter-react');
 
 // Passport user serialisation
 passport.serializeUser(function( user, done ) {
@@ -96,6 +93,7 @@ function isAuthenticated( req, res, next ) {
 }
 
 // Auth routes
+
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', {
     successRedirect: facebookAuth.successURL,
@@ -109,14 +107,40 @@ app.get('/auth/facebook',
   })
 );
 
-app.get('/auth/account', isAuthenticated, function( req, res ) {
-  res.send(req.user);
-});
-
 app.get('/auth/logout', isAuthenticated, function( req, res ) {
   req.logout();
   res.redirect('/');
 });
+
+app.get('/api/account', isAuthenticated, function( req, res ) {
+  res.send(req.user);
+});
+
+app.route('/api/presences/dropped', isAuthenticated)
+
+  // Retrieve users dropped presences
+  .get(function( req, res ) {
+    res.send(req.user.droppedPresences || []);
+  })
+
+  // Drop a presence
+  .post(function( req, res ) {
+    if( req.body.presence ) {
+      User.findOneAndUpdate(
+        { id : req.user.id },
+        { $push: { droppedPresences: new Presence(req.body.presence) } },
+        { safe: true, upsert: true },
+        function( err ) {
+          console.log(err);
+          // Todo: Bomb out! next();
+        }
+      );
+
+      res.send(req.body.presence);
+    } else {
+      // Todo: Error
+    }
+  });
 
 // Start server
 
@@ -125,18 +149,6 @@ app.start = function() {
     console.log('Server started: http://localhost:' + app.get('port') + '/');
   });
 };
-
-// new WebpackDevServer(webpack( webpackConfig ), {
-//   publicPath: webpackConfig.output.publicPath,
-//   hot: true,
-//   historyApiFallback: true
-// }).listen(app.get('port'), 'localhost', function( err, result ) {
-//   if( err ) {
-//     console.log( err );
-//   }
-
-//   console.log('Listening at localhost:' + app.get('port') + '/');
-// });
 
 var server = app.start();
 
