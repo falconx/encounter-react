@@ -6,7 +6,8 @@ var userSchema = mongoose.Schema({
       id: String,
       token: String,
       name: String,
-      droppedPresences: [Presence.schema]
+      dropped: [Presence.schema]
+      // found: [Preference.schema]
     });
 
 module.exports = mongoose.model('User', userSchema);

@@ -83,7 +83,7 @@ passport.use(
   })
 );
 
-// Route middleware to make sure a user is logged in
+// Route middleware to ensure a user is logged in
 function isAuthenticated( req, res, next ) {
   if( req.isAuthenticated() ) {
     return next();
@@ -120,7 +120,7 @@ app.route('/api/presences/dropped', isAuthenticated)
 
   // Retrieve users dropped presences
   .get(function( req, res ) {
-    res.send(req.user.droppedPresences || []);
+    res.send(req.user.dropped || []);
   })
 
   // Drop a presence
@@ -128,7 +128,7 @@ app.route('/api/presences/dropped', isAuthenticated)
     if( req.body.presence ) {
       User.findOneAndUpdate(
         { id : req.user.id },
-        { $push: { droppedPresences: new Presence(req.body.presence) } },
+        { $push: { dropped: new Presence(req.body.presence) } },
         { safe: true, upsert: true },
         function( err ) {
           console.log(err);
@@ -141,6 +141,8 @@ app.route('/api/presences/dropped', isAuthenticated)
       // Todo: Error
     }
   });
+
+// api/preferences/found
 
 // Start server
 

@@ -17,6 +17,8 @@ var App = React.createClass({
   },
 
   storeDidChange: function() {
+    console.log('AccountStore storeDidChange');
+    
     this.setState({
       account: AccountStore.getAccount()
     });
