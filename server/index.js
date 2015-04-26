@@ -43,11 +43,11 @@ app.use(passport.session());
 
 // Passport user serialisation
 passport.serializeUser(function( user, done ) {
-  done(null, user.id);
+  done(null, user._id);
 });
 
 passport.deserializeUser(function( id, done ) {
-  User.findOne({ id: id }, function( err, user ) {
+  User.findOne({ _id: id }, function( err, user ) {
     done(err, user);
   });
 });
@@ -59,7 +59,7 @@ passport.use(
     clientSecret: facebookAuth.clientSecret,
     callbackURL: facebookAuth.callbackURL
   }, function( accessToken, refreshToken, profile, done ) {
-    User.findOne({ id : profile.id }, function( err, user ) {
+    User.findOne({ facebookId : profile.id }, function( err, user ) {
       if( err ) {
         return done(err);
       }
@@ -70,7 +70,7 @@ passport.use(
       } else {
         // Create new user record
         var newUser = new User({
-              id: profile.id,
+              facebookId: profile.id,
               token: accessToken,
               name: profile.name.givenName + ' ' + profile.name.familyName
             });
@@ -113,36 +113,107 @@ app.get('/auth/logout', isAuthenticated, function( req, res ) {
 });
 
 app.get('/api/account', isAuthenticated, function( req, res ) {
-  res.send(req.user);
+  User
+    .findOne({ _id: req.user._id })
+    .populate('dropped found')
+    .exec(function( err, presences ) {
+      if( err ) {
+        // Todo: Handle error
+        console.log(err);
+        next();
+      }
+
+      res.send(presences);
+    });
 });
 
 app.route('/api/presences/dropped', isAuthenticated)
 
   // Retrieve users dropped presences
   .get(function( req, res ) {
-    res.send(req.user.dropped || []);
+    Presence
+      .find({ uid: req.user._id })
+      .exec(function( err, presences ) {
+        if( err ) {
+          // Todo: Handle error
+          console.log(err);
+          next();
+        }
+
+        res.send(presences);
+      });
   })
 
   // Drop a presence
   .post(function( req, res ) {
-    if( req.body.presence ) {
-      User.findOneAndUpdate(
-        { id : req.user.id },
-        { $push: { dropped: new Presence(req.body.presence) } },
-        { safe: true, upsert: true },
-        function( err ) {
-          console.log(err);
-          // Todo: Bomb out! next();
+    new Presence(req.body.presence)
+      .save(function( err, presence ) {
+        if( err ) {
+          // Todo: Handle error
+          console.log( err );
+          next();
         }
-      );
 
-      res.send(req.body.presence);
-    } else {
-      // Todo: Error
-    }
+        User.findOneAndUpdate(
+          { _id : req.user._id },
+          { $push: { dropped: presence } },
+          { safe: true, upsert: true },
+          function( err ) {
+            if( err ) {
+              // Todo: Handle error
+              console.log(err);
+            }
+
+            res.send(presence);
+          }
+        );
+    });
   });
 
-// api/preferences/found
+app.route('/api/presences/found', isAuthenticated)
+
+  // Retrieve users found presences
+  .get(function( req, res ) {
+    User
+      .find({ uid: req.user._id })
+      .populate('found')
+      .select('found')
+      .exec(function( err, presences ) {
+        if( err ) {
+          // Todo: Handle error
+          console.log(err);
+          next();
+        }
+
+        res.send(presences);
+      });
+  })
+
+  // Add a presence to the user's found collection
+  .post(function( req, res ) {
+     new Presence(req.body.presence)
+      .save(function( err, presence ) {
+        if( err ) {
+          // Todo: Handle error
+          console.log( err );
+          next();
+        }
+
+        User.findOneAndUpdate(
+          { _id : req.user._id },
+          { $push: { found: presence } },
+          { safe: true, upsert: true },
+          function( err ) {
+            if( err ) {
+              // Todo: Handle error
+              console.log(err);
+            }
+
+            res.send(presence);
+          }
+        );
+    });
+  });
 
 // Start server
 

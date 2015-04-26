@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
+var Schema = mongoose.Schema;
+var ObjectId = Schema.Types.ObjectId;
 
-var Presence = require('./presence');
-
-var userSchema = mongoose.Schema({
-      id: String,
+var userSchema = Schema({
+      facebookId: Number, // unique
       token: String,
       name: String,
-      dropped: [Presence.schema]
-      // found: [Preference.schema]
+      dropped: [{ type: ObjectId, ref: 'Presence' }],
+      found: [{ type: ObjectId, ref: 'Presence' }]
     });
 
 module.exports = mongoose.model('User', userSchema);

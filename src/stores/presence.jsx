@@ -10,11 +10,13 @@ var PresenceStore = Flux.createStore({
 }, function( payload ) {
 	switch( payload.actionType ) {
 		case 'DROP_PRESENCE':
+		case 'COLLECT_PRESENCE': {
 			PresenceStore.emitChange();
 
 			// We've manipulated data attached to the account so reload it
 			AccountActions.loadAccount();
 			break;
+		}
 	}
 });
 

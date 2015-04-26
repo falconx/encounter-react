@@ -22,6 +22,26 @@ var PresenceActions = Flux.createActions({
 				presence: data
 			};
 		});
+	},
+
+	collectPresence: function( presenceId ) {
+		return new Promise(function( resolve, rej ) {
+			request
+				.post('/api/presences/found')
+				.send({ presenceId: presenceId })
+				.end(function( err, res ) {
+					if( !err && res.status === 200 ) {
+						resolve(JSON.parse( res.text ));
+					}
+
+					rej();
+				});
+		}).then(function( data ) {
+			return {
+				actionType: 'COLLECT_PRESENCE',
+				presence: data
+			};
+		});
 	}
 });
 

@@ -4,19 +4,18 @@ var _ = require('lodash');
 
 var socket = io.connect();
 
-var mapConfig = require('../constants/maps').encounterMap;
-
+var MapConfig = require('../constants/maps').encounterMap;
 var EncounterMapOverlay = require('../map-overlay');
 
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 
-var MapEncounter = React.createClass({
-  mixins: [PresenceStore.mixin],
+var ObjectId = require('mongoose').Schema.Types.ObjectId;
 
+var MapEncounter = React.createClass({
   getDefaultProps: function() {
     return {
-      mapOptions: mapConfig.options
+      mapOptions: MapConfig.options
     };
   },
 
@@ -26,24 +25,30 @@ var MapEncounter = React.createClass({
     var el = this.refs.map_encounter.getDOMNode();
 
     // Todo: Get coordinates from user's current position
+
     var map = new google.maps.Map(el, _.extend(this.props.mapOptions, {
           center: new google.maps.LatLng( 43.6425569, -79.4073126 )
         }));
 
-    var overlay = new EncounterMapOverlay( map.getBounds(), mapConfig.overlayImage, map );
+    var overlay = new EncounterMapOverlay( map.getBounds(), MapConfig.overlayImage, map );
 
-    google.maps.event.addListener(map, 'click', function( e ) {
+    google.maps.event.addListener(map, 'click', function( data ) {
+      // Drop presence at the users current location
       PresenceActions.dropPresence({
-        location: [e.latLng.lat(), e.latLng.lng()]
+        uid: self.props.account._id,
+        location: [data.latLng.lng(), data.latLng.lat()]
       });
 
       socket.emit('presence:dropped', {
-        user: null,
+        uid: self.props.account._id,
         position: {
-          lat: e.latLng.lat(),
-          lng: e.latLng.lng()
+          lat: data.latLng.lat(),
+          lng: data.latLng.lng()
         }
       });
+
+      // A presence has been found, add it to our list of found presences
+      // PresenceActions.collectPresence( data.id );
     });
 
     google.maps.event.addListener(map, 'center_changed', function() {
@@ -51,30 +56,33 @@ var MapEncounter = React.createClass({
     });
 
     // Todo: Hide map or overlay until this has triggered
-    google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-      console.log(self.props.account.dropped, 'tilesloaded');
 
+    google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
       overlay.draw();
 
       // Populate map with presence data
       _.each(self.props.account.dropped, function( presence ) {
         new google.maps.Marker({
-              position: new google.maps.LatLng( presence.location[0], presence.location[1] ),
-              map: map
+              position: new google.maps.LatLng( presence.location[1], presence.location[0] ),
+              map: map,
+              id: presence._id,
+              uid: presence.uid
             });
       });
     });
 
     socket.on('presence:dropped', function( data ) {
-      new google.maps.Marker({
-            position: new google.maps.LatLng( data.position.lat, data.position.lng ),
-            map: map
-          });
-    });
-  },
+      // Todo: Only add if it does not belong to the current user
 
-  storeDidChange: function() {
-    console.log('PresenceStore storeDidChange');
+      if( data.uid !== self.props.account._id ) {
+        new google.maps.Marker({
+              position: new google.maps.LatLng( data.position.lat, data.position.lng ),
+              map: map,
+              id: data.id, // Attach Presence._id
+              uid: data.uid // Attach User._id to determine who dropped it
+            });
+      }
+    });
   },
 
   render: function() {
