@@ -42,6 +42,27 @@ var PresenceActions = Flux.createActions({
 				presence: data
 			};
 		});
+	},
+
+	findWithinRadius: function( lng, lat, radius ) {
+		return new Promise(function( resolve, rej ) {
+			request
+				.get('/api/presences/find/' + lng + '/' + lat + '/' + radius)
+				.set('Accept', 'application/json')
+				.use(nocache)
+				.end(function( err, res ) {
+					if( !err && res.status === 200 ) {
+						resolve(JSON.parse( res.text ));
+					}
+
+					rej();
+				});
+		}).then(function( data ) {
+			return {
+				actionType: 'FIND_PRESENCES',
+				presences: data || []
+			};
+		});
 	}
 });
 

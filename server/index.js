@@ -83,6 +83,10 @@ passport.use(
   })
 );
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Routing
+
 // Route middleware to ensure a user is logged in
 function isAuthenticated( req, res, next ) {
   if( req.isAuthenticated() ) {
@@ -118,9 +122,7 @@ app.get('/api/account', isAuthenticated, function( req, res ) {
     .populate('dropped found')
     .exec(function( err, presences ) {
       if( err ) {
-        // Todo: Handle error
         console.log(err);
-        next();
       }
 
       res.send(presences);
@@ -135,9 +137,7 @@ app.route('/api/presences/dropped', isAuthenticated)
       .find({ uid: req.user._id })
       .exec(function( err, presences ) {
         if( err ) {
-          // Todo: Handle error
           console.log(err);
-          next();
         }
 
         res.send(presences);
@@ -160,7 +160,6 @@ app.route('/api/presences/dropped', isAuthenticated)
           { safe: true, upsert: true },
           function( err ) {
             if( err ) {
-              // Todo: Handle error
               console.log(err);
             }
 
@@ -180,9 +179,7 @@ app.route('/api/presences/found', isAuthenticated)
       .select('found')
       .exec(function( err, presences ) {
         if( err ) {
-          // Todo: Handle error
           console.log(err);
-          next();
         }
 
         res.send(presences);
@@ -205,7 +202,6 @@ app.route('/api/presences/found', isAuthenticated)
           { safe: true, upsert: true },
           function( err ) {
             if( err ) {
-              // Todo: Handle error
               console.log(err);
             }
 
@@ -214,6 +210,24 @@ app.route('/api/presences/found', isAuthenticated)
         );
     });
   });
+
+// Retrieve all the presences found within the specified distance from the provided location
+app.route('/api/presences/find/:lng/:lat/:distance', isAuthenticated)
+  .get(function( req, res ) {
+    Presence.findWithinRadius({
+      lng: req.params.lng,
+      lat: req.params.lat,
+      distance: req.params.distance
+    }, function( err, presences ) {
+      if( err ) {
+        console.log(err);
+      }
+
+      res.send(presences);
+    });
+  });
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Start server
 
@@ -227,7 +241,7 @@ var server = app.start();
 
 // Socket.IO
 
-var io = require('socket.io').listen( server );
+var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function( socket ) {
   // Presence dropped
