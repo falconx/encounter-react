@@ -49,7 +49,7 @@ var PresenceActions = Flux.createActions({
 			request
 				.get('/api/presences/find/' + lng + '/' + lat + '/' + radius)
 				.set('Accept', 'application/json')
-				.use(nocache)
+				// .use(nocache)
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
 						resolve(JSON.parse( res.text ));
