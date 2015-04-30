@@ -1,6 +1,6 @@
 var defaults = {
   overlayImage: '/images/mapbg.png',
-  accuracyThreshold: 100, // Meters
+  accuracyThreshold: 250, // Meters
   searchRadius: 750, // Meters
   options: {
     zoom: 14,

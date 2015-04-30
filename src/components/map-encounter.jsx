@@ -24,7 +24,7 @@ var PresenceMap = React.createClass({
 
   getInitialState: function() {
     return {
-      map: new google.maps.Map(canvasEl, _.extend({}, MapConfig.options, { center: center })),
+      map: null,
       markers: [], // The map markers converted from presence data
       circle: null // Indicates search radius
     };
@@ -34,46 +34,53 @@ var PresenceMap = React.createClass({
     var self = this;
     var canvasEl = this.refs.map_encounter.getDOMNode();
     var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
+    var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig.options, { center: center }));
+    var overlay = new EncounterMapOverlay( map.getBounds(), MapConfig.overlayImage, map );
 
+    // Initialise map
+    google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
+      var circle = new google.maps.Circle({
+            strokeWeight: 0,
+            fillColor: '#ffffff',
+            fillOpacity: 0.35,
+            map: map,
+            center: center,
+            radius: MapConfig.searchRadius
+          });
 
-    if( this.state.map ) {
-      var overlay = new EncounterMapOverlay( this.state.map.getBounds(), MapConfig.overlayImage, this.state.map );
+      overlay.draw();
 
-      // Initialise map
-      google.maps.event.addListenerOnce(this.state.map, 'tilesloaded', function() {
-        overlay.draw();
+      // Populate map with presence data
+      self.generateMarkers( self.props.presences );
 
-        // Populate map with presence data
-        self.generateMarkers( self.props.presences );
+      // Draw circle to indicate search radius
+      self.drawSearchRadius();
 
-        // Draw circle to indicate search radius
-        self.drawSearchRadius();
-
-        // Pass click event through the circle layer
-        google.maps.event.addListener(circle, 'click', function() {
-          google.maps.event.trigger(this.state.map, 'click', arguments[0]);
-        });
-
-        // Update overlay position when center changes
-        google.maps.event.addListener(this.state.map, 'center_changed', function() {
-          overlay.draw();
-        });
+      // Pass click event through the circle layer
+      google.maps.event.addListener(circle, 'click', function() {
+        google.maps.event.trigger(map, 'click', arguments[0]);
       });
-    }
+
+      // Update overlay position when center changes
+      google.maps.event.addListener(map, 'center_changed', function() {
+        overlay.draw();
+      });
+
+      self.setState({ map: map, circle: circle });
+    });
   },
 
-  componentWillReceiveProps: function( newProps ) {
-    // Todo: setState to match newProps
+  // shouldComponentUpdate: function( nextProps, nextState ) { ... },
 
-    // Remove existing markers
-    // _.each(this.state.markers, function( marker ) {
-    //   marker.setMap(null);
-    // });
-
-    this.drawSearchRadius();
+  componentDidUpdate: function( prevProps, prevState ) {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////// Todo
+    // Redraw search radius if we've moved
+    // if( this.state.circle !== prevState.circle ) {
+    //   this.drawSearchRadius();
+    // }
 
     // Only generate markers if we have something different to show
-    if( this.props.presences !== newProps.presences ) {
+    if( this.props.presences !== prevProps.presences ) {
       // Populate map with new presence data
       this.generateMarkers( this.props.presences );
     }
@@ -88,8 +95,15 @@ var PresenceMap = React.createClass({
    */
   generateMarkers: function( presences ) {
     var self = this;
+    var nextMarkers = [];
 
-    _.each(self.props.presences, function( presence ) {
+    // Remove existing markers
+    _.each(this.state.markers, function( marker ) {
+      marker.setMap(null);
+    });
+
+    // Generate new markers
+    _.each(presences, function( presence ) {
       var marker = new google.maps.Marker({
             position: new google.maps.LatLng( presence.location[1], presence.location[0] ),
             map: self.state.map,
@@ -97,16 +111,19 @@ var PresenceMap = React.createClass({
             uid: presence.uid
           });
 
-      self.state.markers.push( marker );
+      nextMarkers.push( marker );
     });
+
+    this.setState({ markers: nextMarkers });
   },
 
   drawSearchRadius: function() {
-    // Todo: Better logic for updating an existing circle?
+    // Todo: Better logic for updating an existing circle and avoiding duplication of definition
 
-    if( this.state.circle ) {
-      this.state.circle.setMap(null);
-    }
+    // Todo: https://github.com/facebook/react/blob/0.11-stable/docs/docs/09.6-update.md
+    // var _circle = _.clone(this.state.circle);
+    // _circle.center = this.state.circle;
+    // this.setState({ circle: _circle });
 
     this.setState({
       circle: new google.maps.Circle({
@@ -130,6 +147,7 @@ var PresenceMap = React.createClass({
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+// Todo: Investigate Leaflet
 
 var MapEncounter = React.createClass({
   mixins: [PresenceStore.mixin],
@@ -137,9 +155,6 @@ var MapEncounter = React.createClass({
   getInitialState: function() {
     return {
       nearbyPresences: [],
-
-      // Todo: Watch and obtain position
-      // Todo: on userPosition change fire an Action and setState
       userPosition: { lat: 43.6425569, lng: -79.4073126 }
     };
   },
@@ -167,6 +182,10 @@ var MapEncounter = React.createClass({
           self.setState({
             userPosition: { lat: position.coords.latitude, lng: position.coords.longitude }
           });
+
+          // Todo: Only perform an update if we have moved a specified distance from our last search to avoid hammering
+          // the server
+          self.findNearbyPresences();
         } else {
           // Todo: Handle location not found
           console.log('Position could not be determined');
@@ -198,9 +217,7 @@ var MapEncounter = React.createClass({
 
   render: function() {
     return (
-      <div>
-        <PresenceMap center={this.state.userPosition} presences={this.state.nearbyPresences} />
-      </div>
+      <PresenceMap center={this.state.userPosition} presences={this.state.nearbyPresences} />
     );
   }
 });
