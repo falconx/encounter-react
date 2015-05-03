@@ -1,5 +1,5 @@
 var React = require('react');
-
+var update = require('react/addons').addons.update;
 var _ = require('lodash');
 
 var socket = io.connect();
@@ -10,9 +10,13 @@ var EncounterMapOverlay = require('../map-overlay');
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 
+// Todo: Investigate Leaflet
+
+// Todo: Calling setState within a componentDidUpdate is bad practice and can cause an infinite loop
+
+// Todo: generateMarkers and drawSearchRadius both mutate state
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 
 var PresenceMap = React.createClass({
   getDefaultProps: function() {
@@ -26,15 +30,14 @@ var PresenceMap = React.createClass({
     return {
       map: null,
       markers: [], // The map markers converted from presence data
-      circle: null // Indicates search radius
+      circle: null // Visually indicates search radius
     };
   },
 
   componentDidMount: function() {
     var self = this;
     var canvasEl = this.refs.map_encounter.getDOMNode();
-    var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
-    var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig.options, { center: center }));
+    var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig.options, { center: this.props.center }));
     var overlay = new EncounterMapOverlay( map.getBounds(), MapConfig.overlayImage, map );
 
     // Initialise map
@@ -44,10 +47,13 @@ var PresenceMap = React.createClass({
             fillColor: '#ffffff',
             fillOpacity: 0.35,
             map: map,
-            center: center,
+            center: new google.maps.LatLng( self.props.center.lat, self.props.center.lng ),
             radius: MapConfig.searchRadius
           });
 
+      self.setState({ map: map, circle: circle });
+
+      // Draw fixed position overlay image
       overlay.draw();
 
       // Populate map with presence data
@@ -65,19 +71,16 @@ var PresenceMap = React.createClass({
       google.maps.event.addListener(map, 'center_changed', function() {
         overlay.draw();
       });
-
-      self.setState({ map: map, circle: circle });
     });
   },
 
-  // shouldComponentUpdate: function( nextProps, nextState ) { ... },
+  shouldComponentUpdate: function( nextProps, nextState ) {
+    return !!this.state.map;
+  },
 
-  componentDidUpdate: function( prevProps, prevState ) {
-    /////////////////////////////////////////////////////////////////////////////////////////////////////////////// Todo
-    // Redraw search radius if we've moved
-    // if( this.state.circle !== prevState.circle ) {
-    //   this.drawSearchRadius();
-    // }
+  componentDidUpdate: function( prevProps ) {
+    // Redraw search radius
+    this.drawSearchRadius();
 
     // Only generate markers if we have something different to show
     if( this.props.presences !== prevProps.presences ) {
@@ -95,7 +98,6 @@ var PresenceMap = React.createClass({
    */
   generateMarkers: function( presences ) {
     var self = this;
-    var nextMarkers = [];
 
     // Remove existing markers
     _.each(this.state.markers, function( marker ) {
@@ -111,30 +113,15 @@ var PresenceMap = React.createClass({
             uid: presence.uid
           });
 
-      nextMarkers.push( marker );
+      self.state.markers.push( marker );
     });
-
-    this.setState({ markers: nextMarkers });
   },
 
   drawSearchRadius: function() {
-    // Todo: Better logic for updating an existing circle and avoiding duplication of definition
+    var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
 
-    // Todo: https://github.com/facebook/react/blob/0.11-stable/docs/docs/09.6-update.md
-    // var _circle = _.clone(this.state.circle);
-    // _circle.center = this.state.circle;
-    // this.setState({ circle: _circle });
-
-    this.setState({
-      circle: new google.maps.Circle({
-        strokeWeight: 0,
-        fillColor: '#ffffff',
-        fillOpacity: 0.35,
-        map: this.state.map,
-        center: this.state.center,
-        radius: MapConfig.searchRadius
-      })
-    });
+    this.state.circle.setCenter(center);
+    this.state.map.setCenter(center);
   },
 
   render: function() {
@@ -147,7 +134,6 @@ var PresenceMap = React.createClass({
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Todo: Investigate Leaflet
 
 var MapEncounter = React.createClass({
   mixins: [PresenceStore.mixin],
@@ -155,7 +141,7 @@ var MapEncounter = React.createClass({
   getInitialState: function() {
     return {
       nearbyPresences: [],
-      userPosition: { lat: 43.6425569, lng: -79.4073126 }
+      userPosition: { lat: 0, lng: 0 }
     };
   },
 
@@ -175,7 +161,7 @@ var MapEncounter = React.createClass({
       function error() {};
 
       function success( position ) {
-        console.log(position.coords, 'position found');
+        console.log({ lat: position.coords.latitude, lng: position.coords.longitude }, 'position found');
 
         // If the found position is outside of our threshold, it's too inaccurate to show
         if( position.coords.accuracy <= MapConfig.accuracyThreshold ) {
