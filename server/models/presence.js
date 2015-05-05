@@ -19,7 +19,7 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
 						$nearSphere: {
 							$geometry: {
 								type: 'Point',
-								coordinates: [params.lng, params.lat]
+								coordinates: [parseInt(params.lng), parseInt(params.lat)]
 							},
 							$maxDistance: params.distance // Meters
 						}

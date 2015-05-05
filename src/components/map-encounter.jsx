@@ -22,7 +22,8 @@ var PresenceMap = React.createClass({
   getDefaultProps: function() {
     return {
       center: { lat: 0, lng: 0 },
-      presences: [] // Translate to markers
+      presences: [], // Translate to markers
+      handleMapClick: _.noop
     };
   },
 
@@ -62,9 +63,12 @@ var PresenceMap = React.createClass({
       // Draw circle to indicate search radius
       self.drawSearchRadius();
 
+      // Map click handler
+      google.maps.event.addListener(map, 'click', self.props.handleMapClick);
+
       // Pass click event through the circle layer
-      google.maps.event.addListener(circle, 'click', function() {
-        google.maps.event.trigger(map, 'click', arguments[0]);
+      google.maps.event.addListener(circle, 'click', function( data ) {
+        google.maps.event.trigger(map, 'click', data);
       });
 
       // Update overlay position when center changes
@@ -83,14 +87,21 @@ var PresenceMap = React.createClass({
     this.drawSearchRadius();
 
     // Only generate markers if we have something different to show
-    if( this.props.presences !== prevProps.presences ) {
+    // if( this.props.presences !== prevProps.presences ) {
       // Populate map with new presence data
       this.generateMarkers( this.props.presences );
-    }
+    // }
   },
 
   componentWillUnmount: function() {
     // Todo: Remove map bindings
+
+    // Remove existing markers
+    // _.each(this.state.markers, function( marker ) {
+    //   marker.setMap(null);
+    // });
+
+    // this.state.map.set(null);
   },
 
   /**
@@ -199,11 +210,20 @@ var MapEncounter = React.createClass({
     this.setState({
       nearbyPresences: PresenceStore.getNearbyPresences()
     });
-  },  
+  },
+
+  handleMapClick: function( data ) {
+    PresenceActions.dropPresence({
+      location: [ data.latLng.lng(), data.latLng.lat() ],
+      uid: this.props.account
+    });
+  },
 
   render: function() {
+    console.log({ lat: this.state.userPosition.lat, lng: this.state.userPosition.lng }, 'render map');
+
     return (
-      <PresenceMap center={this.state.userPosition} presences={this.state.nearbyPresences} />
+      <PresenceMap center={this.state.userPosition} presences={this.state.nearbyPresences} handleMapClick={this.handleMapClick} />
     );
   }
 });
