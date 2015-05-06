@@ -7,6 +7,8 @@
 - Sourcemaps
 - Tests
 
+- Bundle vendor files separately
+
 Phase 1:
 1. [ ] Have Presence.findWithinRadius return data with N meters of location.
 2. [ ] Watch users location and specify threashold of accuracy.

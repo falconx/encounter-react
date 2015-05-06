@@ -12,9 +12,59 @@
       font-family: Arial, sans-serif
     }
 
+    /* Map -------------------------------- */
+
     .map {
       height: 500px;
       width: 500px;
+    }
+
+    /* Infobox ---------------------------- */
+
+    #infobox-menu-wrapper {
+      display: none;
+    }
+
+    #infobox-menu {
+      height: 220px;
+      width: 220px;
+      background: url('/images/mapmenu.png');
+      background-size: 100% 100%;
+    }
+
+    #infobox-menu .menu-item {
+      position: absolute;
+    }
+
+    #infobox-menu .menu-item:hover {
+      border: 0;
+    }
+
+    #infobox-menu .menu-item-found {
+      top: 30px;
+      left: 126px;
+    }
+
+    #infobox-menu .menu-item-found img {
+      width: 80px;
+    }
+
+    #infobox-menu .menu-item-pickup {
+      top: 40px;
+      left: 23px;
+    }
+
+    #infobox-menu .menu-item-pickup img {
+      width: 59px;
+    }
+
+    #infobox-menu .menu-item-release {
+      top: 147px;
+      left: 87px;
+    }
+
+    #infobox-menu .menu-item-release img {
+      width: 52px;
     }
 
     </style>
@@ -22,6 +72,7 @@
   <body>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://maps.googleapis.com/maps/api/js"></script>
+    <script src="/vendor/infobox.js"></script>
     <script src="bundle.js"></script>
   </body>
 </html>

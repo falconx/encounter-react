@@ -8,6 +8,9 @@ var webpack = require('webpack');
 var buildCfg = require('./webpack.config');
 var buildDevCfg = require('./webpack.dev-config');
 
+var VENDOR_FILES = ['src/vendor/*.js'];
+
+// Todo: Ignore vendor files
 var FRONTEND_FILES = ['src/**/*.{js,jsx}'];
 
 // Clean
