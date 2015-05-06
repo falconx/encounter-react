@@ -44,12 +44,11 @@ var PresenceActions = Flux.createActions({
 		});
 	},
 
-	findWithinRadius: function( lng, lat, radius ) {
+	findWithinRadius: function( lng, lat, radius, userId ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.get('/api/presences/find/' + lng + '/' + lat + '/' + radius)
+				.get('/api/presences/find/' + lng + '/' + lat + '/' + radius + '/' + userId)
 				.set('Accept', 'application/json')
-				.use(nocache)
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
 						resolve(JSON.parse( res.text ));

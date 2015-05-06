@@ -12,9 +12,9 @@ var PresenceStore = require('../stores/presence');
 
 // Todo: Investigate Leaflet
 
-// Todo: Calling setState within a componentDidUpdate is bad practice and can cause an infinite loop
-
 // Todo: generateMarkers and drawSearchRadius both mutate state
+
+// Todo: Updating on socket listeners will happen too frequently in the real world
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +49,7 @@ var PresenceMap = React.createClass({
             fillOpacity: 0.35,
             map: map,
             center: new google.maps.LatLng( self.props.center.lat, self.props.center.lng ),
-            radius: MapConfig.searchRadius
+            radius: self.props.searchRadius
           });
 
       self.setState({ map: map, circle: circle });
@@ -87,21 +87,20 @@ var PresenceMap = React.createClass({
     this.drawSearchRadius();
 
     // Only generate markers if we have something different to show
-    // if( this.props.presences !== prevProps.presences ) {
+    if( this.props.presences !== prevProps.presences ) {
       // Populate map with new presence data
       this.generateMarkers( this.props.presences );
-    // }
+    }
   },
 
   componentWillUnmount: function() {
     // Todo: Remove map bindings
 
-    // Remove existing markers
-    // _.each(this.state.markers, function( marker ) {
-    //   marker.setMap(null);
-    // });
+    _.each(this.state.markers, function( marker ) {
+      marker.setMap(null);
+    });
 
-    // this.state.map.set(null);
+    this.state.map.set(null);
   },
 
   /**
@@ -131,6 +130,7 @@ var PresenceMap = React.createClass({
   drawSearchRadius: function() {
     var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
 
+    this.state.circle.setRadius(this.props.searchRadius);
     this.state.circle.setCenter(center);
     this.state.map.setCenter(center);
   },
@@ -152,13 +152,19 @@ var MapEncounter = React.createClass({
   getInitialState: function() {
     return {
       nearbyPresences: [],
-      userPosition: { lat: 0, lng: 0 }
+      userPosition: { lat: 0, lng: 0 },
+      searchRadius: MapConfig.searchRadius
     };
   },
 
   findNearbyPresences: function() {
     // Retrieve surrounding presences
-    PresenceActions.findWithinRadius( this.state.userPosition.lng, this.state.userPosition.lat, MapConfig.searchRadius );
+    PresenceActions.findWithinRadius(
+      this.state.userPosition.lng,
+      this.state.userPosition.lat,
+      this.state.searchRadius,
+      this.props.account._id
+    );
   },
 
   componentDidMount: function() {
@@ -190,20 +196,28 @@ var MapEncounter = React.createClass({
       }
 
       if( navigator.geolocation ) {
-        navigator.geolocation.watchPosition(success, error, {
-          enableHighAccuracy: true,
-          timeout: 5000,
-          maximumAge: 0
+        self.setState({
+          geolocationWatchId: navigator.geolocation.watchPosition(success, error, {
+            enableHighAccuracy: true,
+            timeout: 5000,
+            maximumAge: 0
+          })
         });
       }
 
     })();
 
     // Update preference references if we find one has been dropped nearby
-    socket.on('presence:dropped', function( data ) {
-      // Todo: Check if nearby before fetching all presence data
+    socket.on('presence:dropped', function() {
       self.findNearbyPresences();
     });
+  },
+
+  componentWillUnmount: function() {
+    // Clear geolocation watcher so we can recalculate our position when the component is next mounted
+    if( this.state.geolocationWatchId ) {
+      navigator.geolocation.clearWatch(this.state.geolocationWatchId);
+    }
   },
 
   storeDidChange: function() {
@@ -219,11 +233,27 @@ var MapEncounter = React.createClass({
     });
   },
 
-  render: function() {
-    console.log({ lat: this.state.userPosition.lat, lng: this.state.userPosition.lng }, 'render map');
+  handleRadiusChange: function() {
+    this.setState({
+      searchRadius: parseInt(this.refs.radius.getDOMNode().value) || MapConfig.searchRadius
+    }, this.findNearbyPresences);
+  },
 
+  render: function() {
     return (
-      <PresenceMap center={this.state.userPosition} presences={this.state.nearbyPresences} handleMapClick={this.handleMapClick} />
+      <div>
+        <PresenceMap
+          center={this.state.userPosition}
+          presences={this.state.nearbyPresences}
+          handleMapClick={this.handleMapClick}
+          searchRadius={this.state.searchRadius} />
+
+        <p>
+          <input type="number" ref="radius" />
+          <button type="submit" onClick={this.handleRadiusChange}>Update Radius</button>
+        </p>
+
+      </div>
     );
   }
 });

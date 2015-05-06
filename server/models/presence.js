@@ -10,16 +10,21 @@ var presenceSchema = Schema({
 presenceSchema.index({ location: '2dsphere' });
 
 /**
+ * Finds a collection of surrounding presences which has been dropped by other users
+ *
  * @param params
- * 		Object contianing 'lat', 'lng', and 'distance' keys
+ * 		Object contianing 'lat', 'lng', 'distance', and 'userId' keys
  */
 presenceSchema.statics.findWithinRadius = function( params, cb ) {
 	return this.find({
+					uid: {
+						$ne: params.userId
+					},
 					location: {
 						$nearSphere: {
 							$geometry: {
 								type: 'Point',
-								coordinates: [parseInt(params.lng), parseInt(params.lat)]
+								coordinates: [parseFloat(params.lng), parseFloat(params.lat)]
 							},
 							$maxDistance: params.distance // Meters
 						}
@@ -27,4 +32,4 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
 				}, cb);
 };
 
-module.exports = mongoose.model('Presence', presenceSchema);	
+module.exports = mongoose.model('Presence', presenceSchema);

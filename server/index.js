@@ -212,13 +212,9 @@ app.route('/api/presences/found', isAuthenticated)
   });
 
 // Retrieve all the presences found within the specified distance from the provided location
-app.route('/api/presences/find/:lng/:lat/:distance', isAuthenticated)
+app.route('/api/presences/find/:lng/:lat/:distance/:userId', isAuthenticated)
   .get(function( req, res ) {
-    Presence.findWithinRadius({
-      lng: req.params.lng,
-      lat: req.params.lat,
-      distance: req.params.distance
-    }, function( err, presences ) {
+    Presence.findWithinRadius(req.params, function( err, presences ) {
       if( err ) {
         console.log(err);
       }
