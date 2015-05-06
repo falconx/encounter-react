@@ -84,13 +84,6 @@ var PresenceMap = React.createClass({
         //   location: [ data.latLng.lng(), data.latLng.lat() ],
         //   uid: self.props.account._id
         // });
-
-        // Toggle infobox menu overlay display
-        if( self.state.infobox.getVisible() ) {
-          self.state.infobox.close();
-        } else {
-          self.state.infobox.open( self.state.map, self.state.currentMarker );
-        }
       });
 
       // Pass click event through the circle layer
@@ -173,6 +166,15 @@ var PresenceMap = React.createClass({
     });
 
     this.state.markers.push( marker );
+
+    google.maps.event.addListener(marker, 'click', function() {
+      // Toggle infobox menu overlay display
+      if( self.state.infobox.getVisible() ) {
+        self.state.infobox.close();
+      } else {
+        self.state.infobox.open( self.state.map, self.state.currentMarker );
+      }
+    });
 
     this.setState({ currentMarker: marker });
   },
