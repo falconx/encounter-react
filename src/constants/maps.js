@@ -1,5 +1,11 @@
 var defaults = {
   overlayImage: '/images/mapbg.png',
+  hotspotImage:{
+    url: '/images/maphotspot.png',
+    anchor: new google.maps.Point(25, 25),
+    origin: new google.maps.Point(0, 0),
+    scaledSize: new google.maps.Size(50, 50)
+  },
   accuracyThreshold: 250, // Meters
   searchRadius: 750, // Meters
   options: {

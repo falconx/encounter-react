@@ -10,10 +10,6 @@ var EncounterMapOverlay = require('../map-overlay');
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 
-// Todo: Investigate Leaflet
-
-// Todo: generateMarkers and drawSearchRadius both mutate state
-
 // Todo: Updating on socket listeners will happen too frequently in the real world
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -68,6 +64,9 @@ var PresenceMap = React.createClass({
         infobox: infobox
       });
 
+      // Infobox release menu item click handler
+      self.refs.menu_item_release.getDOMNode().addEventListener('click', self.handleMenuItemRelease);
+
       // Draw fixed position overlay image
       overlay.draw();
 
@@ -76,20 +75,6 @@ var PresenceMap = React.createClass({
 
       // Draw circle to indicate search radius
       self.drawSearchRadius();
-
-      // Map click handler
-      google.maps.event.addListener(map, 'click', function( data ) {
-        // Drop presence
-        // PresenceActions.dropPresence({
-        //   location: [ data.latLng.lng(), data.latLng.lat() ],
-        //   uid: self.props.account._id
-        // });
-      });
-
-      // Pass click event through the circle layer
-      google.maps.event.addListener(circle, 'click', function( data ) {
-        google.maps.event.trigger(map, 'click', data);
-      });
 
       // Update overlay position when center changes
       google.maps.event.addListener(map, 'center_changed', function() {
@@ -103,8 +88,13 @@ var PresenceMap = React.createClass({
   },
 
   componentDidUpdate: function( prevProps ) {
+    var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
+
     // Redraw search radius
     this.drawSearchRadius();
+
+    // Re-center map
+    this.state.map.setCenter(center);
 
     // Only generate markers if we have something different to show
     if( this.props.presences !== prevProps.presences ) {
@@ -138,12 +128,7 @@ var PresenceMap = React.createClass({
     // Generate new markers
     _.each(presences, function( presence ) {
       marker = new google.maps.Marker({
-        icon: {
-          url: '/images/maphotspot.png',
-          anchor: new google.maps.Point(25, 25),
-          origin: new google.maps.Point(0, 0),
-          scaledSize: new google.maps.Size(50, 50)
-        },
+        icon: MapConfig.hotspotImage,
         position: new google.maps.LatLng( presence.location[1], presence.location[0] ),
         map: self.state.map,
         id: presence._id,
@@ -154,21 +139,17 @@ var PresenceMap = React.createClass({
     });
 
     // Add marker representing the position of the user
+    // Adding the user marker last will ensure it will be on top of any other markers and can therefore be clicked on
     marker = new google.maps.Marker({
-      icon: {
-        url: '/images/maphotspot.png',
-        anchor: new google.maps.Point(25, 25),
-        origin: new google.maps.Point(0, 0),
-        scaledSize: new google.maps.Size(50, 50)
-      },
+      icon: MapConfig.hotspotImage,
       position: new google.maps.LatLng( this.props.center.lat, this.props.center.lng ),
       map: this.state.map
     });
 
     this.state.markers.push( marker );
 
+    // Toggle infobox menu overlay display by clicking on current position marker
     google.maps.event.addListener(marker, 'click', function() {
-      // Toggle infobox menu overlay display
       if( self.state.infobox.getVisible() ) {
         self.state.infobox.close();
       } else {
@@ -184,7 +165,23 @@ var PresenceMap = React.createClass({
 
     this.state.circle.setRadius(this.props.searchRadius);
     this.state.circle.setCenter(center);
-    this.state.map.setCenter(center);
+  },
+
+  handleMenuItemFound: _.noop,
+
+  handleMenuItemPickup: _.noop,
+
+  handleMenuItemRelease: function() {
+    console.log('handleRelease');
+
+    PresenceActions.dropPresence({
+      location: [ this.props.center.lng, this.props.center.lat ],
+      uid: this.props.account._id
+    });
+
+    // Todo: Show confirmation screen
+
+    this.state.infobox.close();
   },
 
   render: function() {
@@ -193,13 +190,13 @@ var PresenceMap = React.createClass({
         <div className="map" ref="map_encounter"></div>
         <div id="infobox-menu-wrapper">
           <div id="infobox-menu" ref="infobox_menu">
-            <a href="javascript:;" className="menu-item menu-item-found">
+            <a href="javascript:;" className="menu-item menu-item-found" ref="menu_item_found">
               <img src="/images/mapmenuicon-1.png" />
             </a>
-            <a href="javascript:;" className="menu-item menu-item-pickup">
+            <a href="javascript:;" className="menu-item menu-item-pickup" ref="menu_item_pickup">
               <img src="/images/mapmenuicon-2.png" />
             </a>
-            <a href="javascript:;" className="menu-item menu-item-release">
+            <a href="javascript:;" className="menu-item menu-item-release" ref="menu_item_release">
               <img src="/images/mapmenuicon-3.png" />
             </a>
           </div>
@@ -303,7 +300,8 @@ var MapEncounter = React.createClass({
         <PresenceMap
           center={this.state.userPosition}
           presences={this.state.nearbyPresences}
-          searchRadius={this.state.searchRadius} />
+          searchRadius={this.state.searchRadius}
+          {...this.props} />
 
         <p>
           <input type="number" ref="radius" />
