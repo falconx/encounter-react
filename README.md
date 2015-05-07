@@ -14,6 +14,7 @@
 # Questions
 - Visually disable pickup menu item when not near another presence.
 
+# Sprints
 Phase 1:
 1. [x] Have Presence.findWithinRadius return data with N meters of location.
 2. [x] Watch users location and specify threashold of accuracy.
