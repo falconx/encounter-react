@@ -73,10 +73,10 @@ passport.use(
       } else {
         // Create new user record
         var newUser = new User({
-              facebookId: profile.id,
-              token: accessToken,
-              name: profile.name.givenName + ' ' + profile.name.familyName
-            });
+          facebookId: profile.id,
+          token: accessToken,
+          name: profile.name.givenName + ' ' + profile.name.familyName
+        });
 
         newUser.save(function( err ) {
           return done(err, newUser);

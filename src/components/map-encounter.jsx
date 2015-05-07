@@ -6,6 +6,7 @@ var socket = io.connect();
 
 var MapConfig = require('../constants/maps').encounter; // Encounter map config
 var EncounterMapOverlay = require('../map-overlay');
+var ProfileMarker = require('../marker-profile');
 
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
@@ -40,23 +41,23 @@ var PresenceMap = React.createClass({
     // Initialise map
     google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
       var circle = new google.maps.Circle({
-            strokeWeight: 0,
-            fillColor: '#ffffff',
-            fillOpacity: 0.35,
-            map: map,
-            center: new google.maps.LatLng( self.props.center.lat, self.props.center.lng ),
-            radius: self.props.searchRadius
-          });
+        strokeWeight: 0,
+        fillColor: '#ffffff',
+        fillOpacity: 0.35,
+        map: map,
+        center: new google.maps.LatLng( self.props.center.lat, self.props.center.lng ),
+        radius: self.props.searchRadius
+      });
 
       var infobox = new InfoBox({
-            content: self.refs.infobox_menu.getDOMNode(),
-            disableAutoPan: false,
-            pixelOffset: new google.maps.Size(-111, -111),
-            zIndex: null,
-            closeBoxMargin: '93px 88px 0 0',
-            closeBoxURL: '/images/mapmenu-close.png',
-            infoBoxClearance: new google.maps.Size(1, 1)
-          });
+        content: self.refs.infobox_menu.getDOMNode(),
+        disableAutoPan: false,
+        pixelOffset: new google.maps.Size(-111, -111),
+        zIndex: null,
+        closeBoxMargin: '93px 88px 0 0',
+        closeBoxURL: '/images/mapmenu-close.png',
+        infoBoxClearance: new google.maps.Size(1, 1)
+      });
 
       self.setState({
         map: map,
@@ -140,11 +141,11 @@ var PresenceMap = React.createClass({
 
     // Add marker representing the position of the user
     // Adding the user marker last will ensure it will be on top of any other markers and can therefore be clicked on
-    marker = new google.maps.Marker({
-      icon: MapConfig.hotspotImage,
-      position: new google.maps.LatLng( this.props.center.lat, this.props.center.lng ),
-      map: this.state.map
-    });
+    marker = new ProfileMarker(
+      this.state.map,
+      new google.maps.LatLng( this.props.center.lat, this.props.center.lng ),
+      'http://graph.facebook.com/' + this.props.account.facebookId + '/picture?type=small'
+    );
 
     this.state.markers.push( marker );
 

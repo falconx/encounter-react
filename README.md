@@ -8,18 +8,19 @@
 - Tests
 
 - Bundle vendor files separately
+- Center profile marker image
 
 Phase 1:
-1. [ ] Have Presence.findWithinRadius return data with N meters of location.
-2. [ ] Watch users location and specify threashold of accuracy.
-3. [ ] Update users position on the map.
-4. [ ] Show new presences when they come into range (use dev tools to change location).
-5. [ ] Get map to show all presences within radius which don't belong to the user.
+1. [x] Have Presence.findWithinRadius return data with N meters of location.
+2. [x] Watch users location and specify threashold of accuracy.
+3. [x] Update users position on the map.
+4. [x] Show new presences when they come into range (use dev tools to change location).
+5. [x] Get map to show all presences within radius which don't belong to the user.
 6. [x] Draw circle search radius on map for dev mode/testing.
 
 Phase 2:
-1. [ ] If possible, show circular profile image at center of map. Otherwise show firefly image.
-2. [ ] On clicking the image/current position, show a menu: Drop presence, ...
+1. [x] If possible, show circular profile image at center of map. Otherwise show firefly image.
+2. [x] On clicking the image/current position, show a menu: Drop presence, ...
 
 
 

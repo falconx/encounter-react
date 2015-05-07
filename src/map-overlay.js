@@ -1,3 +1,6 @@
+/**
+ * Special case Google Map Overlay to show faded circle image with cut-out to indicate search radius
+ */
 function EncounterMapOverlay( bounds, image, map ) {
   this.bounds_ = bounds;
   this.image_ = image;

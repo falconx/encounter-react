@@ -1,6 +1,6 @@
 var defaults = {
   overlayImage: '/images/mapbg.png',
-  hotspotImage:{
+  hotspotImage: {
     url: '/images/maphotspot.png',
     anchor: new google.maps.Point(25, 25),
     origin: new google.maps.Point(0, 0),

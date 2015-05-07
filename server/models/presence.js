@@ -17,19 +17,19 @@ presenceSchema.index({ location: '2dsphere' });
  */
 presenceSchema.statics.findWithinRadius = function( params, cb ) {
 	return this.find({
-					uid: {
-						$ne: params.userId
-					},
-					location: {
-						$nearSphere: {
-							$geometry: {
-								type: 'Point',
-								coordinates: [parseFloat(params.lng), parseFloat(params.lat)]
-							},
-							$maxDistance: params.distance // Meters
-						}
-					}
-				}, cb);
+		uid: {
+			$ne: params.userId
+		},
+		location: {
+			$nearSphere: {
+				$geometry: {
+					type: 'Point',
+					coordinates: [parseFloat(params.lng), parseFloat(params.lat)]
+				},
+				$maxDistance: params.distance // Meters
+			}
+		}
+	}, cb);
 };
 
 module.exports = mongoose.model('Presence', presenceSchema);
