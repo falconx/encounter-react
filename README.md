@@ -1,3 +1,7 @@
+```
+// var update = require('react/addons').addons.update;
+```
+
 # Deploy
 1. ```npm install```
 2. Create a ```server/config/providers.json```
@@ -5,6 +9,8 @@
 
 # Todo
 - Refactor map-encounter.jsx
+- map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
+- Request profile image using Passport instead of using Facebook Graph API
 
 - Sourcemaps
 - Tests
