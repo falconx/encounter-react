@@ -1,12 +1,12 @@
 /**
  * Special case Google Map Marker to show profile image and attach a class name
  */
-function ProfileMarker( map, center, profileImage ) {
-  this.center_ = center;
+function ProfileMarker( map, position, profileImage ) {
+  this.position_ = position;
   this.profileImage_ = profileImage;
 
-  // Once the LatLng and text are set, add the overlay to the map.  This will
-  // trigger a call to panes_changed which should in turn call draw.
+  // Once the LatLng and text are set, add the overlay to the map. This will trigger a call to panes_changed which
+  // should in turn call draw.
   this.setMap( map );
 }
 
@@ -16,7 +16,7 @@ ProfileMarker.prototype.draw = function() {
   var self = this;
   var img;
 
-  // Check if the div has been created.
+  // Check if the div has been created
   var div = this.div_;
 
   if( !div ) {
@@ -41,7 +41,7 @@ ProfileMarker.prototype.draw = function() {
   }
 
   // Position the overlay 
-  var point = this.getProjection().fromLatLngToDivPixel( this.center_ );
+  var point = this.getProjection().fromLatLngToDivPixel( this.position_ );
 
   if( point ) {
     div.style.left = point.x + 'px';
@@ -50,7 +50,7 @@ ProfileMarker.prototype.draw = function() {
 };
 
 ProfileMarker.prototype.remove = function() {
-  // Check if the overlay was on the map and needs to be removed.
+  // Check if the overlay was on the map and needs to be removed
   if( this.div_ ) {
     this.div_.parentNode.removeChild( this.div_ );
     this.div_ = null;
@@ -58,7 +58,7 @@ ProfileMarker.prototype.remove = function() {
 };
 
 ProfileMarker.prototype.getPosition = function() {
-  return this.center_;
+  return this.position_;
 };
 
 module.exports = ProfileMarker;
