@@ -96,7 +96,7 @@ function isAuthenticated( req, res, next ) {
     return next();
   }
 
-  res.redirect('/');
+  res.sendStatus(403);
 }
 
 // Auth routes

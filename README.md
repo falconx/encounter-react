@@ -4,7 +4,8 @@
 3. ```npm start```
 
 # Todo
-- map-encounter.jsx code refactor
+- Refactor map-encounter.jsx
+
 - Sourcemaps
 - Tests
 - Bundle vendor files separately
@@ -33,6 +34,7 @@ Phase 3:
 3. [ ] Don't allow clicking on map landmarks.
 4. [ ] Don't allow map zoom level to change.
 5. [ ] Confirmation screen when releasing presence.
+6. [ ] Remove presence data in real-time once they have been removed.
 
 Phase 4:
 1. [ ] Dropped presences screen.
@@ -46,6 +48,7 @@ Phase 6:
 2. [ ] Link found presences menu item from map to page.
 3. [ ] Leave a message when releasing a presence.
 4. [ ] Show presence message when on confirmation page before collecting a presence.
+5. [ ] Show profile image of presence uid on confirmation page before collecting a presence.
 
 Phase 7:
 1. [ ] Only allow 3 presences to be released at any one time, per user.
@@ -53,3 +56,26 @@ Phase 7:
 3. [ ] Visually indicate time remaining on dropped presences screen.
 4. [ ] Visually indicate time remaining on found presences screen.
 5. [ ] Visually indicate time remaining on question prompt screen (when collecting a presence).
+
+Phase 8:
+1. [ ] Show help screen for first time users.
+2. [ ] Handle devices which don’t support GeoLocation.
+3. [ ] Create launch screen and animate through background images.
+4. [ ] Gradient text should have shimmer effect.
+5. [ ] Dashboard - Show unread messages stat.
+6. [ ] Dashboard - Show active presences stat.
+7. [ ] Dashboard - Show unreplied messages stat.
+8. [ ] Dashboard - Link stats.
+
+Phase 9:
+1. [ ] Allow messaging between users - Limit character count to 140.
+2. [ ] Drop presence - Limit character count to 140.
+3. [ ] Allow removing specific messages.
+
+Phase 10:
+1. [ ] Allow user to override user profile image?
+2. [ ] Remove / block user.
+3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.
+
+Phase 11:
+1. Quiz system
