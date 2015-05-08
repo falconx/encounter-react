@@ -15,7 +15,7 @@
 - Stylesheet/Radium
 
 # Questions
-- Visually disable pickup menu item when not near another presence.
+- Visually disable/hide pickup menu item when not near another presence.
 
 # Sprints
 Phase 1:
@@ -32,6 +32,7 @@ Phase 2:
 3. [!] Refactor map-encounter.jsx and presence-map.jsx
 4. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
 5. [ ] Request profile image using Passport instead of using Facebook Graph API
+6. [!] Dropped presences screen.
 
 Phase 3:
 1. [ ] Only update the map once the user has moved N distance since the last check.
@@ -43,45 +44,42 @@ Phase 3:
 7. [x] Don't allow map panning.
 
 Phase 4:
-1. [ ] Dropped presences screen.
-
-Phase 5:
 1. [ ] Show faces of found users on presence map.
 2. [ ] Hide all other presences that belong to a user after finding one that belongs to them.
 
-Phase 6:
+Phase 5:
 1. [ ] Create found presences page and list found presences.
 2. [ ] Link found presences menu item from map to page.
 3. [ ] Leave a message when releasing a presence.
 4. [ ] Show presence message when on confirmation page before collecting a presence.
 5. [ ] Show profile image of presence uid on confirmation page before collecting a presence.
 
-Phase 7:
+Phase 6:
 1. [ ] Only allow 3 presences to be released at any one time, per user.
 2. [ ] Expire presences over time.
 3. [ ] Visually indicate time remaining on dropped presences screen.
 4. [ ] Visually indicate time remaining on found presences screen.
 5. [ ] Visually indicate time remaining on question prompt screen (when collecting a presence).
 
-Phase 8:
-1. [ ] Show help screen for first time users.
-2. [ ] Handle devices which don’t support GeoLocation.
-3. [ ] Create launch screen and animate through background images.
-4. [ ] Gradient text should have shimmer effect.
-5. [ ] Dashboard - Show unread messages stat.
-6. [ ] Dashboard - Show active presences stat.
-7. [ ] Dashboard - Show unreplied messages stat.
-8. [ ] Dashboard - Link stats.
+Phase 7:
+1. [ ] Handle devices which don’t support GeoLocation.
+2. [ ] Create launch screen and animate through background images.
+3. [ ] Gradient text should have shimmer effect.
+4. [ ] Dashboard - Show unread messages stat.
+5. [ ] Dashboard - Show active presences stat.
+6. [ ] Dashboard - Show unreplied messages stat.
+7. [ ] Dashboard - Link stats.
 
-Phase 9:
+Phase 8:
 1. [ ] Allow messaging between users - Limit character count to 140.
 2. [ ] Drop presence - Limit character count to 140.
 3. [ ] Allow removing specific messages.
 
-Phase 10:
+Phase 9:
 1. [ ] Allow user to override user profile image?
 2. [ ] Remove / block user.
 3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.
 
-Phase 11:
-1. Quiz system
+Phase 10:
+1. [ ] Quiz system.
+2. [ ] Show help screen for first time users.

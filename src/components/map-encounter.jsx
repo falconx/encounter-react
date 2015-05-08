@@ -59,6 +59,7 @@ var MapEncounter = React.createClass({
       }
 
       if( navigator.geolocation ) {
+        // Todo: Handle location not found
         self.setState({
           geolocationWatchId: navigator.geolocation.watchPosition(success, _.noop, {
             enableHighAccuracy: true,
@@ -103,6 +104,8 @@ var MapEncounter = React.createClass({
           center={this.state.userPosition}
           presences={this.state.nearbyPresences}
           searchRadius={this.state.searchRadius}
+          showOverlay={true}
+          showCurrentPosition={true}
           {...this.props} />
 
         <p>
