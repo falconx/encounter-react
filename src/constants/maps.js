@@ -8,10 +8,14 @@ var defaults = {
   },
   accuracyThreshold: 250, // Meters
   searchRadius: 750, // Meters
+
+  // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
   options: {
     zoom: 14,
-    disableDefaultUI: true,
+    scrollwheel: false,
+    draggable: false,
     disableDoubleClickZoom: true,
+    disableDefaultUI: true,
     styles: [
       {
         'stylers': [
@@ -35,5 +39,6 @@ var defaults = {
 
 module.exports = {
   defaults: defaults,
-  encounter: defaults
+  encounter: defaults,
+  released: defaults
 };
