@@ -99,6 +99,7 @@ var MapEncounter = React.createClass({
     return (
       <div>
         <PresenceMap
+          mapConfig={MapConfig.options}
           center={this.state.userPosition}
           presences={this.state.nearbyPresences}
           searchRadius={this.state.searchRadius}

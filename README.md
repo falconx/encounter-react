@@ -8,10 +8,6 @@
 3. ```npm start```
 
 # Todo
-- Refactor map-encounter.jsx
-- map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
-- Request profile image using Passport instead of using Facebook Graph API
-
 - Sourcemaps
 - Tests
 - Bundle vendor files separately
@@ -33,6 +29,9 @@ Phase 1:
 Phase 2:
 1. [x] If possible, show circular profile image at center of map. Otherwise show firefly image.
 2. [x] On clicking the image/current position, show a menu: Drop presence, ...
+3. [ ] Refactor map-encounter.jsx and presence-map.jsx
+4. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
+5. [ ] Request profile image using Passport instead of using Facebook Graph API
 
 Phase 3:
 1. [ ] Only update the map once the user has moved N distance since the last check.

@@ -33,8 +33,7 @@ var defaults = {
   }
 };
 
-var maps = {
+module.exports = {
+  defaults: defaults,
   encounter: defaults
 };
-
-module.exports = maps;

@@ -8,6 +8,7 @@ var NotFoundRoute = Router.NotFoundRoute;
 var App = require('./components/app');
 var Dashboard = require('./components/dashboard');
 var MapEncounter = require('./components/map-encounter');
+var MapReleased = require('./components/map-released');
 
 var AccountActions = require('./actions/account');
 
@@ -15,6 +16,7 @@ var routes = (
   <Route name="app" path="/" handler={App}>
     <DefaultRoute name="dashboard" handler={Dashboard} />
     <Route name="map-encounter" path="encounter" handler={MapEncounter} />
+    <Route name="map-released" path="released" handler={MapReleased} />
     <NotFoundRoute handler={Dashboard} />
   </Route>
 );
