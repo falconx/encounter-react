@@ -16,7 +16,7 @@ var Dashboard = React.createClass({
 				<p><Link to="map-encounter">Encounter Map</Link></p>
 				<p><Link to="map-released">Released Presences Map</Link></p>
 
-				<h2>Dropped Presences</h2>
+				<h2>Released Presences</h2>
 				<ol>
 					{account.dropped.map(function( presence ) {
 						return <li key={presence._id}>{JSON.stringify(presence.location)}</li>;
