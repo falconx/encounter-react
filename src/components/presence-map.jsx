@@ -145,11 +145,9 @@ var PresenceMap = React.createClass({
     // Add marker representing the position of the user
     // Adding the user marker last will ensure it will be on top of any other markers and can therefore be clicked on
     if( this.props.showCurrentPosition ) {
-      marker = new ProfileMarker(
-        this.state.map,
-        new google.maps.LatLng( this.props.center.lat, this.props.center.lng ),
-        'http://graph.facebook.com/' + this.props.account.facebookId + '/picture?type=small'
-      );
+      var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
+
+      marker = new ProfileMarker( this.state.map, center, this.props.account.photo );
 
       this.state.markers.push( marker );
     }

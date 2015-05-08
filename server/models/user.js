@@ -6,6 +6,7 @@ var userSchema = Schema({
       facebookId: Number, // unique
       token: String,
       name: String,
+      photo: String, // Path to profile image using Facebook Graph API
       dropped: [{ type: ObjectId, ref: 'Presence' }],
       found: [{ type: ObjectId, ref: 'Presence' }]
     });

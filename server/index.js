@@ -75,7 +75,8 @@ passport.use(
         var newUser = new User({
           facebookId: profile.id,
           token: accessToken,
-          name: profile.name.givenName + ' ' + profile.name.familyName
+          name: profile.name.givenName + ' ' + profile.name.familyName,
+          photo: 'http://graph.facebook.com/' + profile.id + '/picture?type=small'
         });
 
         newUser.save(function( err ) {

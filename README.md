@@ -31,7 +31,7 @@ Phase 2:
 2. [x] On clicking the image/current position, show a menu: Drop presence, ...
 3. [!] Refactor map-encounter.jsx and presence-map.jsx
 4. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
-5. [ ] Request profile image using Passport instead of using Facebook Graph API
+5. [x] Request profile image using Passport instead of using Facebook Graph API
 6. [!] Dropped presences screen.
 
 Phase 3:
@@ -78,8 +78,8 @@ Phase 8:
 Phase 9:
 1. [ ] Allow user to override user profile image?
 2. [ ] Remove / block user.
-3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.
 
 Phase 10:
 1. [ ] Quiz system.
 2. [ ] Show help screen for first time users.
+3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.

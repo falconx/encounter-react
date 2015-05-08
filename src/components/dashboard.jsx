@@ -12,7 +12,7 @@ var Dashboard = React.createClass({
 		return (
 			<div>
 				<p>Hi {account.name} <a href="/auth/logout">Logout</a></p>
-				<p><img src={'http://graph.facebook.com/' + account.facebookId + '/picture?type=small'} /></p>
+				<p><img src={account.photo} /></p>
 				<p><Link to="map-encounter">Encounter Map</Link></p>
 				<p><Link to="map-released">Released Presences Map</Link></p>
 
