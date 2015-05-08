@@ -32,6 +32,13 @@ var defaults = {
         'stylers': [
           { 'color': '#2d333c' }
         ]
+      },
+      { // Turn off points of interest
+        'featureType': 'poi',
+        'elementType': 'labels',
+        'stylers': [
+          { 'visibility': 'off' }
+        ]
       }
     ]
   }
