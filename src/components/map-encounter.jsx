@@ -9,8 +9,6 @@ var PresenceMap = require('./presence-map');
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 
-// Todo: Updating on socket listeners will happen too frequently in the real world
-
 var MapEncounter = React.createClass({
   mixins: [PresenceStore.mixin],
 
@@ -73,6 +71,7 @@ var MapEncounter = React.createClass({
 
     // Update preference references if we find one has been dropped nearby
     socket.on('presence:dropped', function() {
+      // Todo: This will happen too frequently in the real-world
       self.findNearbyPresences();
     });
   },

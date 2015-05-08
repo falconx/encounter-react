@@ -22,7 +22,7 @@ var PresenceStore = Flux.createStore({
 			AccountActions.loadAccount();
 		}
 
-		case 'COLLECT_PRESENCE': {
+		case 'PICKUP_PRESENCE': {
 			PresenceStore.emitChange();
 
 			// We've manipulated data attached to the account so reload it

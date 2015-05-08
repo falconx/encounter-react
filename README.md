@@ -13,6 +13,7 @@
 - Bundle vendor files separately
 - Dev mode switch
 - Stylesheet/Radium
+- initializeTouchEvents(boolean shouldUseTouch)
 
 # Questions
 - Visually disable/hide pickup menu item when not near another presence.
@@ -32,7 +33,7 @@ Phase 2:
 3. [!] Refactor map-encounter.jsx and presence-map.jsx
 4. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
 5. [x] Request profile image using Passport instead of using Facebook Graph API
-6. [!] Dropped presences screen.
+6. [x] Dropped presences screen.
 
 Phase 3:
 1. [ ] Only update the map once the user has moved N distance since the last check.
@@ -42,6 +43,7 @@ Phase 3:
 5. [ ] Confirmation screen when releasing presence.
 6. [ ] Remove presence data in real-time once they have been removed.
 7. [x] Don't allow map panning.
+8. [ ] Dropped presences screen stats.
 
 Phase 4:
 1. [ ] Show faces of found users on presence map.

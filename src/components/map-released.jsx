@@ -1,13 +1,15 @@
 var React = require('react');
+var Navigation = require('react-router').Navigation;
 var _ = require('lodash');
 
 var MapConfig = require('../constants/maps').released;
 
+var Modal = require('./modal');
 var PresenceMap = require('./presence-map');
 
-// Todo: Handle empty this.props.account.presences
-
 var MapReleased = React.createClass({
+	mixins: [Navigation],
+
 	render: function() {
 		if( this.props.account.dropped.length ) {
 			// Center around released presences
@@ -28,7 +30,9 @@ var MapReleased = React.createClass({
 		}
 
 		return (
-			<p>You've not yet released any presences.</p>
+			<Modal closeHandler={this.goBack}>
+				<p>You've not yet released any presences.</p>
+			</Modal>
 		);
 	}
 });

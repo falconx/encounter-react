@@ -24,7 +24,7 @@ var PresenceActions = Flux.createActions({
 		});
 	},
 
-	collectPresence: function( presenceId ) {
+	pickupPresence: function( presenceId ) {
 		return new Promise(function( resolve, rej ) {
 			request
 				.post('/api/presences/found')
@@ -38,7 +38,7 @@ var PresenceActions = Flux.createActions({
 				});
 		}).then(function( data ) {
 			return {
-				actionType: 'COLLECT_PRESENCE',
+				actionType: 'PICKUP_PRESENCE',
 				presence: data
 			};
 		});

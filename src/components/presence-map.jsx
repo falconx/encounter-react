@@ -171,7 +171,13 @@ var PresenceMap = React.createClass({
 
   handleMenuItemFound: _.noop,
 
-  handleMenuItemPickup: _.noop,
+  handleMenuItemPickup: function() {
+    // Todo: Show photo and message attached to presence
+
+    // Todo: Get reference to nearest presence
+
+    // PresenceActions.pickupPresence( presence.id );
+  },
 
   handleMenuItemRelease: function() {
     PresenceActions.dropPresence({
