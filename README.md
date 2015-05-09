@@ -36,52 +36,50 @@ Phase 2:
 6. [x] Dropped presences screen.
 
 Phase 3:
-1. [ ] Only update the map once the user has moved N distance since the last check.
-2. [ ] Allow pickup of nearby presence.
-3. [x] Don't allow clicking on poi.
-4. [x] Don't allow map zoom level to change.
-5. [x] Confirmation screen when releasing presence.
-6. [ ] Remove presence data in real-time once they have been removed.
-7. [x] Don't allow map panning.
-8. [ ] Dropped presences screen stats.
+ 1. [ ] Only update the map once the user has moved N distance since the last check.
+ 2. [!] Allow pickup of a nearby (closest) presence.
+ 3. [x] Don't allow clicking on poi.
+ 4. [x] Don't allow map zoom level to change.
+ 5. [x] Confirmation screen when releasing presence.
+ 6. [ ] Remove presence data in real-time once they have been removed.
+ 7. [x] Don't allow map panning.
+ 8. [ ] Dropped presences screen stats.
+ 9. [ ] Show account photo as presence icon for found presenecs.
+10. [ ] Hide all other presences that belong to a user after finding one that belongs to them.
 
 Phase 4:
-1. [ ] Show faces of found users on presence map.
-2. [ ] Hide all other presences that belong to a user after finding one that belongs to them.
-
-Phase 5:
 1. [ ] Create found presences page and list found presences.
 2. [ ] Link found presences menu item from map to page.
 3. [ ] Leave a message when releasing a presence.
 4. [ ] Show presence message when on confirmation page before collecting a presence.
 5. [ ] Show profile image of presence uid on confirmation page before collecting a presence.
 
-Phase 6:
+Phase 5:
 1. [ ] Only allow 3 presences to be released at any one time, per user.
 2. [ ] Expire presences over time.
 3. [ ] Visually indicate time remaining on dropped presences screen.
 4. [ ] Visually indicate time remaining on found presences screen.
 5. [ ] Visually indicate time remaining on question prompt screen (when collecting a presence).
 
-Phase 7:
+Phase 6:
 1. [ ] Handle devices which don’t support GeoLocation.
 2. [ ] Create launch screen and animate through background images.
 3. [ ] Gradient text should have shimmer effect.
-4. [ ] Dashboard - Show unread messages stat.
-5. [ ] Dashboard - Show active presences stat.
-6. [ ] Dashboard - Show unreplied messages stat.
-7. [ ] Dashboard - Link stats.
+4. [ ] Dashboard - Show active presences stat.
+5. [ ] Dashboard - Link stats.
 
-Phase 8:
+Phase 7:
 1. [ ] Allow messaging between users - Limit character count to 140.
 2. [ ] Drop presence - Limit character count to 140.
 3. [ ] Allow removing specific messages.
+4. [ ] Dashboard - Show unread messages stat.
+5. [ ] Dashboard - Show unreplied messages stat.
 
-Phase 9:
+Phase 8:
 1. [ ] Allow user to override user profile image?
 2. [ ] Remove / block user.
 
-Phase 10:
+Phase 9:
 1. [ ] Quiz system.
 2. [ ] Show help screen for first time users.
 3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.

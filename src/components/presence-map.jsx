@@ -27,7 +27,8 @@ var PresenceMap = React.createClass({
       currentMarker: null, // Marker to indicate users current position
       markers: [], // The map markers converted from presence data
       circle: null, // Visually indicates search radius
-      showReleaseModal: false // Release presence confirmation modal
+      showReleaseModal: false, // Release presence confirmation modal
+      showPickupModal: false // Pickup presence modal
     };
   },
 
@@ -68,9 +69,14 @@ var PresenceMap = React.createClass({
         infobox: infobox
       });
 
-      // Infobox release menu item click handler
+      // Menu item click handlers
+
       self.refs.menu_item_release.getDOMNode().addEventListener('click', function() {
         self.setState({ showReleaseModal: true });
+      });
+
+      self.refs.menu_item_pickup.getDOMNode().addEventListener('click', function() {
+        self.setState({ showPickupModal: true });
       });
 
       // Draw fixed position overlay image
@@ -175,12 +181,19 @@ var PresenceMap = React.createClass({
 
   handleMenuItemFound: _.noop,
 
-  handleMenuItemPickup: function() {
-    // Todo: Show photo and message attached to presence
+  handlePickupModalClose: function() {
+    this.setState({ showPickupModal: false });
+  },
 
-    // Todo: Get reference to nearest presence
+  handlePickupModalPickup: function() {
+    // The closest marker to our position will be the first one returned from our original query
+    var closest = this.props.presences.length ? this.props.presences[0] : null;
 
-    // PresenceActions.pickupPresence( presence.id );
+    if( closest ) {
+      PresenceActions.pickupPresence( closest._id );
+    }
+
+    this.handlePickupModalClose();
   },
 
   handleReleaseModalClose: function() {
@@ -218,10 +231,19 @@ var PresenceMap = React.createClass({
           </div>
         </div>
 
-        <Modal show={this.state.showReleaseModal} closeHandler={this.handleReleaseModalClose}>
+        <Modal show={this.state.showReleaseModal}>
           <p>Are you sure you'd like to drop a presence?</p>
-          <button onClick={this.handleReleaseModalYes}>Yes</button>
-          <button onClick={this.handleReleaseModalClose}>No</button>
+          <p>
+            <button onClick={this.handleReleaseModalYes}>Yes</button>
+            <button onClick={this.handleReleaseModalClose}>No</button>
+          </p>
+        </Modal>
+
+        <Modal show={this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
+          <p>You have encountered a presence!</p>
+          <p>
+            <button onClick={this.handlePickupModalPickup}>Pickup</button>
+          </p>
         </Modal>
 
       </div>

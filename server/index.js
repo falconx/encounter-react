@@ -191,15 +191,10 @@ app.route('/api/presences/found', isAuthenticated)
   })
 
   // Add a presence to the user's found collection
-  .post(function( req, res ) {
-     new Presence(req.body.presence)
-      .save(function( err, presence ) {
-        if( err ) {
-          // Todo: Handle error
-          console.log( err );
-          next();
-        }
-
+  .post(function( req, res, next ) {
+    Presence
+      .findOne({ _id: req.body.presenceId })
+      .exec(function( err, presence ) {
         User.findOneAndUpdate(
           { _id : req.user._id },
           { $push: { found: presence } },
@@ -207,6 +202,7 @@ app.route('/api/presences/found', isAuthenticated)
           function( err ) {
             if( err ) {
               console.log(err);
+              next();
             }
 
             res.send(presence);
@@ -218,13 +214,14 @@ app.route('/api/presences/found', isAuthenticated)
 // Retrieve all the presences found within the specified distance from the provided location
 app.route('/api/presences/find/:lng/:lat/:distance/:userId', isAuthenticated)
   .get(function( req, res ) {
-    Presence.findWithinRadius(req.params, function( err, presences ) {
-      if( err ) {
-        console.log(err);
-      }
+    Presence
+      .findWithinRadius(req.params, function( err, presences ) {
+        if( err ) {
+          console.log(err);
+        }
 
-      res.send(presences);
-    });
+        res.send(presences);
+      });
   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
