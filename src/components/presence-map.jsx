@@ -1,6 +1,7 @@
 var React = require('react');
 var _ = require('lodash');
 
+var Modal = require('./modal');
 var ProfileMarker = require('../marker-profile');
 var EncounterMapOverlay = require('../map-overlay');
 
@@ -25,7 +26,8 @@ var PresenceMap = React.createClass({
       map: null,
       currentMarker: null, // Marker to indicate users current position
       markers: [], // The map markers converted from presence data
-      circle: null // Visually indicates search radius
+      circle: null, // Visually indicates search radius
+      showReleaseModal: false // Release presence confirmation modal
     };
   },
 
@@ -67,7 +69,9 @@ var PresenceMap = React.createClass({
       });
 
       // Infobox release menu item click handler
-      self.refs.menu_item_release.getDOMNode().addEventListener('click', self.handleMenuItemRelease);
+      self.refs.menu_item_release.getDOMNode().addEventListener('click', function() {
+        self.setState({ showReleaseModal: true });
+      });
 
       // Draw fixed position overlay image
       if( overlay ) {
@@ -179,21 +183,27 @@ var PresenceMap = React.createClass({
     // PresenceActions.pickupPresence( presence.id );
   },
 
-  handleMenuItemRelease: function() {
+  handleReleaseModalClose: function() {
+    this.setState({ showReleaseModal: false });
+  },
+
+  handleReleaseModalYes: function() {
     PresenceActions.dropPresence({
       location: [ this.props.center.lng, this.props.center.lat ],
       uid: this.props.account._id
     });
 
-    // Todo: Show confirmation screen
-
     this.state.infobox.close();
+
+    this.handleReleaseModalClose();
   },
 
   render: function() {
     return (
       <div>
+
         <div className="map" ref="map_encounter"></div>
+
         <div id="infobox-menu-wrapper">
           <div id="infobox-menu" ref="infobox_menu">
             <a href="javascript:;" className="menu-item menu-item-found" ref="menu_item_found">
@@ -207,6 +217,13 @@ var PresenceMap = React.createClass({
             </a>
           </div>
         </div>
+
+        <Modal show={this.state.showReleaseModal} closeHandler={this.handleReleaseModalClose}>
+          <p>Are you sure you'd like to drop a presence?</p>
+          <button onClick={this.handleReleaseModalYes}>Yes</button>
+          <button onClick={this.handleReleaseModalClose}>No</button>
+        </Modal>
+
       </div>
     );
   }

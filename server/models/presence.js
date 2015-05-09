@@ -33,16 +33,4 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
 	}, cb);
 };
 
-presenceSchema.statics.findClosest = function( params, cb ) {
-	return new Promise(function( resolve ) {
-		presenceSchema.statics.findWithinRadius( params ).then(function( presences ) {
-			if( presences && presences.length ) {
-				resolve(presences[0]);
-			}
-
-			return resolve([]);
-		});
-	});
-};
-
 module.exports = mongoose.model('Presence', presenceSchema);

@@ -12,6 +12,7 @@ var defaults = {
   // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
   options: {
     zoom: 14,
+    maxZoom: 14, // Ensures we don't zoom too much when fitting bounds around a singular marker
     scrollwheel: false,
     draggable: false,
     disableDoubleClickZoom: true,

@@ -40,7 +40,7 @@ Phase 3:
 2. [ ] Allow pickup of nearby presence.
 3. [x] Don't allow clicking on poi.
 4. [x] Don't allow map zoom level to change.
-5. [ ] Confirmation screen when releasing presence.
+5. [x] Confirmation screen when releasing presence.
 6. [ ] Remove presence data in real-time once they have been removed.
 7. [x] Don't allow map panning.
 8. [ ] Dropped presences screen stats.
