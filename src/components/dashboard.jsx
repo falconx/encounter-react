@@ -9,10 +9,14 @@ var Dashboard = React.createClass({
 	render: function() {
 		var account = this.props.account;
 
+		var accountPhotoStyle = {
+			backgroundImage: 'url(' + account.photo + ')'
+		};
+
 		return (
 			<div>
 				<p>Hi {account.name} <a href="/auth/logout">Logout</a></p>
-				<p><img src={account.photo} /></p>
+				<p><div className="account-photo" style={accountPhotoStyle}></div></p>
 				<p><Link to="map-encounter">Encounter Map</Link></p>
 				<p><Link to="map-released">Released Presences Map</Link></p>
 

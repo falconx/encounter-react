@@ -76,7 +76,7 @@ passport.use(
           facebookId: profile.id,
           token: accessToken,
           name: profile.name.givenName + ' ' + profile.name.familyName,
-          photo: 'http://graph.facebook.com/' + profile.id + '/picture?type=small'
+          photo: 'http://graph.facebook.com/' + profile.id + '/picture?type=large'
         });
 
         newUser.save(function( err ) {
@@ -120,28 +120,41 @@ app.get('/auth/logout', isAuthenticated, function( req, res ) {
   res.redirect('/');
 });
 
-app.get('/api/account', isAuthenticated, function( req, res ) {
+app.get('/api/account', isAuthenticated, function( req, res, next ) {
   User
     .findOne({ _id: req.user._id })
     .populate('dropped found')
     .exec(function( err, presences ) {
       if( err ) {
         console.log(err);
+        next();
       }
 
-      res.send(presences);
+      Presence.populate(presences, [
+        { path: 'dropped.uid', model: 'User', select: '_id photo' },
+        { path: 'found.uid', model: 'User', select: '_id photo' }
+      ], function( err, presences ) {
+        if( err ) {
+          console.log(err);
+          next();
+        }
+
+        res.send(presences);
+      });
     });
 });
 
 app.route('/api/presences/dropped', isAuthenticated)
 
   // Retrieve users dropped presences
-  .get(function( req, res ) {
+  .get(function( req, res, next ) {
     Presence
       .find({ uid: req.user._id })
       .exec(function( err, presences ) {
         if( err ) {
-          console.log(err);
+          // Todo: Handle error
+          console.log( err );
+          next();
         }
 
         res.send(presences);
@@ -149,7 +162,7 @@ app.route('/api/presences/dropped', isAuthenticated)
   })
 
   // Drop a presence
-  .post(function( req, res ) {
+  .post(function( req, res, next ) {
     new Presence(req.body.presence)
       .save(function( err, presence ) {
         if( err ) {
@@ -164,7 +177,9 @@ app.route('/api/presences/dropped', isAuthenticated)
           { safe: true, upsert: true },
           function( err ) {
             if( err ) {
-              console.log(err);
+              // Todo: Handle error
+              console.log( err );
+              next();
             }
 
             res.send(presence);
@@ -176,14 +191,16 @@ app.route('/api/presences/dropped', isAuthenticated)
 app.route('/api/presences/found', isAuthenticated)
 
   // Retrieve users found presences
-  .get(function( req, res ) {
+  .get(function( req, res, next ) {
     User
       .find({ uid: req.user._id })
       .populate('found')
       .select('found')
       .exec(function( err, presences ) {
         if( err ) {
-          console.log(err);
+          // Todo: Handle error
+          console.log( err );
+          next();
         }
 
         res.send(presences);
@@ -213,11 +230,12 @@ app.route('/api/presences/found', isAuthenticated)
 
 // Retrieve all the presences found within the specified distance from the provided location
 app.route('/api/presences/find/:lng/:lat/:distance/:userId', isAuthenticated)
-  .get(function( req, res ) {
+  .get(function( req, res, next ) {
     Presence
       .findWithinRadius(req.params, function( err, presences ) {
         if( err ) {
           console.log(err);
+          next();
         }
 
         res.send(presences);

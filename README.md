@@ -17,6 +17,7 @@
 
 # Questions
 - Visually disable/hide pickup menu item when not near another presence.
+- Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
 
 # Sprints
 Phase 1:

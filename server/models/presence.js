@@ -5,7 +5,7 @@ var Promise = require('es6-promise').Promise;
 
 var presenceSchema = Schema({
 			uid: { type: ObjectId, ref: 'User' },
-      location: [{ type: Number }] // [lng, lat]
+      location: [{ type: Number, required: true }] // [lng, lat]
     });
 
 presenceSchema.index({ location: '2dsphere' });
@@ -30,7 +30,9 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
 				$maxDistance: params.distance // Meters
 			}
 		}
-	}, cb);
+	})
+	.populate('uid', '_id photo')
+	.exec(cb);
 };
 
 module.exports = mongoose.model('Presence', presenceSchema);

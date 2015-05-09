@@ -141,13 +141,20 @@ var PresenceMap = React.createClass({
 
     // Generate new markers
     _.each(presences, function( presence ) {
-      marker = new google.maps.Marker({
-        icon: MapConfig.hotspotImage,
-        position: new google.maps.LatLng( presence.location[1], presence.location[0] ),
-        map: self.state.map,
-        id: presence._id,
-        uid: presence.uid
-      });
+      var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
+
+      // Show account photo as marker icon if the presence has already been found
+      if( _.findWhere(self.props.account.found, { _id: presence._id }) ) {
+        marker = new ProfileMarker( self.state.map, position, presence.uid.photo );
+      } else {
+        marker = new google.maps.Marker({
+          icon: MapConfig.hotspotImage,
+          position: position,
+          map: self.state.map,
+          id: presence._id,
+          uid: presence.uid
+        });
+      }
 
       self.state.markers.push( marker );
     });
@@ -179,10 +186,11 @@ var PresenceMap = React.createClass({
     this.state.circle.setCenter( this.props.center );
   },
 
-  handleMenuItemFound: _.noop,
-
   handlePickupModalClose: function() {
+    this.state.infobox.close();
     this.setState({ showPickupModal: false });
+
+    // Todo: Redraw to show found marker icon as the user's account photo
   },
 
   handlePickupModalPickup: function() {
@@ -197,6 +205,7 @@ var PresenceMap = React.createClass({
   },
 
   handleReleaseModalClose: function() {
+    this.state.infobox.close();
     this.setState({ showReleaseModal: false });
   },
 
@@ -206,12 +215,19 @@ var PresenceMap = React.createClass({
       uid: this.props.account._id
     });
 
-    this.state.infobox.close();
-
     this.handleReleaseModalClose();
   },
 
   render: function() {
+    // The closest marker to our position will be the first one returned from our original query
+    var closest = this.props.presences.length ? this.props.presences[0] : null;
+
+    if( closest ) {
+      var accountPhotoStyle = {
+        backgroundImage: 'url(' + closest.uid.photo + ')'
+      };
+    }
+
     return (
       <div>
 
@@ -239,12 +255,17 @@ var PresenceMap = React.createClass({
           </p>
         </Modal>
 
-        <Modal show={this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
-          <p>You have encountered a presence!</p>
-          <p>
-            <button onClick={this.handlePickupModalPickup}>Pickup</button>
-          </p>
-        </Modal>
+        {closest &&
+          <Modal show={this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
+            <p>You have encountered a presence!</p>
+            <p>
+              <div style={accountPhotoStyle} className="account-photo"></div>
+            </p>
+            <p>
+              <button onClick={this.handlePickupModalPickup}>Pickup</button>
+            </p>
+          </Modal>
+        }
 
       </div>
     );
