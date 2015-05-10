@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+var _ = require('lodash');
+
 var path = require('path');
 var bodyParser = require('body-parser');
 var session = require('cookie-session');
@@ -229,10 +231,12 @@ app.route('/api/presences/found', isAuthenticated)
   });
 
 // Retrieve all the presences found within the specified distance from the provided location
-app.route('/api/presences/find/:lng/:lat/:distance/:userId', isAuthenticated)
+app.route('/api/presences/find/:lng/:lat/:distance', isAuthenticated)
   .get(function( req, res, next ) {
+    var params = _.extend(req.params, { userId: req.user._id });
+
     Presence
-      .findWithinRadius(req.params, function( err, presences ) {
+      .findWithinRadius(params, function( err, presences ) {
         if( err ) {
           console.log(err);
           next();

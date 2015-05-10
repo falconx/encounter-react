@@ -15,9 +15,10 @@
 - Stylesheet/Radium
 - initializeTouchEvents(boolean shouldUseTouch)
 
-# Questions
+# Notes & Questions
 - Visually disable/hide pickup menu item when not near another presence.
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
+- Facebook Id is revealed in response data.
 - nearbyPresence query returns photo - should this be a separate query?
 
 # Sprints
@@ -50,7 +51,7 @@ Phase 3:
 10. [ ] Hide all other presences that belong to a user after finding one that belongs to them.
 11. [x] Redraw marker icons after picking up a presence.
 12. [ ] Make menu overlay follow the user position.
-13. [ ] Don't allow pickup of already found presences.
+13. [x] Don't allow pickup of already found presences.
 
 Phase 4:
 1. [ ] Create found presences page and list found presences.

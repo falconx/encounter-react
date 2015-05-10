@@ -25,8 +25,7 @@ var MapEncounter = React.createClass({
     PresenceActions.findWithinRadius(
       this.state.userPosition.lng,
       this.state.userPosition.lat,
-      this.state.searchRadius,
-      this.props.account._id
+      this.state.searchRadius
     );
   },
 

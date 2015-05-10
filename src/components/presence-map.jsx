@@ -191,16 +191,35 @@ var PresenceMap = React.createClass({
     this.state.circle.setCenter( this.props.center );
   },
 
+  // Todo:
+  // This assumes that props.presences is ordered by closest - possibly not a safe assertion. We could move this logic
+  // over to the server?
+  getClosest: function() {
+    var self = this;
+    var closest = null; 
+
+    // The closest marker to our position will be the first one returned from our original query which the user has not
+    // already found
+    if( this.props.presences.length ) {
+      var matches = _.filter(this.props.presences, function( presence ) {
+        return !_.findWhere(self.props.account.found, { _id: presence._id });
+      });
+
+      if( matches && matches.length ) {
+        closest = matches[0];
+      }
+    }
+
+    return closest;
+  },
+
   handlePickupModalClose: function() {
     this.state.infobox.close();
     this.setState({ showPickupModal: false });
-
-    // Todo: Redraw to show found marker icon as the user's account photo
   },
 
   handlePickupModalPickup: function() {
-    // The closest marker to our position will be the first one returned from our original query
-    var closest = this.props.presences.length ? this.props.presences[0] : null;
+    var closest = this.getClosest();
 
     if( closest ) {
       PresenceActions.pickupPresence( closest._id );
@@ -225,7 +244,7 @@ var PresenceMap = React.createClass({
 
   render: function() {
     // The closest marker to our position will be the first one returned from our original query
-    var closest = this.props.presences.length ? this.props.presences[0] : null;
+    var closest = this.getClosest();
 
     if( closest ) {
       var accountPhotoStyle = {
