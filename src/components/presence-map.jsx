@@ -279,17 +279,15 @@ var PresenceMap = React.createClass({
           </p>
         </Modal>
 
-        {closest &&
-          <Modal show={this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
-            <p>You have encountered a presence!</p>
-            <p>
-              <div style={accountPhotoStyle} className="account-photo"></div>
-            </p>
-            <p>
-              <button onClick={this.handlePickupModalPickup}>Pickup</button>
-            </p>
-          </Modal>
-        }
+        <Modal show={closest && this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
+          <p>You have encountered a presence!</p>
+          <p>
+            <div style={accountPhotoStyle} className="account-photo"></div>
+          </p>
+          <p>
+            <button onClick={this.handlePickupModalPickup}>Pickup</button>
+          </p>
+        </Modal>
 
       </div>
     );
