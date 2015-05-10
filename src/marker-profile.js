@@ -1,9 +1,12 @@
 /**
  * Special case Google Map Marker to show profile image and attach a class name
  */
-function ProfileMarker( map, position, profileImage ) {
+function ProfileMarker( map, position, profileImage, classes ) {
   this.position_ = position;
   this.profileImage_ = profileImage;
+
+  this.classes_ = ['marker-profile'];
+  Array.prototype.push.apply(this.classes_, classes);
 
   // Once the LatLng and text are set, add the overlay to the map. This will trigger a call to panes_changed which
   // should in turn call draw.
@@ -29,7 +32,7 @@ ProfileMarker.prototype.draw = function() {
     div.style.paddingLeft = '0px';
     div.style.cursor = 'pointer';
     div.style.backgroundImage = 'url(' + this.profileImage_ + ')';
-    div.className = 'marker-profile';
+    div.className = this.classes_.join(' ');
 
     google.maps.event.addDomListener(div, 'click', function() {
       google.maps.event.trigger(self, 'click');

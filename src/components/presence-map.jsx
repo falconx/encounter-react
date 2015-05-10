@@ -104,6 +104,11 @@ var PresenceMap = React.createClass({
   },
 
   componentDidUpdate: function( prevProps ) {
+    // Generate markers incase in order to show correct marker icons based on discovery state
+    if( this.props.account.found !== prevProps.account.found ) {
+      this.generateMarkers( this.props.presences );
+    }
+
     // Redraw search radius
     this.drawSearchRadius();
 
@@ -145,7 +150,7 @@ var PresenceMap = React.createClass({
 
       // Show account photo as marker icon if the presence has already been found
       if( _.findWhere(self.props.account.found, { _id: presence._id }) ) {
-        marker = new ProfileMarker( self.state.map, position, presence.uid.photo );
+        marker = new ProfileMarker( self.state.map, position, presence.uid.photo, ['found'] );
       } else {
         marker = new google.maps.Marker({
           icon: MapConfig.hotspotImage,

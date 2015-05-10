@@ -18,6 +18,7 @@
 # Questions
 - Visually disable/hide pickup menu item when not near another presence.
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
+- nearbyPresence query returns photo - should this be a separate query?
 
 # Sprints
 Phase 1:
@@ -45,8 +46,11 @@ Phase 3:
  6. [ ] Remove presence data in real-time once they have been removed.
  7. [x] Don't allow map panning.
  8. [ ] Dropped presences screen stats.
- 9. [ ] Show account photo as presence icon for found presenecs.
+ 9. [x] Show account photo as presence icon for found presenecs.
 10. [ ] Hide all other presences that belong to a user after finding one that belongs to them.
+11. [x] Redraw marker icons after picking up a presence.
+12. [ ] Make menu overlay follow the user position.
+13. [ ] Don't allow pickup of already found presences.
 
 Phase 4:
 1. [ ] Create found presences page and list found presences.
