@@ -21,7 +21,7 @@ var MapReleased = React.createClass({
 
 			return (
 				<PresenceMap
-					MapConfig={MapConfig}
+					mapOptions={MapConfig.options}
 					center={bounds.getCenter()}
 					presences={this.props.account.dropped}
 					bounds={bounds}

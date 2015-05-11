@@ -14,8 +14,11 @@
 # Notes & Questions
 - Visually disable/hide pickup menu item when not near another presence.
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
-- Facebook Id is revealed in response data.
+- FacebookId is revealed in response data - Will be fixed in Phase 4 with encryption and proxy on server.
 - nearbyPresence query returns photo - should this be a separate query?
+- How can we make it more obvious that you are close enough to a presence to pick it up:
+-- Visually indicate radius.
+-- Notification/buzz phone if possible.
 
 # Sprints
 Phase 1:
@@ -48,6 +51,8 @@ Phase 3:
 11. [x] Redraw marker icons after picking up a presence.
 12. [ ] Make menu overlay follow the user position.
 13. [x] Don't allow pickup of already found presences.
+14. [ ] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a
+separate radius check to determine if the user is close enough to the presence to pick it up.
 
 Phase 4:
 1. [ ] Create found presences page and list found presences.
@@ -55,6 +60,7 @@ Phase 4:
 3. [ ] Leave a message when releasing a presence.
 4. [ ] Show presence message when on confirmation page before collecting a presence.
 5. [ ] Show profile image of presence uid on confirmation page before collecting a presence.
+6. [ ] Encrypt facebookId or entire account photo url path on the server via proxy.
 
 Phase 5:
 1. [ ] Only allow 3 presences to be released at any one time, per user.

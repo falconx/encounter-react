@@ -13,7 +13,7 @@ var PresenceActions = require('../actions/presence');
 var PresenceMap = React.createClass({
   getDefaultProps: function() {
     return {
-      mapConfig: {}, // Config to override MapConfig defaults
+      mapOptions: {}, // Config to override MapConfig defaults
       center: { lat: 0, lng: 0 }, // LatLngLiteral converted to LatLng by google maps
       presences: [], // Translate to markers
       bounds: undefined, // Optional LatLngBounds to restrict the map view
@@ -27,7 +27,8 @@ var PresenceMap = React.createClass({
       map: null,
       currentMarker: null, // Marker to indicate users current position
       markers: [], // The map markers converted from presence data
-      circle: null, // Visually indicates search radius
+      searchRadiusCircle: null, // Visually indicates search radius
+      pickupRadiusCircle: null, // Visually indicates the radius in which a user can pickup a presence
       showReleaseModal: false, // Release presence confirmation modal
       showPickupModal: false // Pickup presence modal
     };
@@ -36,18 +37,27 @@ var PresenceMap = React.createClass({
   componentDidMount: function() {
     var self = this;
     var canvasEl = this.refs.map_encounter.getDOMNode();
-    var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig, this.props.mapConfig, { center: this.props.center }));
+    var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig, this.props.mapOptions, { center: this.props.center }));
     var overlay = this.props.showOverlay ? new EncounterMapOverlay( map.getBounds(), MapConfig.overlayImage, map ) : null;
 
     // Initialise map
     google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-      var circle = new google.maps.Circle({
+      var searchRadiusCircle = new google.maps.Circle({
         strokeWeight: 0,
         fillColor: '#ffffff',
-        fillOpacity: 0.35,
+        fillOpacity: 0.2,
         map: map,
         center: self.props.center,
         radius: self.props.searchRadius
+      });
+
+      var pickupRadiusCircle = new google.maps.Circle({
+        strokeWeight: 0,
+        fillColor: '#ffffff',
+        fillOpacity: 0.4,
+        map: map,
+        center: self.props.center,
+        radius: self.props.pickupRadius
       });
 
       var infobox = new InfoBox({
@@ -66,7 +76,8 @@ var PresenceMap = React.createClass({
 
       self.setState({
         map: map,
-        circle: circle,
+        searchRadiusCircle: searchRadiusCircle,
+        pickupRadiusCircle: pickupRadiusCircle,
         infobox: infobox
       });
 
@@ -88,8 +99,9 @@ var PresenceMap = React.createClass({
       // Populate map with presence data
       self.generateMarkers( self.props.presences );
 
-      // Draw circle to indicate search radius
+      // Draw circles to indicate search and pickup radius
       self.drawSearchRadius();
+      self.drawPickupRadius();
 
       // Update overlay position when center changes
       google.maps.event.addListener(map, 'center_changed', function() {
@@ -110,8 +122,9 @@ var PresenceMap = React.createClass({
       this.generateMarkers( this.props.presences );
     }
 
-    // Redraw search radius
+    // Redraw search and pickup radius
     this.drawSearchRadius();
+    this.drawPickupRadius();
 
     // Re-center map
     this.state.map.setCenter( this.props.center );
@@ -188,8 +201,15 @@ var PresenceMap = React.createClass({
   },
 
   drawSearchRadius: function() {
-    this.state.circle.setRadius( this.props.searchRadius );
-    this.state.circle.setCenter( this.props.center );
+    // Todo: How could this be handled if we consider this.state.searchRadiusCircle as immutable?
+    this.state.searchRadiusCircle.setRadius( this.props.searchRadius );
+    this.state.searchRadiusCircle.setCenter( this.props.center );
+  },
+
+  drawPickupRadius: function() {
+    // Todo: How could this be handled if we consider this.state.pickupRadiusCircle as immutable?
+    this.state.pickupRadiusCircle.setRadius( this.props.pickupRadius );
+    this.state.pickupRadiusCircle.setCenter( this.props.center );
   },
 
   // Todo:

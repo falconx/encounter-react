@@ -7,7 +7,8 @@ var defaults = {
     scaledSize: new google.maps.Size(50, 50)
   },
   accuracyThreshold: 250, // Meters
-  searchRadius: 750, // Meters
+  searchRadius: 750, // The radius range in which presences will appear on the map (meters)
+  pickupRadius: 250, // The radius range in which a user can pickup a presence (meters)
 
   // https://developers.google.com/maps/documentation/javascript/reference#MapOptions
   options: {

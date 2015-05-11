@@ -11,7 +11,7 @@ var presenceSchema = Schema({
 presenceSchema.index({ location: '2dsphere' });
 
 /**
- * Finds a collection of surrounding presences which has been dropped by other users
+ * Finds a collection of surrounding presences which has been dropped by other users (sorted by closest first)
  *
  * @param params
  * 		Object contianing 'lng', 'lat', 'distance', and 'userId' keys
@@ -33,6 +33,10 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
 	})
 	.populate('uid', '_id photo')
 	.exec(cb);
+};
+
+presenceSchema.statics.findClosest = function( lng, lat, maxDistance, uid, cb ) {
+	// 
 };
 
 module.exports = mongoose.model('Presence', presenceSchema);

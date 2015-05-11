@@ -16,7 +16,8 @@ var MapEncounter = React.createClass({
     return {
       nearbyPresences: [],
       userPosition: { lat: 0, lng: 0 },
-      searchRadius: MapConfig.searchRadius
+      searchRadius: MapConfig.searchRadius,
+      pickupRadius: MapConfig.pickupRadius
     };
   },
 
@@ -84,27 +85,39 @@ var MapEncounter = React.createClass({
     });
   },
 
-  handleRadiusChange: function() {
+  handleSearchRadiusChange: function() {
     this.setState({
-      searchRadius: parseInt(this.refs.radius.getDOMNode().value) || MapConfig.searchRadius
+      searchRadius: parseInt(this.refs.search_radius.getDOMNode().value) || MapConfig.searchRadius
     }, this.findNearbyPresences);
+  },
+
+  handlePickupRadiusChange: function() {
+    this.setState({
+      pickupRadius: parseInt(this.refs.pickup_radius.getDOMNode().value) || MapConfig.pickupRadius
+    });
   },
 
   render: function() {
     return (
       <div>
         <PresenceMap
-          mapConfig={MapConfig.options}
+          mapOptions={MapConfig.options}
           center={this.state.userPosition}
           presences={this.state.nearbyPresences}
           searchRadius={this.state.searchRadius}
+          pickupRadius={this.state.pickupRadius}
           showOverlay={true}
           showCurrentPosition={true}
           {...this.props} />
 
         <p>
-          <input type="number" ref="radius" />
-          <button type="submit" onClick={this.handleRadiusChange}>Update Radius</button>
+          <input type="number" ref="search_radius" />
+          <button type="submit" onClick={this.handleSearchRadiusChange}>Update search radius</button>
+        </p>
+
+        <p>
+          <input type="number" ref="pickup_radius" />
+          <button type="submit" onClick={this.handlePickupRadiusChange}>Update pickup radius</button>
         </p>
 
       </div>
