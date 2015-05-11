@@ -22,11 +22,7 @@ var MapEncounter = React.createClass({
 
   findNearbyPresences: function() {
     // Retrieve surrounding presences
-    PresenceActions.findWithinRadius(
-      this.state.userPosition.lng,
-      this.state.userPosition.lat,
-      this.state.searchRadius
-    );
+    PresenceActions.findWithinRadius( this.state.userPosition.lng, this.state.userPosition.lat, this.state.searchRadius );
   },
 
   componentDidMount: function() {

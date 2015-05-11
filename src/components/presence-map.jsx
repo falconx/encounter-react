@@ -1,4 +1,5 @@
 var React = require('react');
+var update = require('react/addons').addons.update;
 var _ = require('lodash');
 
 var Modal = require('./modal');
@@ -161,7 +162,7 @@ var PresenceMap = React.createClass({
         });
       }
 
-      self.state.markers.push( marker );
+      update(self.state.markers, { $push: [marker] });
     });
 
     // Add marker representing the position of the user
@@ -171,7 +172,7 @@ var PresenceMap = React.createClass({
 
       marker = new ProfileMarker( this.state.map, center, this.props.account.photo );
 
-      this.state.markers.push( marker );
+      update(self.state.markers, { $push: [marker] });
     }
 
     // Toggle infobox menu overlay display by clicking on current position marker

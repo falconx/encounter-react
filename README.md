@@ -1,7 +1,3 @@
-```
-// var update = require('react/addons').addons.update;
-```
-
 # Deploy
 1. ```npm install```
 2. Create a ```server/config/providers.json```

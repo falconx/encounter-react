@@ -235,15 +235,14 @@ app.route('/api/presences/find/:lng/:lat/:distance', isAuthenticated)
   .get(function( req, res, next ) {
     var params = _.extend(req.params, { userId: req.user._id });
 
-    Presence
-      .findWithinRadius(params, function( err, presences ) {
-        if( err ) {
-          console.log(err);
-          next();
-        }
+    Presence.findWithinRadius(params, function( err, presences ) {
+      if( err ) {
+        console.log(err);
+        next();
+      }
 
-        res.send(presences);
-      });
+      res.send(presences);
+    });
   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
