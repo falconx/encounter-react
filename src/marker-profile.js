@@ -6,7 +6,7 @@ function ProfileMarker( map, position, profileImage, classes ) {
   this.profileImage_ = profileImage;
 
   this.classes_ = ['marker-profile'];
-  Array.prototype.push.apply(this.classes_, classes);
+  this.classes_.push.apply(this.classes_, classes);
 
   // Once the LatLng and text are set, add the overlay to the map. This will trigger a call to panes_changed which
   // should in turn call draw.

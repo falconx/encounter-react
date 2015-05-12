@@ -1,5 +1,5 @@
 var React = require('react');
-var update = require('react/addons').addons.update;
+var addons = require('react/addons').addons;
 var _ = require('lodash');
 
 var Modal = require('./modal');
@@ -27,8 +27,6 @@ var PresenceMap = React.createClass({
       map: null,
       currentMarker: null, // Marker to indicate users current position
       markers: [], // The map markers converted from presence data
-      searchRadiusCircle: null, // Visually indicates search radius
-      pickupRadiusCircle: null, // Visually indicates the radius in which a user can pickup a presence
       showReleaseModal: false, // Release presence confirmation modal
       showPickupModal: false // Pickup presence modal
     };
@@ -42,24 +40,6 @@ var PresenceMap = React.createClass({
 
     // Initialise map
     google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-      var searchRadiusCircle = new google.maps.Circle({
-        strokeWeight: 0,
-        fillColor: '#ffffff',
-        fillOpacity: 0.2,
-        map: map,
-        center: self.props.center,
-        radius: self.props.searchRadius
-      });
-
-      var pickupRadiusCircle = new google.maps.Circle({
-        strokeWeight: 0,
-        fillColor: '#ffffff',
-        fillOpacity: 0.4,
-        map: map,
-        center: self.props.center,
-        radius: self.props.pickupRadius
-      });
-
       var infobox = new InfoBox({
         content: self.refs.infobox_menu.getDOMNode(),
         disableAutoPan: false,
@@ -76,8 +56,6 @@ var PresenceMap = React.createClass({
 
       self.setState({
         map: map,
-        searchRadiusCircle: searchRadiusCircle,
-        pickupRadiusCircle: pickupRadiusCircle,
         infobox: infobox
       });
 
@@ -99,10 +77,6 @@ var PresenceMap = React.createClass({
       // Populate map with presence data
       self.generateMarkers( self.props.presences );
 
-      // Draw circles to indicate search and pickup radius
-      self.drawSearchRadius();
-      self.drawPickupRadius();
-
       // Update overlay position when center changes
       google.maps.event.addListener(map, 'center_changed', function() {
         if( overlay ) {
@@ -117,17 +91,13 @@ var PresenceMap = React.createClass({
   },
 
   componentDidUpdate: function( prevProps ) {
+    // Re-center map
+    this.state.map.setCenter( this.props.center );
+
     // Generate markers incase in order to show correct marker icons based on discovery state
     if( this.props.account.found !== prevProps.account.found ) {
       this.generateMarkers( this.props.presences );
     }
-
-    // Redraw search and pickup radius
-    this.drawSearchRadius();
-    this.drawPickupRadius();
-
-    // Re-center map
-    this.state.map.setCenter( this.props.center );
 
     // Only generate markers if we have something different to show
     if( this.props.presences !== prevProps.presences ) {
@@ -151,7 +121,7 @@ var PresenceMap = React.createClass({
    */
   generateMarkers: function( presences ) {
     var self = this;
-    var marker;
+    var markers = [];
 
     // Remove existing markers
     _.each(this.state.markers, function( marker ) {
@@ -160,6 +130,7 @@ var PresenceMap = React.createClass({
 
     // Generate new markers
     _.each(presences, function( presence ) {
+      var marker;
       var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
 
       // Show account photo as marker icon if the presence has already been found
@@ -175,18 +146,23 @@ var PresenceMap = React.createClass({
         });
       }
 
-      update(self.state.markers, { $push: [marker] });
+      markers.push( marker );
     });
 
     // Add marker representing the position of the user
     // Adding the user marker last will ensure it will be on top of any other markers and can therefore be clicked on
     if( this.props.showCurrentPosition ) {
       var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
+      var marker = new ProfileMarker( this.state.map, center, this.props.account.photo );
 
-      marker = new ProfileMarker( this.state.map, center, this.props.account.photo );
+      markers.push( marker );
 
-      update(self.state.markers, { $push: [marker] });
+      this.setState({ currentMarker: marker });
     }
+
+    self.setState({
+      markers: addons.update(self.state.markers, { $push: markers })
+    });
 
     // Toggle infobox menu overlay display by clicking on current position marker
     google.maps.event.addListener(marker, 'click', function() {
@@ -196,20 +172,6 @@ var PresenceMap = React.createClass({
         self.state.infobox.open( self.state.map, self.state.currentMarker );
       }
     });
-
-    this.setState({ currentMarker: marker });
-  },
-
-  drawSearchRadius: function() {
-    // Todo: How could this be handled if we consider this.state.searchRadiusCircle as immutable?
-    this.state.searchRadiusCircle.setRadius( this.props.searchRadius );
-    this.state.searchRadiusCircle.setCenter( this.props.center );
-  },
-
-  drawPickupRadius: function() {
-    // Todo: How could this be handled if we consider this.state.pickupRadiusCircle as immutable?
-    this.state.pickupRadiusCircle.setRadius( this.props.pickupRadius );
-    this.state.pickupRadiusCircle.setCenter( this.props.center );
   },
 
   // Todo:
@@ -263,6 +225,16 @@ var PresenceMap = React.createClass({
     this.handleReleaseModalClose();
   },
 
+  renderChildren: function() {
+    var self = this;
+
+    return this.props.children.map(function( child ) {
+      return addons.cloneWithProps(child, {
+        map: self.state.map
+      });
+    });
+  },
+
   render: function() {
     // The closest marker to our position will be the first one returned from our original query
     var closest = this.getClosest();
@@ -276,7 +248,9 @@ var PresenceMap = React.createClass({
     return (
       <div>
 
-        <div className="map" ref="map_encounter"></div>
+        <div className="map" ref="map_encounter" />
+
+        {this.renderChildren()}
 
         <div id="infobox-menu-wrapper">
           <div id="infobox-menu" ref="infobox_menu">

@@ -8,6 +8,7 @@ var MapConfig = require('../constants/maps').encounter; // Encounter map config
 var PresenceMap = require('./presence-map');
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
+var Circle = require('./circle');
 
 var MapEncounter = React.createClass({
   mixins: [PresenceStore.mixin],
@@ -104,11 +105,25 @@ var MapEncounter = React.createClass({
           mapOptions={MapConfig.options}
           center={this.state.userPosition}
           presences={this.state.nearbyPresences}
-          searchRadius={this.state.searchRadius}
-          pickupRadius={this.state.pickupRadius}
           showOverlay={true}
           showCurrentPosition={true}
-          {...this.props} />
+          {...this.props}>
+
+          <Circle
+            strokeWeight="0"
+            fillColor="#ffffff"
+            fillOpacity="0.2"
+            center={this.state.userPosition}
+            radius={this.state.searchRadius} />
+
+          <Circle
+            strokeWeight="0"
+            fillColor="#ffffff"
+            fillOpacity="0.4"
+            center={this.state.userPosition}
+            radius={this.state.pickupRadius} />
+
+        </PresenceMap>
 
         <p>
           <input type="number" ref="search_radius" />
