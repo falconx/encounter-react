@@ -9,6 +9,9 @@ var PresenceMap = require('./presence-map');
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 var Circle = require('./circle');
+var Marker = require('./marker');
+var MarkerProfile = require('./marker-profile');
+var InfoBox = require('./infobox');
 
 var MapEncounter = React.createClass({
   mixins: [PresenceStore.mixin],
@@ -98,15 +101,45 @@ var MapEncounter = React.createClass({
     });
   },
 
+  renderMarkers: function() {
+    var self = this;
+
+    return this.state.nearbyPresences.map(function( presence ) {
+      var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
+      var found = _.findWhere(self.props.account.found, { _id: presence._id });
+
+      if( found ) {
+        return (
+          <MarkerProfile
+            key={presence._id}
+            position={position}
+            photo={presence.uid.photo}
+            classes={['found']} />
+        );
+      } else {
+        return (
+          <Marker
+            key={presence._id}
+            icon={MapConfig.hotspotImage}
+            position={position}
+            id={presence._id}
+            uid={presence.uid} />
+        );
+      }
+    });
+  },
+
   render: function() {
+    var userPosition = new google.maps.LatLng( this.state.userPosition.lat, this.state.userPosition.lng );
+
     return (
       <div>
         <PresenceMap
           mapOptions={MapConfig.options}
           center={this.state.userPosition}
-          presences={this.state.nearbyPresences}
+          // presences={this.state.nearbyPresences}
           showOverlay={true}
-          showCurrentPosition={true}
+          // showCurrentPosition={true}
           {...this.props}>
 
           <Circle
@@ -122,6 +155,36 @@ var MapEncounter = React.createClass({
             fillOpacity="0.4"
             center={this.state.userPosition}
             radius={this.state.pickupRadius} />
+
+          {this.renderMarkers()}
+
+          <MarkerProfile position={userPosition} photo={this.props.account.photo} />
+
+          <InfoBox
+            visible={true}
+            center={userPosition}
+            disableAutoPan={false}
+            pixelOffset={new google.maps.Size(-111, -111)}
+            zIndex={null}
+            closeBoxMargin="93px 88px 0 0"
+            closeBoxURL="/images/mapmenu-close.png"
+            infoBoxClearance={new google.maps.Size(1, 1)}>
+
+            <div id="infobox-menu-wrapper">
+              <div id="infobox-menu" ref="infobox_menu">
+                <a href="javascript:;" className="menu-item menu-item-found" ref="menu_item_found">
+                  <img src="/images/mapmenuicon-1.png" />
+                </a>
+                <a href="javascript:;" className="menu-item menu-item-pickup" ref="menu_item_pickup">
+                  <img src="/images/mapmenuicon-2.png" />
+                </a>
+                <a href="javascript:;" className="menu-item menu-item-release" ref="menu_item_release">
+                  <img src="/images/mapmenuicon-3.png" />
+                </a>
+              </div>
+            </div>
+
+          </InfoBox>
 
         </PresenceMap>
 

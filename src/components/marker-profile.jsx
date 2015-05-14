@@ -1,7 +1,9 @@
+var React = require('react');
+
 /**
  * Special case Google Map Marker to show profile image and attach a class name
  */
-function ProfileMarker( map, position, profileImage, classes ) {
+function CustomMarker( map, position, profileImage, classes ) {
   this.position_ = position;
   this.profileImage_ = profileImage;
 
@@ -13,9 +15,9 @@ function ProfileMarker( map, position, profileImage, classes ) {
   this.setMap( map );
 }
 
-ProfileMarker.prototype = new google.maps.OverlayView();
+CustomMarker.prototype = new google.maps.OverlayView();
 
-ProfileMarker.prototype.draw = function() {
+CustomMarker.prototype.draw = function() {
   var self = this;
   var img;
 
@@ -26,7 +28,7 @@ ProfileMarker.prototype.draw = function() {
     // Create a overlay text DIV
     div = this.div_ = document.createElement('DIV');
 
-    // Create the DIV representing our ProfileMarker
+    // Create the DIV representing our CustomMarker
     div.style.border = 'none';
     div.style.position = 'absolute';
     div.style.paddingLeft = '0px';
@@ -52,7 +54,7 @@ ProfileMarker.prototype.draw = function() {
   }
 };
 
-ProfileMarker.prototype.remove = function() {
+CustomMarker.prototype.remove = function() {
   // Check if the overlay was on the map and needs to be removed
   if( this.div_ ) {
     this.div_.parentNode.removeChild( this.div_ );
@@ -60,8 +62,29 @@ ProfileMarker.prototype.remove = function() {
   }
 };
 
-ProfileMarker.prototype.getPosition = function() {
+CustomMarker.prototype.getPosition = function() {
   return this.position_;
 };
 
-module.exports = ProfileMarker;
+var MarkerProfile = React.createClass({
+	componentDidMount: function() {
+		this.componentDidUpdate();
+	},
+
+	componentDidUpdate: function() {
+		// Create or update marker
+		if( this.state && this.state.marker ) {
+			this.state.marker.setOptions( this.props );
+		} else {
+			this.setState({
+				marker: new CustomMarker( this.props.map, this.props.position, this.props.photo, this.props.classes )
+			});
+		}
+	},
+
+	render: function() {
+		return false;
+	}
+});
+
+module.exports = MarkerProfile;
