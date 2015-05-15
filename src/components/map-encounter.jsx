@@ -21,7 +21,8 @@ var MapEncounter = React.createClass({
       nearbyPresences: [],
       userPosition: { lat: 0, lng: 0 },
       searchRadius: MapConfig.searchRadius,
-      pickupRadius: MapConfig.pickupRadius
+      pickupRadius: MapConfig.pickupRadius,
+      showMapMenu: false
     };
   },
 
@@ -69,6 +70,21 @@ var MapEncounter = React.createClass({
 
     })();
 
+    // Menu item click handlers
+
+    self.refs.menu_item_found.getDOMNode().addEventListener('click', function() {
+      debugger;
+    });
+
+    // self.refs.menu_item_release.getDOMNode().addEventListener('click', function() {
+    //   self.setState({ showReleaseModal: true });
+    // });
+
+    // self.refs.menu_item_pickup.getDOMNode().addEventListener('click', function() {
+    //   self.setState({ showPickupModal: true });
+    // });
+
+
     // Update preference references if we find one has been dropped nearby
     socket.on('presence:dropped', function() {
       // Todo: This will happen too frequently in the real-world
@@ -99,6 +115,10 @@ var MapEncounter = React.createClass({
     this.setState({
       pickupRadius: parseInt(this.refs.pickup_radius.getDOMNode().value) || MapConfig.pickupRadius
     });
+  },
+
+  handleMarkerProfileClick: function() {
+    this.setState({ showMapMenu: !this.state.showMapMenu });
   },
 
   renderMarkers: function() {
@@ -137,9 +157,7 @@ var MapEncounter = React.createClass({
         <PresenceMap
           mapOptions={MapConfig.options}
           center={this.state.userPosition}
-          // presences={this.state.nearbyPresences}
           showOverlay={true}
-          // showCurrentPosition={true}
           {...this.props}>
 
           <Circle
@@ -158,33 +176,23 @@ var MapEncounter = React.createClass({
 
           {this.renderMarkers()}
 
-          <MarkerProfile position={userPosition} photo={this.props.account.photo} />
+          <MarkerProfile
+            position={userPosition}
+            photo={this.props.account.photo}
+            clickHandler={this.handleMarkerProfileClick} />
 
           <InfoBox
-            visible={true}
+            visible={this.state.showMapMenu}
+            content={document.getElementById('infobox-menu-wrapper')}
             center={userPosition}
             disableAutoPan={false}
             pixelOffset={new google.maps.Size(-111, -111)}
             zIndex={null}
             closeBoxMargin="93px 88px 0 0"
             closeBoxURL="/images/mapmenu-close.png"
-            infoBoxClearance={new google.maps.Size(1, 1)}>
-
-            <div id="infobox-menu-wrapper">
-              <div id="infobox-menu" ref="infobox_menu">
-                <a href="javascript:;" className="menu-item menu-item-found" ref="menu_item_found">
-                  <img src="/images/mapmenuicon-1.png" />
-                </a>
-                <a href="javascript:;" className="menu-item menu-item-pickup" ref="menu_item_pickup">
-                  <img src="/images/mapmenuicon-2.png" />
-                </a>
-                <a href="javascript:;" className="menu-item menu-item-release" ref="menu_item_release">
-                  <img src="/images/mapmenuicon-3.png" />
-                </a>
-              </div>
-            </div>
-
-          </InfoBox>
+            closeCallback={this.handleMarkerProfileClick}
+            infoBoxClearance={new google.maps.Size(1, 1)}
+            enableEventPropagation={false} />
 
         </PresenceMap>
 
@@ -197,6 +205,20 @@ var MapEncounter = React.createClass({
           <input type="number" ref="pickup_radius" />
           <button type="submit" onClick={this.handlePickupRadiusChange}>Update pickup radius</button>
         </p>
+
+        <div id="infobox-menu-wrapper">
+          <div id="infobox-menu">
+            <a href="javascript:;" className="menu-item menu-item-found" ref="menu_item_found">
+              <img src="/images/mapmenuicon-1.png" />
+            </a>
+            <a href="javascript:;" className="menu-item menu-item-pickup" ref="menu_item_pickup">
+              <img src="/images/mapmenuicon-2.png" />
+            </a>
+            <a href="javascript:;" className="menu-item menu-item-release" ref="menu_item_release">
+              <img src="/images/mapmenuicon-3.png" />
+            </a>
+          </div>
+        </div>
 
       </div>
     );

@@ -6,7 +6,6 @@ var _ = require('lodash');
 var flattenChildren = require('react/lib/flattenChildren');
 
 var Modal = require('./modal');
-// var ProfileMarker = require('../marker-profile');
 var EncounterMapOverlay = require('../map-overlay');
 
 var MapConfig = require('../constants/maps').defaults;
@@ -18,10 +17,8 @@ var PresenceMap = React.createClass({
     return {
       mapOptions: {}, // Config to override MapConfig defaults
       center: { lat: 0, lng: 0 }, // LatLngLiteral converted to LatLng by google maps
-      // presences: [], // Translate to markers
       bounds: undefined, // Optional LatLngBounds to restrict the map view
       showOverlay: false
-      // showCurrentPosition: false // Show a marker at the users current position
     };
   },
 

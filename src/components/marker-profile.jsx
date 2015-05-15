@@ -72,13 +72,21 @@ var MarkerProfile = React.createClass({
 	},
 
 	componentDidUpdate: function() {
+    var self = this;
+
 		// Create or update marker
 		if( this.state && this.state.marker ) {
 			this.state.marker.setOptions( this.props );
 		} else {
-			this.setState({
-				marker: new CustomMarker( this.props.map, this.props.position, this.props.photo, this.props.classes )
-			});
+      var marker = new CustomMarker( this.props.map, this.props.position, this.props.photo, this.props.classes );
+
+      if( self.props.clickHandler ) {
+        google.maps.event.addListener(marker, 'click', function() {
+          self.props.clickHandler( arguments );
+        });
+      }
+
+			this.setState({ marker: marker });
 		}
 	},
 
