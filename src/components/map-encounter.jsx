@@ -12,6 +12,7 @@ var Circle = require('./circle');
 var Marker = require('./marker');
 var MarkerProfile = require('./marker-profile');
 var InfoBox = require('./infobox');
+var Modal = require('./modal');
 
 var MapEncounter = React.createClass({
   mixins: [PresenceStore.mixin],
@@ -22,7 +23,9 @@ var MapEncounter = React.createClass({
       userPosition: { lat: 0, lng: 0 },
       searchRadius: MapConfig.searchRadius,
       pickupRadius: MapConfig.pickupRadius,
-      showMapMenu: false
+      showMapMenu: false,
+      showReleaseModal: false,
+      showPickupModal: false
     };
   },
 
@@ -106,6 +109,69 @@ var MapEncounter = React.createClass({
     this.setState({ showMapMenu: !this.state.showMapMenu });
   },
 
+  // Todo:
+  // This assumes that props.presences is ordered by closest - possibly not a safe assertion. We could move this logic
+  // over to the server?
+  getClosest: function() {
+    var self = this;
+    var closest = null; 
+
+    // The closest marker to our position will be the first one returned from our original query which the user has not
+    // already found
+    if( this.state.nearbyPresences.length ) {
+      var matches = _.filter(this.state.nearbyPresences, function( presence ) {
+        return !_.findWhere(self.props.account.found, { _id: presence._id });
+      });
+
+      if( matches && matches.length ) {
+        closest = matches[0];
+      }
+    }
+
+    return closest;
+  },
+
+  handleMenuItemRelease: function() {
+    this.setState({ showReleaseModal: true });
+  },
+
+  handleMenuItemPickup: function() {
+    this.setState({ showPickupModal: true });
+  },
+
+  handlePickupModalClose: function() {
+    this.setState({
+      showPickupModal: false,
+      showMapMenu: false
+    });
+  },
+
+  handlePickupModalPickup: function() {
+    var closest = this.getClosest();
+
+    if( closest ) {
+      PresenceActions.pickupPresence( closest._id );
+    }
+
+    this.handlePickupModalClose();
+  },
+
+  handleReleaseModalClose: function() {
+    this.setState({
+      showReleaseModal: false,
+      showMapMenu: false
+    });
+  },
+
+  handleReleaseModalYes: function() {
+    PresenceActions.dropPresence({
+      location: [ this.props.center.lng, this.props.center.lat ],
+      uid: this.props.account._id
+    });
+
+    this.handleReleaseModalClose();
+  },
+
   renderMarkers: function() {
     var self = this;
 
@@ -134,16 +200,17 @@ var MapEncounter = React.createClass({
     });
   },
 
-  handleMenuItemRelease: function() {
-    this.setState({ showReleaseModal: true });
-  },
-
-  handleMenuItemPickup: function() {
-    this.setState({ showPickupModal: true });
-  },
-
   render: function() {
     var userPosition = new google.maps.LatLng( this.state.userPosition.lat, this.state.userPosition.lng );
+
+    // The closest marker to our position will be the first one returned from our original query
+    var closest = this.getClosest();
+
+    if( closest ) {
+      var accountPhotoStyle = {
+        backgroundImage: 'url(' + closest.uid.photo + ')'
+      };
+    }
 
     return (
       <div>
@@ -212,6 +279,24 @@ var MapEncounter = React.createClass({
             </a>
           </div>
         </div>
+
+        <Modal show={this.state.showReleaseModal}>
+          <p>Are you sure you'd like to drop a presence?</p>
+          <p>
+            <button onClick={this.handleReleaseModalYes}>Yes</button>
+            <button onClick={this.handleReleaseModalClose}>No</button>
+          </p>
+        </Modal>
+
+        <Modal show={closest && this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
+          <p>You have encountered a presence!</p>
+          <p>
+            <div style={accountPhotoStyle} className="account-photo"></div>
+          </p>
+          <p>
+            <button onClick={this.handlePickupModalPickup}>Pickup</button>
+          </p>
+        </Modal>
 
       </div>
     );
