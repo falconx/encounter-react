@@ -70,21 +70,6 @@ var MapEncounter = React.createClass({
 
     })();
 
-    // Menu item click handlers
-
-    self.refs.menu_item_found.getDOMNode().addEventListener('click', function() {
-      debugger;
-    });
-
-    // self.refs.menu_item_release.getDOMNode().addEventListener('click', function() {
-    //   self.setState({ showReleaseModal: true });
-    // });
-
-    // self.refs.menu_item_pickup.getDOMNode().addEventListener('click', function() {
-    //   self.setState({ showPickupModal: true });
-    // });
-
-
     // Update preference references if we find one has been dropped nearby
     socket.on('presence:dropped', function() {
       // Todo: This will happen too frequently in the real-world
@@ -149,6 +134,14 @@ var MapEncounter = React.createClass({
     });
   },
 
+  handleMenuItemRelease: function() {
+    this.setState({ showReleaseModal: true });
+  },
+
+  handleMenuItemPickup: function() {
+    this.setState({ showPickupModal: true });
+  },
+
   render: function() {
     var userPosition = new google.maps.LatLng( this.state.userPosition.lat, this.state.userPosition.lng );
 
@@ -192,7 +185,7 @@ var MapEncounter = React.createClass({
             closeBoxURL="/images/mapmenu-close.png"
             closeCallback={this.handleMarkerProfileClick}
             infoBoxClearance={new google.maps.Size(1, 1)}
-            enableEventPropagation={false} />
+            enableEventPropagation={true} />
 
         </PresenceMap>
 
@@ -208,13 +201,13 @@ var MapEncounter = React.createClass({
 
         <div id="infobox-menu-wrapper">
           <div id="infobox-menu">
-            <a href="javascript:;" className="menu-item menu-item-found" ref="menu_item_found">
+            <a href="javascript:;" className="menu-item menu-item-found">
               <img src="/images/mapmenuicon-1.png" />
             </a>
-            <a href="javascript:;" className="menu-item menu-item-pickup" ref="menu_item_pickup">
+            <a href="javascript:;" className="menu-item menu-item-pickup" onClick={this.handleMenuItemPickup}>
               <img src="/images/mapmenuicon-2.png" />
             </a>
-            <a href="javascript:;" className="menu-item menu-item-release" ref="menu_item_release">
+            <a href="javascript:;" className="menu-item menu-item-release" onClick={this.handleMenuItemRelease}>
               <img src="/images/mapmenuicon-3.png" />
             </a>
           </div>
