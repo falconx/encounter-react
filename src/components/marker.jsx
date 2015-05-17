@@ -1,4 +1,5 @@
 var React = require('react');
+var _ = require('lodash');
 
 var Marker = React.createClass({
 	componentDidMount: function() {
@@ -10,9 +11,11 @@ var Marker = React.createClass({
 		if( this.state && this.state.marker ) {
 			this.state.marker.setOptions( this.props );
 		} else {
-			this.setState({
-				marker: new google.maps.Marker( this.props )
-			});
+			var marker = new google.maps.Marker( this.props );
+
+			window.markers.push( marker );
+
+			this.setState({ marker: marker });
 		}
 	},
 

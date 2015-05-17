@@ -41,8 +41,6 @@ var InfoBox = React.createClass({
 			var anchor = new google.maps.Marker({ position: this.props.center });
 			this.state.infobox.open( this.props.map, anchor );
 		} else {
-			// Don't call close as this will remove our content from the DOM - instead handle props.visible from a parent
-			// component
 			this.state.infobox.close();
 		}
 	},

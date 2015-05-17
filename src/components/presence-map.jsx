@@ -34,6 +34,9 @@ var PresenceMap = React.createClass({
     var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig, this.props.mapOptions, { center: this.props.center }));
     var overlay = this.props.showOverlay ? new EncounterMapOverlay( map.getBounds(), MapConfig.overlayImage, map ) : null;
 
+    // Since markers are generated lower in the component hierarchy, we store them as a global so we can access them here
+    window.markers = [];
+
     // Initialise map
     google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
       if( self.props.bounds ) {
@@ -76,6 +79,11 @@ var PresenceMap = React.createClass({
     var children = [];
     var flattened = flattenChildren(this.props.children);
     var index = 0;
+
+    // Clear all markers from the map
+    _.each(window.markers, function( marker ) {
+      marker.setMap(null);
+    });
 
     _.each(flattened, function( child ) {
       children.push(addons.cloneWithProps(child, {
