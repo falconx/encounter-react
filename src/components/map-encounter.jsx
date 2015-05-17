@@ -253,6 +253,11 @@ var MapEncounter = React.createClass({
 
           {this.renderMarkers()}
 
+          <MarkerProfile
+            position={userPosition}
+            photo={this.props.account.photo}
+            clickHandler={this.handleMarkerProfileClick} />
+            
           <InfoBox
             visible={this.state.showMapMenu}
             content={this.getInfoboxContent()}
@@ -265,11 +270,6 @@ var MapEncounter = React.createClass({
             closeCallback={this.handleMarkerProfileClick}
             infoBoxClearance={new google.maps.Size(1, 1)}
             enableEventPropagation={true} />
-
-          <MarkerProfile
-            position={userPosition}
-            photo={this.props.account.photo}
-            clickHandler={this.handleMarkerProfileClick} />
 
         </PresenceMap>
 

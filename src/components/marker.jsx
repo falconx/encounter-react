@@ -7,11 +7,13 @@ var Marker = React.createClass({
 	},
 
 	componentDidUpdate: function() {
+		var options = _.extend({}, this.props);
+
 		// Create or update marker
 		if( this.state && this.state.marker ) {
-			this.state.marker.setOptions( this.props );
+			this.state.marker.setOptions( options );
 		} else {
-			var marker = new google.maps.Marker( this.props );
+			var marker = new google.maps.Marker( options );
 
 			window.markers.push( marker );
 
