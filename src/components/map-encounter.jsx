@@ -120,7 +120,7 @@ var MapEncounter = React.createClass({
     // already found
     if( this.state.nearbyPresences.length ) {
       var matches = _.filter(this.state.nearbyPresences, function( presence ) {
-        return !_.findWhere(self.props.account.found, { _id: presence._id });
+        return !_.findWhere(self.props.account.found, { _id: presence._id }) && presence.distance <= this.state.pickupRadius;
       });
 
       if( matches && matches.length ) {

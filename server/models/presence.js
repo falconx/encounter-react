@@ -34,9 +34,7 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
    	}
   ], function( err, presences ) {
     self.populate( presences, { path: 'uid', select: '_id photo' }, cb);
-  }
-);
-
+  });
 };
 
 presenceSchema.statics.findClosest = function( lng, lat, maxDistance, uid, cb ) {
