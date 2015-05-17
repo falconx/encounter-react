@@ -82,6 +82,11 @@
       display: none;
     }
 
+    /* Only show the menu once it has been positioned inside the infoBox container */
+    .infoBox #infobox-menu-wrapper {
+      display: block;
+    }
+
     #infobox-menu {
       height: 220px;
       width: 220px;
@@ -129,6 +134,7 @@
   <body>
     <script src="/socket.io/socket.io.js"></script>
     <script src="http://maps.googleapis.com/maps/api/js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
     <script src="/vendor/infobox.js"></script>
     <script src="bundle.js"></script>
   </body>

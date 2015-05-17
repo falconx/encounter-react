@@ -1,9 +1,11 @@
 var React = require('react');
-var update = require('react/addons').addons.update;
+var addons = require('react/addons').addons;
 var _ = require('lodash');
 
+// Note this is an internal method that is not explicitly exposed by React
+var flattenChildren = require('react/lib/flattenChildren');
+
 var Modal = require('./modal');
-var ProfileMarker = require('../marker-profile');
 var EncounterMapOverlay = require('../map-overlay');
 
 var MapConfig = require('../constants/maps').defaults;
@@ -15,22 +17,14 @@ var PresenceMap = React.createClass({
     return {
       mapOptions: {}, // Config to override MapConfig defaults
       center: { lat: 0, lng: 0 }, // LatLngLiteral converted to LatLng by google maps
-      presences: [], // Translate to markers
       bounds: undefined, // Optional LatLngBounds to restrict the map view
-      showOverlay: false,
-      showCurrentPosition: false // Show a marker at the users current position
+      showOverlay: false
     };
   },
 
   getInitialState: function() {
     return {
-      map: null,
-      currentMarker: null, // Marker to indicate users current position
-      markers: [], // The map markers converted from presence data
-      searchRadiusCircle: null, // Visually indicates search radius
-      pickupRadiusCircle: null, // Visually indicates the radius in which a user can pickup a presence
-      showReleaseModal: false, // Release presence confirmation modal
-      showPickupModal: false // Pickup presence modal
+      map: null
     };
   },
 
@@ -40,68 +34,23 @@ var PresenceMap = React.createClass({
     var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig, this.props.mapOptions, { center: this.props.center }));
     var overlay = this.props.showOverlay ? new EncounterMapOverlay( map.getBounds(), MapConfig.overlayImage, map ) : null;
 
+    // Since markers are generated lower in the component hierarchy, we store them as a global so we can access them here
+    window.markers = [];
+
     // Initialise map
     google.maps.event.addListenerOnce(map, 'tilesloaded', function() {
-      var searchRadiusCircle = new google.maps.Circle({
-        strokeWeight: 0,
-        fillColor: '#ffffff',
-        fillOpacity: 0.2,
-        map: map,
-        center: self.props.center,
-        radius: self.props.searchRadius
-      });
-
-      var pickupRadiusCircle = new google.maps.Circle({
-        strokeWeight: 0,
-        fillColor: '#ffffff',
-        fillOpacity: 0.4,
-        map: map,
-        center: self.props.center,
-        radius: self.props.pickupRadius
-      });
-
-      var infobox = new InfoBox({
-        content: self.refs.infobox_menu.getDOMNode(),
-        disableAutoPan: false,
-        pixelOffset: new google.maps.Size(-111, -111),
-        zIndex: null,
-        closeBoxMargin: '93px 88px 0 0',
-        closeBoxURL: '/images/mapmenu-close.png',
-        infoBoxClearance: new google.maps.Size(1, 1)
-      });
-
       if( self.props.bounds ) {
         map.fitBounds( self.props.bounds );
       }
 
-      self.setState({
-        map: map,
-        searchRadiusCircle: searchRadiusCircle,
-        pickupRadiusCircle: pickupRadiusCircle,
-        infobox: infobox
-      });
-
-      // Menu item click handlers
-
-      self.refs.menu_item_release.getDOMNode().addEventListener('click', function() {
-        self.setState({ showReleaseModal: true });
-      });
-
-      self.refs.menu_item_pickup.getDOMNode().addEventListener('click', function() {
-        self.setState({ showPickupModal: true });
-      });
+      self.setState({ map: map });
 
       // Draw fixed position overlay image
       if( overlay ) {
         overlay.draw();
       }
 
-      // Populate map with presence data
-      self.generateMarkers( self.props.presences );
-
-      // Draw circles to indicate search and pickup radius
-      self.drawSearchRadius();
-      self.drawPickupRadius();
+      self.forceUpdate();
 
       // Update overlay position when center changes
       google.maps.event.addListener(map, 'center_changed', function() {
@@ -117,199 +66,39 @@ var PresenceMap = React.createClass({
   },
 
   componentDidUpdate: function( prevProps ) {
-    // Generate markers incase in order to show correct marker icons based on discovery state
-    if( this.props.account.found !== prevProps.account.found ) {
-      this.generateMarkers( this.props.presences );
-    }
-
-    // Redraw search and pickup radius
-    this.drawSearchRadius();
-    this.drawPickupRadius();
-
-    // Re-center map
     this.state.map.setCenter( this.props.center );
-
-    // Only generate markers if we have something different to show
-    if( this.props.presences !== prevProps.presences ) {
-      // Populate map with new presence data
-      this.generateMarkers( this.props.presences );
-    }
   },
 
   componentWillUnmount: function() {
-    // Todo: Remove map listeners
-
-    _.each(this.state.markers, function( marker ) {
-      marker.setMap(null);
-    });
-
     this.state.map.set(null);
   },
 
-  /**
-   * Generates map markers from a collection of presences
-   */
-  generateMarkers: function( presences ) {
+  renderChildren: function() {
     var self = this;
-    var marker;
+    var children = [];
+    var flattened = flattenChildren(this.props.children);
+    var index = 0;
 
-    // Remove existing markers
-    _.each(this.state.markers, function( marker ) {
+    // Clear all markers from the map
+    _.each(window.markers, function( marker ) {
       marker.setMap(null);
     });
 
-    // Generate new markers
-    _.each(presences, function( presence ) {
-      var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
-
-      // Show account photo as marker icon if the presence has already been found
-      if( _.findWhere(self.props.account.found, { _id: presence._id }) ) {
-        marker = new ProfileMarker( self.state.map, position, presence.uid.photo, ['found'] );
-      } else {
-        marker = new google.maps.Marker({
-          icon: MapConfig.hotspotImage,
-          position: position,
-          map: self.state.map,
-          id: presence._id,
-          uid: presence.uid
-        });
-      }
-
-      update(self.state.markers, { $push: [marker] });
+    _.each(flattened, function( child ) {
+      children.push(addons.cloneWithProps(child, {
+        key: index++,
+        map: self.state.map
+      }));
     });
 
-    // Add marker representing the position of the user
-    // Adding the user marker last will ensure it will be on top of any other markers and can therefore be clicked on
-    if( this.props.showCurrentPosition ) {
-      var center = new google.maps.LatLng( this.props.center.lat, this.props.center.lng );
-
-      marker = new ProfileMarker( this.state.map, center, this.props.account.photo );
-
-      update(self.state.markers, { $push: [marker] });
-    }
-
-    // Toggle infobox menu overlay display by clicking on current position marker
-    google.maps.event.addListener(marker, 'click', function() {
-      if( self.state.infobox.getVisible() ) {
-        self.state.infobox.close();
-      } else {
-        self.state.infobox.open( self.state.map, self.state.currentMarker );
-      }
-    });
-
-    this.setState({ currentMarker: marker });
-  },
-
-  drawSearchRadius: function() {
-    // Todo: How could this be handled if we consider this.state.searchRadiusCircle as immutable?
-    this.state.searchRadiusCircle.setRadius( this.props.searchRadius );
-    this.state.searchRadiusCircle.setCenter( this.props.center );
-  },
-
-  drawPickupRadius: function() {
-    // Todo: How could this be handled if we consider this.state.pickupRadiusCircle as immutable?
-    this.state.pickupRadiusCircle.setRadius( this.props.pickupRadius );
-    this.state.pickupRadiusCircle.setCenter( this.props.center );
-  },
-
-  // Todo:
-  // This assumes that props.presences is ordered by closest - possibly not a safe assertion. We could move this logic
-  // over to the server?
-  getClosest: function() {
-    var self = this;
-    var closest = null; 
-
-    // The closest marker to our position will be the first one returned from our original query which the user has not
-    // already found
-    if( this.props.presences.length ) {
-      var matches = _.filter(this.props.presences, function( presence ) {
-        return !_.findWhere(self.props.account.found, { _id: presence._id });
-      });
-
-      if( matches && matches.length ) {
-        closest = matches[0];
-      }
-    }
-
-    return closest;
-  },
-
-  handlePickupModalClose: function() {
-    this.state.infobox.close();
-    this.setState({ showPickupModal: false });
-  },
-
-  handlePickupModalPickup: function() {
-    var closest = this.getClosest();
-
-    if( closest ) {
-      PresenceActions.pickupPresence( closest._id );
-    }
-
-    this.handlePickupModalClose();
-  },
-
-  handleReleaseModalClose: function() {
-    this.state.infobox.close();
-    this.setState({ showReleaseModal: false });
-  },
-
-  handleReleaseModalYes: function() {
-    PresenceActions.dropPresence({
-      location: [ this.props.center.lng, this.props.center.lat ],
-      uid: this.props.account._id
-    });
-
-    this.handleReleaseModalClose();
+    return children;
   },
 
   render: function() {
-    // The closest marker to our position will be the first one returned from our original query
-    var closest = this.getClosest();
-
-    if( closest ) {
-      var accountPhotoStyle = {
-        backgroundImage: 'url(' + closest.uid.photo + ')'
-      };
-    }
-
     return (
       <div>
-
-        <div className="map" ref="map_encounter"></div>
-
-        <div id="infobox-menu-wrapper">
-          <div id="infobox-menu" ref="infobox_menu">
-            <a href="javascript:;" className="menu-item menu-item-found" ref="menu_item_found">
-              <img src="/images/mapmenuicon-1.png" />
-            </a>
-            <a href="javascript:;" className="menu-item menu-item-pickup" ref="menu_item_pickup">
-              <img src="/images/mapmenuicon-2.png" />
-            </a>
-            <a href="javascript:;" className="menu-item menu-item-release" ref="menu_item_release">
-              <img src="/images/mapmenuicon-3.png" />
-            </a>
-          </div>
-        </div>
-
-        <Modal show={this.state.showReleaseModal}>
-          <p>Are you sure you'd like to drop a presence?</p>
-          <p>
-            <button onClick={this.handleReleaseModalYes}>Yes</button>
-            <button onClick={this.handleReleaseModalClose}>No</button>
-          </p>
-        </Modal>
-
-        <Modal show={closest && this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
-          <p>You have encountered a presence!</p>
-          <p>
-            <div style={accountPhotoStyle} className="account-photo"></div>
-          </p>
-          <p>
-            <button onClick={this.handlePickupModalPickup}>Pickup</button>
-          </p>
-        </Modal>
-
+        <div className="map" ref="map_encounter" />
+        {this.renderChildren()}
       </div>
     );
   }

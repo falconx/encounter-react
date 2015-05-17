@@ -20,6 +20,9 @@
 -- Visually indicate radius.
 -- Notification/buzz phone if possible.
 
+Luke:
+1. [ ] Design favicon
+
 # Sprints
 Phase 1:
 1. [x] Have Presence.findWithinRadius return data with N meters of location.
@@ -32,7 +35,7 @@ Phase 1:
 Phase 2:
 1. [x] If possible, show circular profile image at center of map. Otherwise show firefly image.
 2. [x] On clicking the image/current position, show a menu: Drop presence, ...
-3. [!] Refactor map-encounter.jsx and presence-map.jsx
+3. [x] Refactor map-encounter.jsx and presence-map.jsx
 4. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
 5. [x] Request profile image using Passport instead of using Facebook Graph API
 6. [x] Dropped presences screen.
@@ -53,6 +56,7 @@ Phase 3:
 13. [x] Don't allow pickup of already found presences.
 14. [ ] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a
 separate radius check to determine if the user is close enough to the presence to pick it up.
+15. [!] Have nearest query return distance away.
 
 Phase 4:
 1. [ ] Create found presences page and list found presences.
