@@ -66,7 +66,6 @@ var PresenceMap = React.createClass({
   },
 
   componentDidUpdate: function( prevProps ) {
-    // Re-center map
     this.state.map.setCenter( this.props.center );
   },
 

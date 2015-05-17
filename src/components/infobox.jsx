@@ -13,19 +13,11 @@ var InfoBox = React.createClass({
 	},
 
 	componentDidUpdate: function() {
-		var options = _.omit(this.props, ['content']);
-
-		if( this.props.content ) {
-			_.extend(options, {
-				content: this.props.content
-			});
-		}
- 
 		// Create or update infobox
 		if( this.state && this.state.infobox ) {
-			this.state.infobox.setOptions( options );
+			this.state.infobox.setOptions( this.props );
 		} else if( this.props.map ) {
-			var infobox = new window.InfoBox( options );
+			var infobox = new window.InfoBox( this.props );
 
 			google.maps.event.addListener(infobox, 'closeclick', this.props.closeCallback);
 

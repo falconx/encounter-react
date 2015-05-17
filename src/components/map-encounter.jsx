@@ -73,6 +73,21 @@ var MapEncounter = React.createClass({
 
     })();
 
+    // Handle menu item clicks
+
+    $('body').on('click', '.menu-item-release', function( e ) {
+      e.stopImmediatePropagation();
+      self.setState({ showReleaseModal: true });
+    });
+
+    $('body').on('click', '.menu-item-pickup', function( e ) {
+      e.stopImmediatePropagation();
+
+      if( self.getClosest() ) {
+        self.setState({ showPickupModal: true });
+      }
+    });
+
     // Update preference references if we find one has been dropped nearby
     socket.on('presence:dropped', function() {
       // Todo: This will happen too frequently in the real-world
@@ -120,7 +135,7 @@ var MapEncounter = React.createClass({
     // already found
     if( this.state.nearbyPresences.length ) {
       var matches = _.filter(this.state.nearbyPresences, function( presence ) {
-        return !_.findWhere(self.props.account.found, { _id: presence._id }) && presence.distance <= this.state.pickupRadius;
+        return !_.findWhere(self.props.account.found, { _id: presence._id }) && presence.distance <= self.state.pickupRadius;
       });
 
       if( matches && matches.length ) {
@@ -172,6 +187,10 @@ var MapEncounter = React.createClass({
     this.handleReleaseModalClose();
   },
 
+  getInfoboxContent: function() {
+    return '<div id="infobox-menu-wrapper"><div id="infobox-menu"><a href="javascript:;" class="menu-item menu-item-found"><img src="/images/mapmenuicon-1.png" /></a><a href="javascript:;" class="menu-item menu-item-pickup"><img src="/images/mapmenuicon-2.png" /></a><a href="javascript:;" class="menu-item menu-item-release"><img src="/images/mapmenuicon-3.png" /></a></div></div>';
+  },
+
   renderMarkers: function() {
     var self = this;
 
@@ -202,8 +221,6 @@ var MapEncounter = React.createClass({
 
   render: function() {
     var userPosition = new google.maps.LatLng( this.state.userPosition.lat, this.state.userPosition.lng );
-
-    // The closest marker to our position will be the first one returned from our original query
     var closest = this.getClosest();
 
     if( closest ) {
@@ -236,14 +253,9 @@ var MapEncounter = React.createClass({
 
           {this.renderMarkers()}
 
-          <MarkerProfile
-            position={userPosition}
-            photo={this.props.account.photo}
-            clickHandler={this.handleMarkerProfileClick} />
-
           <InfoBox
             visible={this.state.showMapMenu}
-            content={document.getElementById('infobox-menu-wrapper')}
+            content={this.getInfoboxContent()}
             center={userPosition}
             disableAutoPan={false}
             pixelOffset={new google.maps.Size(-111, -111)}
@@ -253,6 +265,11 @@ var MapEncounter = React.createClass({
             closeCallback={this.handleMarkerProfileClick}
             infoBoxClearance={new google.maps.Size(1, 1)}
             enableEventPropagation={true} />
+
+          <MarkerProfile
+            position={userPosition}
+            photo={this.props.account.photo}
+            clickHandler={this.handleMarkerProfileClick} />
 
         </PresenceMap>
 
@@ -266,20 +283,6 @@ var MapEncounter = React.createClass({
           <button type="submit" onClick={this.handlePickupRadiusChange}>Update pickup radius</button>
         </p>
 
-        <div id="infobox-menu-wrapper">
-          <div id="infobox-menu">
-            <a href="javascript:;" className="menu-item menu-item-found">
-              <img src="/images/mapmenuicon-1.png" />
-            </a>
-            <a href="javascript:;" className="menu-item menu-item-pickup" onClick={this.handleMenuItemPickup}>
-              <img src="/images/mapmenuicon-2.png" />
-            </a>
-            <a href="javascript:;" className="menu-item menu-item-release" onClick={this.handleMenuItemRelease}>
-              <img src="/images/mapmenuicon-3.png" />
-            </a>
-          </div>
-        </div>
-
         <Modal show={this.state.showReleaseModal}>
           <p>Are you sure you'd like to drop a presence?</p>
           <p>
@@ -288,7 +291,7 @@ var MapEncounter = React.createClass({
           </p>
         </Modal>
 
-        <Modal show={closest && this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
+        <Modal show={this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
           <p>You have encountered a presence!</p>
           <p>
             <div style={accountPhotoStyle} className="account-photo"></div>
