@@ -44,8 +44,4 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
   });
 };
 
-presenceSchema.statics.findClosest = function( lng, lat, maxDistance, uid, cb ) {
-  // 
-};
-
 module.exports = mongoose.model('Presence', presenceSchema);

@@ -124,28 +124,6 @@ var MapEncounter = React.createClass({
     this.setState({ showMapMenu: !this.state.showMapMenu });
   },
 
-  // Todo:
-  // This assumes that props.presences is ordered by closest - possibly not a safe assertion. We could move this logic
-  // over to the server?
-  getClosest: function() {
-    var self = this;
-    var closest = null; 
-
-    // The closest marker to our position will be the first one returned from our original query which the user has not
-    // already found
-    if( this.state.nearbyPresences.length ) {
-      var matches = _.filter(this.state.nearbyPresences, function( presence ) {
-        return !_.findWhere(self.props.account.found, { _id: presence._id }) && presence.distance <= self.state.pickupRadius;
-      });
-
-      if( matches && matches.length ) {
-        closest = matches[0];
-      }
-    }
-
-    return closest;
-  },
-
   handleMenuItemRelease: function() {
     this.setState({ showReleaseModal: true });
   },
@@ -189,6 +167,34 @@ var MapEncounter = React.createClass({
 
   getInfoboxContent: function() {
     return '<div id="infobox-menu-wrapper"><div id="infobox-menu"><a href="javascript:;" class="menu-item menu-item-found"><img src="/images/mapmenuicon-1.png" /></a><a href="javascript:;" class="menu-item menu-item-pickup"><img src="/images/mapmenuicon-2.png" /></a><a href="javascript:;" class="menu-item menu-item-release"><img src="/images/mapmenuicon-3.png" /></a></div></div>';
+  },
+
+  // Todo:
+  // This assumes that props.presences is ordered by closest - possibly not a safe assertion. We could move this logic
+  // over to the server?
+  getClosest: function() {
+    var self = this;
+    var closest = null; 
+
+    // The closest marker to our position will be the first one returned from our original query which the user has not
+    // already found
+    if( this.state.nearbyPresences.length ) {
+      var nearbyPresencesUsers = _.uniq(_.map(this.state.nearbyPresences, function( presence ) {
+        return presence.uid._id;
+      }));
+
+      var matches = _.filter(this.state.nearbyPresences, function( presence ) {
+        return !_.findWhere(self.props.account.found, { _id: presence._id }) &&
+          presence.distance <= self.state.pickupRadius &&
+          _.contains(nearbyPresencesUsers, presence.uid._id);
+      });
+
+      if( matches && matches.length ) {
+        closest = matches[0];
+      }
+    }
+
+    return closest;
   },
 
   renderMarkers: function() {

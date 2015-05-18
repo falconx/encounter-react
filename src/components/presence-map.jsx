@@ -43,14 +43,12 @@ var PresenceMap = React.createClass({
         map.fitBounds( self.props.bounds );
       }
 
-      self.setState({ map: map });
+      self.setState({ map: map }, self.forceUpdate);
 
       // Draw fixed position overlay image
       if( overlay ) {
         overlay.draw();
       }
-
-      self.forceUpdate();
 
       // Update overlay position when center changes
       google.maps.event.addListener(map, 'center_changed', function() {
@@ -74,6 +72,10 @@ var PresenceMap = React.createClass({
   },
 
   renderChildren: function() {
+    if( !this.state.map ) {
+      return false;
+    }
+
     var self = this;
     var children = [];
     var flattened = flattenChildren(this.props.children);

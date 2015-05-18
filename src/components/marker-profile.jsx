@@ -1,4 +1,5 @@
 var React = require('react');
+var _ = require('lodash');
 
 /**
  * Special case Google Map Marker to show profile image and attach a class name
@@ -67,32 +68,34 @@ CustomMarker.prototype.getPosition = function() {
 };
 
 var MarkerProfile = React.createClass({
-	componentDidMount: function() {
-		this.componentDidUpdate();
-	},
+  getDefaultProps: function() {
+    return {
+      clickHandler: _.noop
+    };
+  },
 
-	componentDidUpdate: function() {
+  componentDidMount: function() {
+    this.componentDidUpdate();
+  },
+
+  componentDidUpdate: function() {
     var self = this;
 
-		// Create or update marker
-		if( this.state && this.state.marker ) {
-			this.state.marker.setOptions( this.props );
-		} else {
+    // Create or update marker
+    if( this.state && this.state.marker ) {
+      this.state.marker.setOptions( this.props );
+    } else {
       var marker = new CustomMarker( this.props.map, this.props.position, this.props.photo, this.props.classes );
 
-      if( self.props.clickHandler ) {
-        google.maps.event.addListener(marker, 'click', function() {
-          self.props.clickHandler( arguments );
-        });
-      }
+      google.maps.event.addListener(marker, 'click', self.props.clickHandler);
 
-			this.setState({ marker: marker });
-		}
-	},
+      this.setState({ marker: marker });
+    }
+  },
 
-	render: function() {
-		return false;
-	}
+  render: function() {
+    return false;
+  }
 });
 
 module.exports = MarkerProfile;
