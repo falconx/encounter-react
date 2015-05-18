@@ -5,6 +5,8 @@ var Link = require('react-router').Link;
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 
+var _ = require('lodash');
+
 var Dashboard = React.createClass({
 	render: function() {
 		var account = this.props.account;
@@ -13,9 +15,13 @@ var Dashboard = React.createClass({
 			backgroundImage: 'url(' + account.photo + ')'
 		};
 
+		var usersFound = _.uniq(_.map(account.found, function( presence ) {
+      return presence.uid._id;
+    }));
+
 		return (
 			<div>
-				<p>Hi {account.name} <a href="/auth/logout">Logout</a></p>
+				<p>Hi {account.name} ({account._id}) <a href="/auth/logout">Logout</a></p>
 				<p><div className="account-photo" style={accountPhotoStyle}></div></p>
 				<p><Link to="map-encounter">Encounter Map</Link></p>
 				<p><Link to="map-released">Released Presences Map</Link></p>
@@ -31,6 +37,13 @@ var Dashboard = React.createClass({
 				<ol>
 					{account.found.map(function( presence ) {
 						return <li key={presence._id}>{JSON.stringify(presence.location)}</li>;
+					})}
+				</ol>
+
+				<h2>Found Users</h2>
+				<ol>
+					{usersFound.map(function( uid ) {
+						return <li key={uid}>{uid}</li>
 					})}
 				</ol>
 			</div>

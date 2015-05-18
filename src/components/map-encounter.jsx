@@ -194,9 +194,24 @@ var MapEncounter = React.createClass({
   renderMarkers: function() {
     var self = this;
 
+    // Find all the user ids that have released presences nearby
+    var nearbyPresencesUsers = _.uniq(_.map(this.state.nearbyPresences, function( presence ) {
+      return presence.uid._id;
+    }));
+
     return this.state.nearbyPresences.map(function( presence ) {
       var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
+
+      // Determine if the presence if the exact one found by the current user
       var found = _.findWhere(self.props.account.found, { _id: presence._id });
+
+      // Hide all presences belonging to a user if we have already found one belong to them and this isn't the instance
+      // they found
+      var hide = false;
+
+      if( !found ) {
+        hide = _.contains(nearbyPresencesUsers, presence.uid._id);
+      }
 
       if( found ) {
         return (
@@ -206,7 +221,7 @@ var MapEncounter = React.createClass({
             photo={presence.uid.photo}
             classes={['found']} />
         );
-      } else {
+      } else if( !hide ) {
         return (
           <Marker
             key={presence._id}
@@ -257,7 +272,7 @@ var MapEncounter = React.createClass({
             position={userPosition}
             photo={this.props.account.photo}
             clickHandler={this.handleMarkerProfileClick} />
-            
+
           <InfoBox
             visible={this.state.showMapMenu}
             content={this.getInfoboxContent()}

@@ -50,13 +50,14 @@ Phase 3:
  7. [x] Don't allow map panning.
  8. [ ] Dropped presences screen stats.
  9. [x] Show account photo as presence icon for found presenecs.
-10. [ ] Hide all other presences that belong to a user after finding one that belongs to them.
+10. [x] Hide all other presences that belong to a user after finding one that belongs to them.
 11. [x] Redraw marker icons after picking up a presence.
 12. [ ] Make menu overlay follow the user position.
 13. [x] Don't allow pickup of already found presences.
-14. [ ] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a
+14. [x] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a
 separate radius check to determine if the user is close enough to the presence to pick it up.
-15. [!] Have nearest query return distance away.
+15. [x] Have nearest query return distance away.
+16. [!] Don't allow pickup of presences which belong to a user they have already found.
 
 Phase 4:
 1. [ ] Create found presences page and list found presences.
