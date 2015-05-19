@@ -9,6 +9,7 @@ var App = require('./components/app');
 var Dashboard = require('./components/dashboard');
 var MapEncounter = require('./components/map-encounter');
 var MapReleased = require('./components/map-released');
+var Encountered = require('./components/encountered');
 
 var AccountActions = require('./actions/account');
 
@@ -17,6 +18,7 @@ var routes = (
     <DefaultRoute name="dashboard" handler={Dashboard} />
     <Route name="map-encounter" path="encounter" handler={MapEncounter} />
     <Route name="map-released" path="released" handler={MapReleased} />
+    <Route name="encountered" path="encountered" handler={Encountered} />
     <NotFoundRoute handler={Dashboard} />
   </Route>
 );

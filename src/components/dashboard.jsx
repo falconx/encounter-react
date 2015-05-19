@@ -10,10 +10,7 @@ var _ = require('lodash');
 var Dashboard = React.createClass({
 	render: function() {
 		var account = this.props.account;
-
-		var accountPhotoStyle = {
-			backgroundImage: 'url(' + account.photo + ')'
-		};
+		var accountPhotoStyle = { backgroundImage: 'url(' + account.photo + ')' };
 
 		var usersFound = _.uniq(_.map(account.found, function( presence ) {
       return presence.uid._id;
@@ -25,6 +22,7 @@ var Dashboard = React.createClass({
 				<p><div className="account-photo" style={accountPhotoStyle}></div></p>
 				<p><Link to="map-encounter">Encounter Map</Link></p>
 				<p><Link to="map-released">Released Presences Map</Link></p>
+				<p><Link to="encountered">Found</Link></p>
 
 				<h2>Released Presences</h2>
 				<ol>
@@ -33,14 +31,14 @@ var Dashboard = React.createClass({
 					})}
 				</ol>
 
-				<h2>Found Presences</h2>
+				<h2>Encounterd Presences</h2>
 				<ol>
 					{account.found.map(function( presence ) {
 						return <li key={presence._id}>{JSON.stringify(presence.location)}</li>;
 					})}
 				</ol>
 
-				<h2>Found Users</h2>
+				<h2>Encounterd Users</h2>
 				<ol>
 					{usersFound.map(function( uid ) {
 						return <li key={uid}>{uid}</li>

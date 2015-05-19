@@ -57,7 +57,7 @@ Phase 3:
 14. [x] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a
 separate radius check to determine if the user is close enough to the presence to pick it up.
 15. [x] Have nearest query return distance away.
-16. [!] Don't allow pickup of presences which belong to a user they have already found.
+16. [x] Don't allow pickup of presences which belong to a user they have already found.
 
 Phase 4:
 1. [ ] Create found presences page and list found presences.

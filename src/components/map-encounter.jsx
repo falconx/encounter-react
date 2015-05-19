@@ -5,6 +5,8 @@ var socket = io.connect();
 
 var MapConfig = require('../constants/maps').encounter; // Encounter map config
 
+var Navigation = require('react-router').Navigation;
+
 var PresenceMap = require('./presence-map');
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
@@ -15,7 +17,7 @@ var InfoBox = require('./infobox');
 var Modal = require('./modal');
 
 var MapEncounter = React.createClass({
-  mixins: [PresenceStore.mixin],
+  mixins: [Navigation, PresenceStore.mixin],
 
   getInitialState: function() {
     return {
@@ -86,6 +88,11 @@ var MapEncounter = React.createClass({
       if( self.getClosest() ) {
         self.setState({ showPickupModal: true });
       }
+    });
+
+    $('body').on('click', '.menu-item-found', function( e ) {
+      e.stopImmediatePropagation();
+      self.transitionTo('encountered');
     });
 
     // Update preference references if we find one has been dropped nearby
@@ -184,13 +191,13 @@ var MapEncounter = React.createClass({
       }));
 
       var matches = _.filter(this.state.nearbyPresences, function( presence ) {
-        return !_.findWhere(self.props.account.found, { _id: presence._id }) &&
-          presence.distance <= self.state.pickupRadius &&
-          _.contains(nearbyPresencesUsers, presence.uid._id);
+        return !_.findWhere(self.props.account.found, { _id: presence._id }) && // Have we already found this presence?
+          !_.contains(nearbyPresencesUsers, presence.uid._id) && // Have we already found a presence belonging to this user?
+          presence.distance <= self.state.pickupRadius; // Is the presence within pickup range?
       });
 
       if( matches && matches.length ) {
-        closest = matches[0];
+        closest = matches[0]; // Assume first as closest from original query
       }
     }
 
