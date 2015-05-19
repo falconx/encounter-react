@@ -60,11 +60,11 @@ separate radius check to determine if the user is close enough to the presence t
 16. [x] Don't allow pickup of presences which belong to a user they have already found.
 
 Phase 4:
-1. [ ] Create found presences page and list found presences.
-2. [ ] Link found presences menu item from map to page.
+1. [x] Create found presences page and list found presences.
+2. [x] Link found presences menu item from map to page.
 3. [ ] Leave a message when releasing a presence.
 4. [ ] Show presence message when on confirmation page before collecting a presence.
-5. [ ] Show profile image of presence uid on confirmation page before collecting a presence.
+5. [x] Show profile image of presence uid on confirmation page before collecting a presence.
 6. [ ] Encrypt facebookId or entire account photo url path on the server via proxy.
 
 Phase 5:
