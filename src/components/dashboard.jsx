@@ -27,14 +27,14 @@ var Dashboard = React.createClass({
 				<h2>Released Presences</h2>
 				<ol>
 					{account.dropped.map(function( presence ) {
-						return <li key={presence._id}>{JSON.stringify(presence.location)}</li>;
+						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)}</li>;
 					})}
 				</ol>
 
 				<h2>Encounterd Presences</h2>
 				<ol>
 					{account.found.map(function( presence ) {
-						return <li key={presence._id}>{JSON.stringify(presence.location)}</li>;
+						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)}</li>;
 					})}
 				</ol>
 

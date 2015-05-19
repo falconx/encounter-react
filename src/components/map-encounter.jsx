@@ -75,7 +75,7 @@ var MapEncounter = React.createClass({
 
     })();
 
-    // Handle menu item clicks
+    // Handle map menu item clicks
 
     $('body').on('click', '.menu-item-release', function( e ) {
       e.stopImmediatePropagation();
@@ -252,9 +252,7 @@ var MapEncounter = React.createClass({
     var closest = this.getClosest();
 
     if( closest ) {
-      var accountPhotoStyle = {
-        backgroundImage: 'url(' + closest.uid.photo + ')'
-      };
+      var accountPhotoStyle = { backgroundImage: 'url(' + closest.uid.photo + ')' };
     }
 
     return (
