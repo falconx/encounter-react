@@ -149,65 +149,76 @@ app.get('/api/account', isAuthenticated, function( req, res, next ) {
 app.route('/api/presences/dropped', isAuthenticated)
 
   // Retrieve users dropped presences
-  .get(function( req, res, next ) {
-    Presence
-      .find({ uid: req.user._id })
-      .exec(function( err, presences ) {
-        if( err ) {
-          // Todo: Handle error
-          console.log( err );
-          next();
-        }
+  // .get(function( req, res, next ) {
+  //   Presence
+  //     .find({ uid: req.user._id })
+  //     .exec(function( err, presences ) {
+  //       if( err ) {
+  //         // Todo: Handle error
+  //         console.log( err );
+  //         next();
+  //       }
 
-        res.send(presences);
-      });
-  })
+  //       res.send(presences);
+  //     });
+  // })
 
   // Drop a presence
   .post(function( req, res, next ) {
-    new Presence(req.body.presence)
-      .save(function( err, presence ) {
-        if( err ) {
-          // Todo: Handle error
-          console.log( err );
-          next();
-        }
+    // new Message({
+    //   uid: req.user._id,
+    //   message: req.body.presence.question
+    // }).save(function( err, message ) {
 
-        User.findOneAndUpdate(
-          { _id : req.user._id },
-          { $push: { dropped: presence } },
-          { safe: true, upsert: true },
-          function( err ) {
-            if( err ) {
-              // Todo: Handle error
-              console.log( err );
-              next();
-            }
+      // Replace question with a reference to the message instance
+      // var presence = _.extend({}, req.body.presence, { mid: message._id });
 
-            res.send(presence);
+      new Presence(req.body.presence)
+        .save(function( err, presence ) {
+          if( err ) {
+            // Todo: Handle error
+            console.log( err );
+            next();
           }
-        );
-    });
+
+          // Reference presence in users released presences collection
+          User.findOneAndUpdate(
+            { _id : req.user._id },
+            { $push: { dropped: presence } },
+            { safe: true, upsert: true },
+            function( err ) {
+              if( err ) {
+                // Todo: Handle error
+                console.log( err );
+                next();
+              }
+
+              res.send(presence);
+            }
+          );
+        });
+
+    // });
   });
 
 app.route('/api/presences/found', isAuthenticated)
 
   // Retrieve users found presences
-  .get(function( req, res, next ) {
-    User
-      .find({ uid: req.user._id })
-      .populate('found')
-      .select('found')
-      .exec(function( err, presences ) {
-        if( err ) {
-          // Todo: Handle error
-          console.log( err );
-          next();
-        }
+  // .get(function( req, res, next ) {
+  //   User
+  //     .findOne({ _id: req.user._id })
+  //     .populate('found')
+  //     .select('found')
+  //     .exec(function( err, presences ) {
+  //       if( err ) {
+  //         // Todo: Handle error
+  //         console.log( err );
+  //         next();
+  //       }
 
-        res.send(presences);
-      });
-  })
+  //       res.send(presences);
+  //     });
+  // })
 
   // Add a presence to the user's found collection
   .post(function( req, res, next ) {

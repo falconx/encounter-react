@@ -20,6 +20,39 @@
 -- Visually indicate radius.
 -- Notification/buzz phone if possible.
 
+- SSL
+
+Models:
+
+------------------------------------------------------------------
+| User                                                           |
+------------------------------------------------------------------
+| _id        | Includes timestamp                                |
+| dropped    | Array of released presence ids                    |
+| found      | Array of presences which the user has picked up   |
+| facebookId | Facebook Id                                       |
+| name       | Name provided by Facebook via PassportJS          |
+| photo      | Photo url path using Facebook Graph API           |
+------------------------------------------------------------------
+
+------------------------------------------------------------------
+| Presence                                                       |
+------------------------------------------------------------------
+| _id      | Includes timestamp                                  |
+| uid      | Id of the user which released the presence          |
+| location | [lng, lat] of where the presence was released       |
+| mid      | Id of the initial message posed upon release        |
+------------------------------------------------------------------
+
+------------------------------------------------------------------
+| Message                                                        |
+|-----------------------------------------------------------------
+| _id     | Includes timestamp                                   |
+| pid     | Id of the presence which posed the original question |
+| uid     | Id of the user which left the message                |
+| message | The question/message                                 |
+------------------------------------------------------------------
+
 Luke:
 1. [ ] Design favicon
 
@@ -42,7 +75,7 @@ Phase 2:
 
 Phase 3:
  1. [ ] Only update the map once the user has moved N distance since the last check.
- 2. [!] Allow pickup of a nearby (closest) presence.
+ 2. [x] Allow pickup of a nearby (closest) presence.
  3. [x] Don't allow clicking on poi.
  4. [x] Don't allow map zoom level to change.
  5. [x] Confirmation screen when releasing presence.
@@ -62,8 +95,8 @@ separate radius check to determine if the user is close enough to the presence t
 Phase 4:
 1. [x] Create found presences page and list found presences.
 2. [x] Link found presences menu item from map to page.
-3. [ ] Leave a message when releasing a presence.
-4. [ ] Show presence message when on confirmation page before collecting a presence.
+3. [x] Leave a question when releasing a presence.
+4. [x] Show presence question when on confirmation page before collecting a presence.
 5. [x] Show profile image of presence uid on confirmation page before collecting a presence.
 6. [ ] Encrypt facebookId or entire account photo url path on the server via proxy.
 

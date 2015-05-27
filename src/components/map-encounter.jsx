@@ -163,9 +163,10 @@ var MapEncounter = React.createClass({
     });
   },
 
-  handleReleaseModalYes: function() {
+  handleReleaseModal: function() {
     PresenceActions.dropPresence({
-      location: [ this.props.center.lng, this.props.center.lat ],
+      question: this.refs.release_question.getDOMNode().value,
+      location: [ this.state.userPosition.lng, this.state.userPosition.lat ],
       uid: this.props.account._id
     });
 
@@ -176,57 +177,24 @@ var MapEncounter = React.createClass({
     return '<div id="infobox-menu-wrapper"><div id="infobox-menu"><a href="javascript:;" class="menu-item menu-item-found"><img src="/images/mapmenuicon-1.png" /></a><a href="javascript:;" class="menu-item menu-item-pickup"><img src="/images/mapmenuicon-2.png" /></a><a href="javascript:;" class="menu-item menu-item-release"><img src="/images/mapmenuicon-3.png" /></a></div></div>';
   },
 
-  // Todo:
-  // This assumes that props.presences is ordered by closest - possibly not a safe assertion. We could move this logic
-  // over to the server?
   getClosest: function() {
     var self = this;
-    var closest = null; 
 
-    // The closest marker to our position will be the first one returned from our original query which the user has not
-    // already found
-    if( this.state.nearbyPresences.length ) {
-      var nearbyPresencesUsers = _.uniq(_.map(this.state.nearbyPresences, function( presence ) {
-        return presence.uid._id;
-      }));
+    // Ignore presences that have already been found and those that are not close enough to pick up
+    var nearby = _.filter(this.state.nearbyPresences, function( presence ) {
+      return !presence.found && presence.distance <= self.state.pickupRadius;
+    });
 
-      var matches = _.filter(this.state.nearbyPresences, function( presence ) {
-        return !_.findWhere(self.props.account.found, { _id: presence._id }) && // Have we already found this presence?
-          !_.contains(nearbyPresencesUsers, presence.uid._id) && // Have we already found a presence belonging to this user?
-          presence.distance <= self.state.pickupRadius; // Is the presence within pickup range?
-      });
-
-      if( matches && matches.length ) {
-        closest = matches[0]; // Assume first as closest from original query
-      }
-    }
-
-    return closest;
+    return (nearby && nearby.length) ? nearby[0] : null;
   },
 
   renderMarkers: function() {
     var self = this;
 
-    // Find all the user ids that have released presences nearby
-    var nearbyPresencesUsers = _.uniq(_.map(this.state.nearbyPresences, function( presence ) {
-      return presence.uid._id;
-    }));
-
     return this.state.nearbyPresences.map(function( presence ) {
       var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
 
-      // Determine if the presence if the exact one found by the current user
-      var found = _.findWhere(self.props.account.found, { _id: presence._id });
-
-      // Hide all presences belonging to a user if we have already found one belong to them and this isn't the instance
-      // they found
-      var hide = false;
-
-      if( !found ) {
-        hide = _.contains(nearbyPresencesUsers, presence.uid._id);
-      }
-
-      if( found ) {
+      if( presence.found ) {
         return (
           <MarkerProfile
             key={presence._id}
@@ -234,7 +202,7 @@ var MapEncounter = React.createClass({
             photo={presence.uid.photo}
             classes={['found']} />
         );
-      } else if( !hide ) {
+      } else {
         return (
           <Marker
             key={presence._id}
@@ -281,6 +249,7 @@ var MapEncounter = React.createClass({
 
           <MarkerProfile
             position={userPosition}
+            zIndex="1000"
             photo={this.props.account.photo}
             clickHandler={this.handleMarkerProfileClick} />
 
@@ -309,23 +278,27 @@ var MapEncounter = React.createClass({
           <button type="submit" onClick={this.handlePickupRadiusChange}>Update pickup radius</button>
         </p>
 
-        <Modal show={this.state.showReleaseModal}>
-          <p>Are you sure you'd like to drop a presence?</p>
+        <Modal show={this.state.showReleaseModal} closeHandler={this.handleReleaseModalClose}>
+          <p>Leave a message</p>
+          <p><textarea ref="release_question"></textarea></p>
           <p>
-            <button onClick={this.handleReleaseModalYes}>Yes</button>
-            <button onClick={this.handleReleaseModalClose}>No</button>
+            <button onClick={this.handleReleaseModal}>Release presence</button>
           </p>
         </Modal>
 
-        <Modal show={this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
-          <p>You have encountered a presence!</p>
-          <p>
-            <div style={accountPhotoStyle} className="account-photo"></div>
-          </p>
-          <p>
-            <button onClick={this.handlePickupModalPickup}>Pickup</button>
-          </p>
-        </Modal>
+        {closest &&
+          <Modal show={this.state.showPickupModal} closeHandler={this.handlePickupModalClose}>
+            <p>You have encountered a presence!</p>
+            <p>
+              <div style={accountPhotoStyle} className="account-photo"></div>
+            </p>
+            <p>{closest.question}</p>
+            <p><textarea ref="release_answer"></textarea></p>
+            <p>
+              <button onClick={this.handlePickupModalPickup}>Pickup</button>
+            </p>
+          </Modal>
+        }
 
       </div>
     );
