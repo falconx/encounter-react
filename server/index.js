@@ -102,23 +102,24 @@ function isAuthenticated( req, res, next ) {
   res.sendStatus(403);
 }
 
+// var routes = require('./routes/index')(passport);
+// app.use('/', routes);
+
 // Auth routes
 
 app.use('/api', router);
 
-router.route('/auth/facebook/callback').get(function() {
-  console.log('auth facebook callback');
-  passport.authenticate('facebook', {
-    successRedirect: facebookAuth.successURL,
-    failureRedirect: facebookAuth.failureURL
-  });
+router.route('/auth/facebook').get(function( req, res, next ) {
+  return passport.authenticate('facebook', {
+    scope: facebookAuth.scope
+  })(req, res, next);
 });
 
-router.route('/auth/facebook').get(function() {
-  console.log('auth facebook');
-  passport.authenticate('facebook', {
-    scope: facebookAuth.scope
-  });
+router.route('/auth/facebook/callback').get(function( req, res, next ) {
+  return passport.authenticate('facebook', {
+    successRedirect: facebookAuth.successURL,
+    failureRedirect: facebookAuth.failureURL
+  })(req, res, next);
 });
 
 router.route('/auth/logout').get(isAuthenticated, function( req, res ) {
