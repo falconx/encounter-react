@@ -1,16 +1,16 @@
 var express = require('express');
 var app = express();
+var router = express.Router();
 
-var _ = require('lodash');
-
+var fs = require('fs');
 var path = require('path');
 var bodyParser = require('body-parser');
 var session = require('cookie-session');
 var mongoose = require('mongoose');
+var _ = require('lodash');
 
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
-
 var facebookAuth = require('./config/providers.json').facebook;
 
 // Transparently require() jsx
@@ -104,157 +104,172 @@ function isAuthenticated( req, res, next ) {
 
 // Auth routes
 
-app.get('/auth/facebook/callback',
+app.use('/api', router);
+
+router.route('/auth/facebook/callback').get(function() {
+  console.log('auth facebook callback');
   passport.authenticate('facebook', {
     successRedirect: facebookAuth.successURL,
     failureRedirect: facebookAuth.failureURL
-  })
-);
+  });
+});
 
-app.get('/auth/facebook',
+router.route('/auth/facebook').get(function() {
+  console.log('auth facebook');
   passport.authenticate('facebook', {
     scope: facebookAuth.scope
-  })
-);
+  });
+});
 
-app.get('/auth/logout', isAuthenticated, function( req, res ) {
+router.route('/auth/logout').get(isAuthenticated, function( req, res ) {
   req.logout();
   res.redirect('/');
 });
 
-app.get('/api/account', isAuthenticated, function( req, res, next ) {
-  User
-    .findOne({ _id: req.user._id })
-    .populate('dropped found')
-    .exec(function( err, presences ) {
-      if( err ) {
-        console.log(err);
-        next();
-      }
-
-      Presence.populate(presences, [
-        { path: 'dropped.uid', model: 'User', select: '_id photo' },
-        { path: 'found.uid', model: 'User', select: '_id photo' }
-      ], function( err, presences ) {
-        if( err ) {
-          console.log(err);
-          next();
-        }
-
-        res.send(presences);
-      });
-    });
+// Retrieve account
+router.route('/account').get(isAuthenticated, function( req, res ) {
+  fs.readFile(path.resolve(__dirname + '/../mocks/account.json'), 'utf8', function( error, data ) {
+    res.send(data);
+  });
 });
 
-app.route('/api/presences/dropped', isAuthenticated)
-
-  // Retrieve users dropped presences
-  // .get(function( req, res, next ) {
-  //   Presence
-  //     .find({ uid: req.user._id })
-  //     .exec(function( err, presences ) {
-  //       if( err ) {
-  //         // Todo: Handle error
-  //         console.log( err );
-  //         next();
-  //       }
-
-  //       res.send(presences);
-  //     });
-  // })
-
-  // Drop a presence
-  .post(function( req, res, next ) {
-    // new Message({
-    //   uid: req.user._id,
-    //   message: req.body.presence.question
-    // }).save(function( err, message ) {
-
-      // Replace question with a reference to the message instance
-      // var presence = _.extend({}, req.body.presence, { mid: message._id });
-
-      new Presence(req.body.presence)
-        .save(function( err, presence ) {
-          if( err ) {
-            // Todo: Handle error
-            console.log( err );
-            next();
-          }
-
-          // Reference presence in users released presences collection
-          User.findOneAndUpdate(
-            { _id : req.user._id },
-            { $push: { dropped: presence } },
-            { safe: true, upsert: true },
-            function( err ) {
-              if( err ) {
-                // Todo: Handle error
-                console.log( err );
-                next();
-              }
-
-              res.send(presence);
-            }
-          );
-        });
-
-    // });
-  });
-
-app.route('/api/presences/found', isAuthenticated)
-
-  // Retrieve users found presences
-  // .get(function( req, res, next ) {
-  //   User
-  //     .findOne({ _id: req.user._id })
-  //     .populate('found')
-  //     .select('found')
-  //     .exec(function( err, presences ) {
-  //       if( err ) {
-  //         // Todo: Handle error
-  //         console.log( err );
-  //         next();
-  //       }
-
-  //       res.send(presences);
-  //     });
-  // })
-
-  // Add a presence to the user's found collection
-  .post(function( req, res, next ) {
-    Presence
-      .findOne({ _id: req.body.presenceId })
-      .exec(function( err, presence ) {
-        User.findOneAndUpdate(
-          { _id : req.user._id },
-          { $push: { found: presence } },
-          { safe: true, upsert: true },
-          function( err ) {
-            if( err ) {
-              console.log(err);
-              next();
-            }
-
-            res.send(presence);
-          }
-        );
-    });
-  });
-
 // Retrieve all the presences found within the specified distance from the provided location
-app.route('/api/presences/find/:lng/:lat/:distance', isAuthenticated)
-  .get(function( req, res, next ) {
-    var params = _.extend(req.params, { userId: req.user._id });
-
-    Presence.findWithinRadius(params, function( err, presences ) {
-      if( err ) {
-        console.log(err);
-        next();
-      }
-
-      res.send(presences);
-    });
+router.route('/presences/find/:lng/:lat/:distance').get(isAuthenticated, function( req, res ) {
+  fs.readFile(path.resolve(__dirname + '/../mocks/find.json'), 'utf8', function( error, data ) {
+    res.send(data);
   });
+});
+
+// router.route('/account').get(function( req, res, next ) {
+//   User
+//     .findOne({ _id: req.user._id })
+//     .populate('released encountered')
+//     .exec(function( err, presences ) {
+//       if( err ) {
+//         console.log(err);
+//         next();
+//       }
+
+//       Presence.populate(presences, [
+//         { path: 'released.uid', model: 'User', select: '_id photo' },
+//         { path: 'encountered.uid', model: 'User', select: '_id photo' }
+//       ], function( err, presences ) {
+//         if( err ) {
+//           console.log(err);
+//           next();
+//         }
+
+//         res.send(presences);
+//       });
+//     });
+// });
+
+// router.route('/presences/released')
+
+//   // Retrieve users released presences
+//   .get(function( req, res, next ) {
+//     Presence
+//       .find({ uid: req.user._id })
+//       .exec(function( err, presences ) {
+//         if( err ) {
+//           console.log( err );
+//           next();
+//         }
+
+//         res.send(presences);
+//       });
+//   })
+
+//   // Drop a presence
+//   .post(function( req, res, next ) {
+//     // new Message({
+//     //   uid: req.user._id,
+//     //   message: req.body.presence.question
+//     // }).save(function( err, message ) {
+
+//       // Replace question with a reference to the message instance
+//       // var presence = _.extend({}, req.body.presence, { mid: message._id });
+
+//       new Presence(req.body.presence)
+//         .save(function( err, presence ) {
+//           if( err ) {
+//             // Todo: Handle error
+//             console.log( err );
+//             next();
+//           }
+
+//           // Reference presence in users released presences collection
+//           User.findOneAndUpdate(
+//             { _id : req.user._id },
+//             { $push: { released: presence } },
+//             { safe: true, upsert: true },
+//             function( err ) {
+//               if( err ) {
+//                 console.log( err );
+//                 next();
+//               }
+
+//               res.send(presence);
+//             }
+//           );
+//         });
+
+//     // });
+//   });
+
+// router.route('/presences/encountered')
+
+//   // Retrieve users encountered presences
+//   // .get(function( req, res, next ) {
+//   //   User
+//   //     .findOne({ _id: req.user._id })
+//   //     .populate('encountered')
+//   //     .select('encountered')
+//   //     .exec(function( err, presences ) {
+//   //       if( err ) {
+//   //         console.log( err );
+//   //         next();
+//   //       }
+
+//   //       res.send(presences);
+//   //     });
+//   // })
+
+//   // Add a presence to the user's encountered collection
+//   .post(function( req, res, next ) {
+//     Presence
+//       .findOne({ _id: req.body.presenceId })
+//       .exec(function( err, presence ) {
+//         User.findOneAndUpdate(
+//           { _id : req.user._id },
+//           { $push: { encountered: presence } },
+//           { safe: true, upsert: true },
+//           function( err ) {
+//             if( err ) {
+//               console.log(err);
+//               next();
+//             }
+
+//             res.send(presence);
+//           }
+//         );
+//     });
+//   });
+
+// // Retrieve all the presences found within the specified distance from the provided location
+// router.route('/presences/find/:lng/:lat/:distance')
+//   .get(function( req, res, next ) {
+//     var params = _.extend(req.params, { userId: req.user._id });
+
+//     Presence.findWithinRadius(params, function( err, presences ) {
+//       if( err ) {
+//         console.log(err);
+//         next();
+//       }
+
+//       res.send(presences);
+//     });
+//   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

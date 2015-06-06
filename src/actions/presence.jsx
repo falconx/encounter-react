@@ -7,7 +7,7 @@ var PresenceActions = Flux.createActions({
 	dropPresence: function( presence ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.post('/api/presences/dropped')
+				.post('/api/presences/released')
 				.send({ presence: presence })
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
@@ -27,7 +27,7 @@ var PresenceActions = Flux.createActions({
 	pickupPresence: function( presenceId ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.post('/api/presences/found')
+				.post('/api/presences/encountered')
 				.send({ presenceId: presenceId })
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {

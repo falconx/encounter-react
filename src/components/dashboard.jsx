@@ -12,36 +12,36 @@ var Dashboard = React.createClass({
 		var account = this.props.account;
 		var accountPhotoStyle = { backgroundImage: 'url(' + account.photo + ')' };
 
-		var usersFound = _.uniq(_.map(account.found, function( presence ) {
-      return presence.uid._id;
-    }));
+		var usersFound = _.uniq(_.map(account.encountered, function( presence ) {
+			return presence.user._id;
+		}));
 
 		return (
 			<div>
-				<p>Hi {account.name} ({account._id}) <a href="/auth/logout">Logout</a></p>
+				<p>Hi {account.name} ({account._id}) <a href="/api/auth/logout">Logout</a></p>
 				<p><div className="account-photo" style={accountPhotoStyle}></div></p>
 				<p><Link to="map-encounter">Encounter Map</Link></p>
 				<p><Link to="map-released">Released Presences Map</Link></p>
-				<p><Link to="encountered">Found</Link></p>
+				<p><Link to="encountered">Encountered</Link></p>
 
 				<h2>Released Presences</h2>
 				<ol>
-					{account.dropped.map(function( presence ) {
+					{account.released.map(function( presence ) {
 						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)}</li>;
 					})}
 				</ol>
 
 				<h2>Encounterd Presences</h2>
 				<ol>
-					{account.found.map(function( presence ) {
+					{account.encountered.map(function( presence ) {
 						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)}</li>;
 					})}
 				</ol>
 
 				<h2>Encounterd Users</h2>
 				<ol>
-					{usersFound.map(function( uid ) {
-						return <li key={uid}>{uid}</li>
+					{usersFound.map(function( userId ) {
+						return <li key={userId}>{userId}</li>
 					})}
 				</ol>
 			</div>

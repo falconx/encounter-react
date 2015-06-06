@@ -45,7 +45,7 @@ var MapEncounter = React.createClass({
     (function() {
 
       function success( position ) {
-        console.log({ lat: position.coords.latitude, lng: position.coords.longitude }, 'position found');
+        console.log({ lat: position.coords.latitude, lng: position.coords.longitude }, 'position encountered');
 
         // If the found position is outside of our threshold, it's too inaccurate to show
         if( position.coords.accuracy <= MapConfig.accuracyThreshold ) {
@@ -90,13 +90,13 @@ var MapEncounter = React.createClass({
       }
     });
 
-    $('body').on('click', '.menu-item-found', function( e ) {
+    $('body').on('click', '.menu-item-encountered', function( e ) {
       e.stopImmediatePropagation();
       self.transitionTo('encountered');
     });
 
-    // Update preference references if we find one has been dropped nearby
-    socket.on('presence:dropped', function() {
+    // Update preference references if we find one has been released nearby
+    socket.on('presence:released', function() {
       // Todo: This will happen too frequently in the real-world
       self.findNearbyPresences();
     });
@@ -174,7 +174,7 @@ var MapEncounter = React.createClass({
   },
 
   getInfoboxContent: function() {
-    return '<div id="infobox-menu-wrapper"><div id="infobox-menu"><a href="javascript:;" class="menu-item menu-item-found"><img src="/images/mapmenuicon-1.png" /></a><a href="javascript:;" class="menu-item menu-item-pickup"><img src="/images/mapmenuicon-2.png" /></a><a href="javascript:;" class="menu-item menu-item-release"><img src="/images/mapmenuicon-3.png" /></a></div></div>';
+    return '<div id="infobox-menu-wrapper"><div id="infobox-menu"><a href="javascript:;" class="menu-item menu-item-encountered"><img src="/images/mapmenuicon-1.png" /></a><a href="javascript:;" class="menu-item menu-item-pickup"><img src="/images/mapmenuicon-2.png" /></a><a href="javascript:;" class="menu-item menu-item-release"><img src="/images/mapmenuicon-3.png" /></a></div></div>';
   },
 
   getClosest: function() {
@@ -182,7 +182,7 @@ var MapEncounter = React.createClass({
 
     // Ignore presences that have already been found and those that are not close enough to pick up
     var nearby = _.filter(this.state.nearbyPresences, function( presence ) {
-      return !presence.found && presence.distance <= self.state.pickupRadius;
+      return !presence.encountered && presence.distance <= self.state.pickupRadius;
     });
 
     return (nearby && nearby.length) ? nearby[0] : null;
@@ -194,13 +194,13 @@ var MapEncounter = React.createClass({
     return this.state.nearbyPresences.map(function( presence ) {
       var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
 
-      if( presence.found ) {
+      if( presence.encountered ) {
         return (
           <MarkerProfile
             key={presence._id}
             position={position}
             photo={presence.uid.photo}
-            classes={['found']} />
+            classes={['encountered']} />
         );
       } else {
         return (

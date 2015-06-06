@@ -13,7 +13,7 @@ var Encountered = React.createClass({
 		return (
 			<div className="encountered">
 				<ul>
-					{this.props.account.found.map(function( presence ) {
+					{this.props.account.encountered.map(function( presence ) {
 						var style = { backgroundImage: 'url(' + presence.uid.photo + ')' };
 
 						return (

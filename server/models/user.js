@@ -7,8 +7,8 @@ var userSchema = Schema({
       token: String,
       name: String,
       photo: String, // Path to profile image using Facebook Graph API
-      dropped: [{ type: ObjectId, ref: 'Presence' }],
-      found: [{ type: ObjectId, ref: 'Presence' }]
+      released: [{ type: ObjectId, ref: 'Presence' }],
+      encountered: [{ type: ObjectId, ref: 'Presence' }]
     });
 
 module.exports = mongoose.model('User', userSchema);

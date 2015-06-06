@@ -16,7 +16,7 @@ var PresenceStore = Flux.createStore({
 		case 'DROP_PRESENCE': {
 			PresenceStore.emitChange();
 			
-			socket.emit('presence:dropped', payload.presence);
+			socket.emit('presence:released', payload.presence);
 
 			// We've manipulated data attached to the account so reload it
 			AccountActions.loadAccount();

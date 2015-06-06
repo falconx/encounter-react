@@ -1,0 +1,13 @@
+[
+	{
+        "_id": "555c3e3c98489af15277f267",
+        "user": {
+            "_id": "555c3e3c98489af15277f193",
+            "photo": "http://graph.facebook.com/286615164876545/picture?type=large"
+        },
+        "location": [1.2838352, 52.6343464],
+        "distance": 572.7687846606067,
+        "question": "Where can I go for a drink around here?",
+        "encountered": true
+    }
+]

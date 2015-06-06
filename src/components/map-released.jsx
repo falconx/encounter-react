@@ -12,7 +12,7 @@ var MapReleased = React.createClass({
   mixins: [Navigation],
 
   renderMarkers: function() {
-    return this.props.account.dropped.map(function( presence ) {
+    return this.props.account.released.map(function( presence ) {
       var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
 
       return (
@@ -27,11 +27,11 @@ var MapReleased = React.createClass({
   },
 
   render: function() {
-    if( this.props.account.dropped.length ) {
+    if( this.props.account.released.length ) {
       // Center around released presences
       var bounds = new google.maps.LatLngBounds();
 
-      _.each(this.props.account.dropped, function( presence ) {
+      _.each(this.props.account.released, function( presence ) {
         bounds.extend(new google.maps.LatLng( presence.location[1], presence.location[0] ));
       });
 

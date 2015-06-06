@@ -1,0 +1,38 @@
+{
+    "_id": "55603fe7f9e7eaf821372072",
+    "facebookId": "286615164876543",
+    "name": "Matt Layton",
+    "photo": "http://graph.facebook.com/286615164876543/picture?type=large",
+    "encountered": [
+        {
+            "_id": "555c3e3c98489af15277f267",
+            "user": {
+                "_id": "55603fe7f9e7eaf821372072",
+                "photo": "http://graph.facebook.com/286615164876545/picture?type=large"
+            },
+            "location": [1.2838282, 52.6343485],
+            "discovered": "2015-05-25T03:05:52+00:00",
+            "message_thread_id": "5560d49c1a7892564ac62d21"
+        },
+        {
+            "_id": "555c3e3c98489af15277f193",
+            "user": {
+                "_id": "55603fe7f9e7eaf821145076",
+                "photo": "http://graph.facebook.com/286615164876547/picture?type=large"
+            },
+            "location": [1.2838352, 52.6343485],
+            "discovered": "2015-04-12T03:05:44+00:00"
+        }
+    ],
+    "released": [
+        {
+            "_id": "555c3e3c98489af15277f251",
+            "location": [1.2838352, 52.6343464],
+            "encountered_count": 4,
+            "replied_count": 1
+        }
+    ],
+    "active_presences": 1,
+    "unreplied_presences": 1,
+    "unread_messages": 2
+}

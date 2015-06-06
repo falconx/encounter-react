@@ -5,8 +5,8 @@ var User = require('./user');
 var Presence = require('./presence');
 
 var messageSchema = Schema({
-      uid: { type: ObjectId, ref: 'User' },
-      pid: { type: ObjectId, ref: 'Presence' },
+      user: { type: ObjectId, ref: 'User' },
+      presence: { type: ObjectId, ref: 'Presence' },
       message: String
     });
 
