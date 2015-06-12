@@ -46,7 +46,7 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
       }
     }
   ], function( err, nearbyPresences ) {
-    self.populate(nearbyPresences, { path: 'user', select: '_id photo' }, function() {
+    self.populate(nearbyPresences, [{ path: 'user', select: '_id photo' }, { path: 'message' }], function() {
       User
         .findOne({ _id: params.userId })
         .populate('encountered')

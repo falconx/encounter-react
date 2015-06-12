@@ -291,7 +291,7 @@ var MapEncounter = React.createClass({
             <p>
               <div style={accountPhotoStyle} className="account-photo"></div>
             </p>
-            <p>{closest.question}</p>
+            <p>{closest.message.message}</p>
             <p><textarea ref="release_answer"></textarea></p>
             <p>
               <button onClick={this.handlePickupModalPickup}>Pickup</button>
