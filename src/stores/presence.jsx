@@ -1,6 +1,6 @@
 var Flux = require('../flux');
 
-var socket = io.connect();
+// var socket = io.connect();
 
 var AccountStore = require('./account');
 var AccountActions = require('../actions/account');
@@ -13,10 +13,10 @@ var PresenceStore = Flux.createStore({
 	}
 }, function( payload ) {
 	switch( payload.actionType ) {
-		case 'DROP_PRESENCE': {
+		case 'RELEASE_PRESENCE': {
 			PresenceStore.emitChange();
 			
-			socket.emit('presence:released', payload.presence);
+			// socket.emit('presence:released', payload.presence);
 
 			// We've manipulated data attached to the account so reload it
 			AccountActions.loadAccount();

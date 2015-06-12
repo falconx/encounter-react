@@ -89,6 +89,8 @@ var MarkerProfile = React.createClass({
 
       google.maps.event.addListener(marker, 'click', self.props.clickHandler);
 
+      window.markers.push( marker );
+
       this.setState({ marker: marker });
     }
   },

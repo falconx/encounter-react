@@ -4,10 +4,10 @@ var Promise = require('es6-promise').Promise;
 var request = require('superagent');
 
 var PresenceActions = Flux.createActions({
-	dropPresence: function( presence ) {
+	release: function( presence ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.post('/api/presences/released')
+				.post('/api/presences/release')
 				.send({ presence: presence })
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
@@ -18,17 +18,16 @@ var PresenceActions = Flux.createActions({
 				});
 		}).then(function( data ) {
 			return {
-				actionType: 'DROP_PRESENCE',
+				actionType: 'RELEASE_PRESENCE',
 				presence: data
 			};
 		});
 	},
 
-	pickupPresence: function( presenceId ) {
+	pickup: function( presenceId ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.post('/api/presences/encountered')
-				.send({ presenceId: presenceId })
+				.post('/api/presences/' + presenceId + '/encountered')
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
 						resolve(JSON.parse( res.text ));

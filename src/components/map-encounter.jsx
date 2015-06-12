@@ -45,7 +45,7 @@ var MapEncounter = React.createClass({
     (function() {
 
       function success( position ) {
-        console.log({ lat: position.coords.latitude, lng: position.coords.longitude }, 'position encountered');
+        console.log({ lat: position.coords.latitude, lng: position.coords.longitude }, 'position determined');
 
         // If the found position is outside of our threshold, it's too inaccurate to show
         if( position.coords.accuracy <= MapConfig.accuracyThreshold ) {
@@ -150,7 +150,7 @@ var MapEncounter = React.createClass({
     var closest = this.getClosest();
 
     if( closest ) {
-      PresenceActions.pickupPresence( closest._id );
+      PresenceActions.pickup( closest._id );
     }
 
     this.handlePickupModalClose();
@@ -164,10 +164,9 @@ var MapEncounter = React.createClass({
   },
 
   handleReleaseModal: function() {
-    PresenceActions.dropPresence({
+    PresenceActions.release({
       question: this.refs.release_question.getDOMNode().value,
-      location: [ this.state.userPosition.lng, this.state.userPosition.lat ],
-      uid: this.props.account._id
+      location: [ this.state.userPosition.lng, this.state.userPosition.lat ]
     });
 
     this.handleReleaseModalClose();
@@ -199,7 +198,7 @@ var MapEncounter = React.createClass({
           <MarkerProfile
             key={presence._id}
             position={position}
-            photo={presence.uid.photo}
+            photo={presence.user.photo}
             classes={['encountered']} />
         );
       } else {
@@ -209,7 +208,7 @@ var MapEncounter = React.createClass({
             icon={MapConfig.hotspotImage}
             position={position}
             id={presence._id}
-            uid={presence.uid} />
+            uid={presence.user._id} />
         );
       }
     });
@@ -220,7 +219,7 @@ var MapEncounter = React.createClass({
     var closest = this.getClosest();
 
     if( closest ) {
-      var accountPhotoStyle = { backgroundImage: 'url(' + closest.uid.photo + ')' };
+      var accountPhotoStyle = { backgroundImage: 'url(' + closest.user.photo + ')' };
     }
 
     return (

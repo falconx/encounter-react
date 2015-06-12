@@ -22,6 +22,7 @@ require('node-jsx').install({
 // Models
 var User = require('./models/user');
 var Presence = require('./models/presence');
+var Message = require('./models/message');
 
 // Connect to data store
 mongoose.connect('mongodb://localhost/encounter-react');
@@ -109,168 +110,118 @@ function isAuthenticated( req, res, next ) {
 
 app.use('/api', router);
 
-router.route('/auth/facebook').get(function( req, res, next ) {
-  return passport.authenticate('facebook', {
-    scope: facebookAuth.scope
-  })(req, res, next);
-});
+// Login
+router.route('/auth/facebook')
+  .get(function( req, res, next ) {
+    return passport.authenticate('facebook', {
+      scope: facebookAuth.scope
+    })(req, res, next);
+  });
 
-router.route('/auth/facebook/callback').get(function( req, res, next ) {
-  return passport.authenticate('facebook', {
-    successRedirect: facebookAuth.successURL,
-    failureRedirect: facebookAuth.failureURL
-  })(req, res, next);
-});
+router.route('/auth/facebook/callback')
+  .get(function( req, res, next ) {
+    return passport.authenticate('facebook', {
+      successRedirect: facebookAuth.successURL,
+      failureRedirect: facebookAuth.failureURL
+    })(req, res, next);
+  });
 
-router.route('/auth/logout').get(isAuthenticated, function( req, res ) {
-  req.logout();
-  res.redirect('/');
-});
+// Logout
+router.route('/auth/logout')
+  .get(isAuthenticated, function( req, res ) {
+    req.logout();
+    res.redirect('/');
+  });
 
 // Retrieve account
-router.route('/account').get(isAuthenticated, function( req, res ) {
-  fs.readFile(path.resolve(__dirname + '/../mocks/account.json'), 'utf8', function( error, data ) {
-    res.send(data);
+router.route('/account')
+  .get(isAuthenticated, function( req, res, next ) {
+    User
+      .findOne({ _id: req.user._id })
+      .populate('released encountered')
+      .exec(function( err, presences ) {
+        if( err ) { console.log(err); next(); } // Handle error
+
+        Presence.populate(presences, [
+          { path: 'encountered.user', model: 'User', select: '_id photo' }
+        ], function( err, presences ) {
+          if( err ) { console.log(err); next(); } // Handle error
+
+          res.send(presences);
+        });
+      });
   });
-});
 
 // Retrieve all the presences found within the specified distance from the provided location
-router.route('/presences/find/:lng/:lat/:distance').get(isAuthenticated, function( req, res ) {
-  fs.readFile(path.resolve(__dirname + '/../mocks/find.json'), 'utf8', function( error, data ) {
-    res.send(data);
+router.route('/presences/find/:lng/:lat/:distance')
+  .get(isAuthenticated, function( req, res, next ) {
+    var params = _.extend(req.params, { userId: req.user._id });
+
+    Presence.findWithinRadius(params, function( err, presences ) {
+      if( err ) { console.log(err); next(); } // Handle error
+
+      res.send(presences);
+    });
   });
-});
 
-// router.route('/account').get(function( req, res, next ) {
-//   User
-//     .findOne({ _id: req.user._id })
-//     .populate('released encountered')
-//     .exec(function( err, presences ) {
-//       if( err ) {
-//         console.log(err);
-//         next();
-//       }
+// Release presence
+router.route('/presences/release')
+  .post(isAuthenticated, function( req, res, next ) {
+    var message = {
+      user: req.user._id,
+      message: req.body.presence.question
+    };
 
-//       Presence.populate(presences, [
-//         { path: 'released.uid', model: 'User', select: '_id photo' },
-//         { path: 'encountered.uid', model: 'User', select: '_id photo' }
-//       ], function( err, presences ) {
-//         if( err ) {
-//           console.log(err);
-//           next();
-//         }
+    // Create message thread with question
+    new Message(message).save(function( err, message ) {
+      if( err ) { console.log(err); next(); } // Handle error
 
-//         res.send(presences);
-//       });
-//     });
-// });
+      // Update presence with message
+      var presence = _.extend({}, req.body.presence, {
+        user: req.user._id,
+        message: message._id
+      });
 
-// router.route('/presences/released')
+      new Presence(presence).save(function( err, presence ) {
+        if( err ) { console.log(err); next(); } // Handle error
 
-//   // Retrieve users released presences
-//   .get(function( req, res, next ) {
-//     Presence
-//       .find({ uid: req.user._id })
-//       .exec(function( err, presences ) {
-//         if( err ) {
-//           console.log( err );
-//           next();
-//         }
+        // Reference presence in users released presences collection
+        User.findOneAndUpdate(
+          { _id : req.user._id },
+          { $push: { released: presence } },
+          { safe: true, upsert: true },
+          function( err ) {
+            if( err ) { console.log(err); next(); } // Handle error
 
-//         res.send(presences);
-//       });
-//   })
+            res.send(presence);
+          }
+        );
+      });
+    });
+  });
 
-//   // Drop a presence
-//   .post(function( req, res, next ) {
-//     // new Message({
-//     //   uid: req.user._id,
-//     //   message: req.body.presence.question
-//     // }).save(function( err, message ) {
+// Add a presence to the users encountered collection
+router.route('/presences/:id/encounter')
+  .post(function( req, res, next ) {
+    // Todo: Validate distance from presence?
 
-//       // Replace question with a reference to the message instance
-//       // var presence = _.extend({}, req.body.presence, { mid: message._id });
+    Presence
+      findOne({ _id: req.params.id })
+      .exec(function( err, presence ) {
+        if( err ) { console.log(err); next(); } // Handle error
 
-//       new Presence(req.body.presence)
-//         .save(function( err, presence ) {
-//           if( err ) {
-//             // Todo: Handle error
-//             console.log( err );
-//             next();
-//           }
+        User.findOneAndUpdate(
+          { _id : req.user._id },
+          { $push: { encountered: presence } },
+          { safe: true, upsert: true },
+          function( err ) {
+            if( err ) { console.log(err); next(); } // Handle error
 
-//           // Reference presence in users released presences collection
-//           User.findOneAndUpdate(
-//             { _id : req.user._id },
-//             { $push: { released: presence } },
-//             { safe: true, upsert: true },
-//             function( err ) {
-//               if( err ) {
-//                 console.log( err );
-//                 next();
-//               }
-
-//               res.send(presence);
-//             }
-//           );
-//         });
-
-//     // });
-//   });
-
-// router.route('/presences/encountered')
-
-//   // Retrieve users encountered presences
-//   // .get(function( req, res, next ) {
-//   //   User
-//   //     .findOne({ _id: req.user._id })
-//   //     .populate('encountered')
-//   //     .select('encountered')
-//   //     .exec(function( err, presences ) {
-//   //       if( err ) {
-//   //         console.log( err );
-//   //         next();
-//   //       }
-
-//   //       res.send(presences);
-//   //     });
-//   // })
-
-//   // Add a presence to the user's encountered collection
-//   .post(function( req, res, next ) {
-//     Presence
-//       .findOne({ _id: req.body.presenceId })
-//       .exec(function( err, presence ) {
-//         User.findOneAndUpdate(
-//           { _id : req.user._id },
-//           { $push: { encountered: presence } },
-//           { safe: true, upsert: true },
-//           function( err ) {
-//             if( err ) {
-//               console.log(err);
-//               next();
-//             }
-
-//             res.send(presence);
-//           }
-//         );
-//     });
-//   });
-
-// // Retrieve all the presences found within the specified distance from the provided location
-// router.route('/presences/find/:lng/:lat/:distance')
-//   .get(function( req, res, next ) {
-//     var params = _.extend(req.params, { userId: req.user._id });
-
-//     Presence.findWithinRadius(params, function( err, presences ) {
-//       if( err ) {
-//         console.log(err);
-//         next();
-//       }
-
-//       res.send(presences);
-//     });
-//   });
+            res.send(presence);
+          }
+        )
+      });
+  });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
