@@ -27,7 +27,7 @@ var PresenceActions = Flux.createActions({
 	pickup: function( presenceId ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.post('/api/presences/' + presenceId + '/encountered')
+				.post('/api/presences/' + presenceId + '/encounter')
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
 						resolve(JSON.parse( res.text ));

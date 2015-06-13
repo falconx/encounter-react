@@ -206,7 +206,7 @@ router.route('/presences/:id/encounter')
     // Todo: Validate distance from presence?
 
     Presence
-      findOne({ _id: req.params.id })
+      .findOne({ _id: req.params.id })
       .exec(function( err, presence ) {
         if( err ) { console.log(err); next(); } // Handle error
 

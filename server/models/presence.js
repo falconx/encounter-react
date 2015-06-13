@@ -54,16 +54,20 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
         .exec(function( err, user ) {
           var presences = [];
 
-          // Show any encountered presences but ignore others from users which the current user has already encountered a presence from
-          var encounteredUsers = _.pluck(user.encountered, 'user');
+          // Return encountered presences and all others belonging to the owner as encountered
+          var encounteredUsers = _.map(user.encountered, function( encountered ) {
+            return encountered.user.toString();
+          });
+
+          console.log(encounteredUsers);
 
           _.each(nearbyPresences, function( presence ) {
-            var encountered = !!_.findWhere(user.encountered, { _id: presence._id });
-
-            if( encountered || _.indexOf(encounteredUsers, presence.user._id) === -1 ) {
+            if( _.indexOf(encounteredUsers, presence.user._id.toString()) !== -1 ) {
               // Add encountered property to identify whether the presence has already been encountered by the user
-              presences.push(_.extend(presence, { encountered: encountered }));
+              _.extend(presence, { encountered: true });
             }
+
+            presences.push( presence );
           });
 
           cb(err, presences);

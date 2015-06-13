@@ -140,6 +140,12 @@ var MapEncounter = React.createClass({
   },
 
   handlePickupModalClose: function() {
+    var closest = this.getClosest();
+
+    if( closest ) {
+      PresenceActions.pickup( closest._id );
+    }
+
     this.setState({
       showPickupModal: false,
       showMapMenu: false
