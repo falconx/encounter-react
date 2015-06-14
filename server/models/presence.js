@@ -59,8 +59,6 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
             return encountered.user.toString();
           });
 
-          console.log(encounteredUsers);
-
           _.each(nearbyPresences, function( presence ) {
             if( _.indexOf(encounteredUsers, presence.user._id.toString()) !== -1 ) {
               // Add encountered property to identify whether the presence has already been encountered by the user
