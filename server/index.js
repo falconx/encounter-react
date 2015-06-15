@@ -213,9 +213,21 @@ router.route('/presences/:id/encounter')
         User.findOneAndUpdate(
           { _id : req.user._id },
           { $push: { encountered: presence } },
-          { safe: true, upsert: true },
+          { safe: true, upsert: true, new: true },
           function( err ) {
             if( err ) { console.log(err); next(); } // Handle error
+
+            if( req.body.response ) {
+              var message = {
+                user: req.user._id,
+                presence: presence._id,
+                message: req.body.response
+              };
+
+              new Message(message).save(function( err, message ) {
+                if( err ) { console.log(err); next(); } // Handle error
+              });
+            }
 
             res.send(presence);
           }

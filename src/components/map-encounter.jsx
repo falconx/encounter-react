@@ -139,11 +139,11 @@ var MapEncounter = React.createClass({
     this.setState({ showPickupModal: true });
   },
 
-  handlePickupModalClose: function() {
+  handlePickupModalClose: function( response ) {
     var closest = this.getClosest();
 
     if( closest ) {
-      PresenceActions.pickup( closest._id );
+      PresenceActions.pickup( closest._id, response );
     }
 
     this.setState({
@@ -153,13 +153,9 @@ var MapEncounter = React.createClass({
   },
 
   handlePickupModalPickup: function() {
-    var closest = this.getClosest();
+    var response = this.refs.release_answer.getDOMNode().value || undefined;
 
-    if( closest ) {
-      PresenceActions.pickup( closest._id );
-    }
-
-    this.handlePickupModalClose();
+    this.handlePickupModalClose( response );
   },
 
   handleReleaseModalClose: function() {
@@ -178,16 +174,26 @@ var MapEncounter = React.createClass({
     this.handleReleaseModalClose();
   },
 
+  /**
+   * Determine whether the current user has encountered the presence in question
+   */
+  hasEncountered: function( presence ) {
+    return _.findWhere(this.props.account.encountered, { _id: presence._id });
+  },
+
   getInfoboxContent: function() {
     return '<div id="infobox-menu-wrapper"><div id="infobox-menu"><a href="javascript:;" class="menu-item menu-item-encountered"><img src="/images/mapmenuicon-1.png" /></a><a href="javascript:;" class="menu-item menu-item-pickup"><img src="/images/mapmenuicon-2.png" /></a><a href="javascript:;" class="menu-item menu-item-release"><img src="/images/mapmenuicon-3.png" /></a></div></div>';
   },
 
+  /**
+   * Find the closest presence in range of our pickup distance the current user hasn't already found
+   */
   getClosest: function() {
     var self = this;
 
     // Ignore presences that have already been found and those that are not close enough to pick up
     var nearby = _.filter(this.state.nearbyPresences, function( presence ) {
-      return !presence.encountered && presence.distance <= self.state.pickupRadius;
+      return !self.hasEncountered(presence) && presence.distance <= self.state.pickupRadius;
     });
 
     return (nearby && nearby.length) ? nearby[0] : null;
@@ -199,7 +205,7 @@ var MapEncounter = React.createClass({
     return this.state.nearbyPresences.map(function( presence ) {
       var position = new google.maps.LatLng( presence.location[1], presence.location[0] );
 
-      if( presence.encountered ) {
+      if( self.hasEncountered(presence) ) {
         return (
           <MarkerProfile
             key={presence._id}

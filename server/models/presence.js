@@ -15,10 +15,10 @@ var presenceSchema = Schema({
 presenceSchema.index({ location: '2dsphere' });
 
 /**
- * Finds a collection of surrounding presences which has been dropped by other users (sorted by closest first).
+ * Finds a collection of surrounding presences which has been dropped by other users (sorted by closest first)
  *
  * Presences which haven't been encountered but which belong to a user where a presence has been encountered by the current user
- * will be ignored.
+ * will be ignored
  *
  * @param params
  *    Object contianing 'lng', 'lat', 'distance', and 'userId' keys
@@ -60,11 +60,6 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
           });
 
           _.each(nearbyPresences, function( presence ) {
-            if( _.indexOf(encounteredUsers, presence.user._id.toString()) !== -1 ) {
-              // Add encountered property to identify whether the presence has already been encountered by the user
-              _.extend(presence, { encountered: true });
-            }
-
             presences.push( presence );
           });
 
