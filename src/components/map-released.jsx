@@ -2,7 +2,7 @@ var React = require('react');
 var Navigation = require('react-router').Navigation;
 var _ = require('lodash');
 
-var MapConfig = require('../constants/maps').released;
+var Config = require('../config');
 
 var Modal = require('./modal');
 var PresenceMap = require('./presence-map');
@@ -18,7 +18,7 @@ var MapReleased = React.createClass({
       return (
         <Marker
           key={presence._id}
-          icon={MapConfig.hotspotImage}
+          icon={Config.map.hotspotImage}
           position={position}
           id={presence._id}
           uid={presence.uid} />
@@ -37,7 +37,7 @@ var MapReleased = React.createClass({
 
       return (
         <PresenceMap
-          mapOptions={MapConfig.options}
+          mapOptions={Config.map.options}
           center={bounds.getCenter()}
           bounds={bounds}
           {...this.props}>

@@ -35,13 +35,13 @@ Phase 2:
  1. [x] If possible, show circular profile image at center of map. Otherwise show firefly image.
  2. [x] On clicking the image/current position, show a menu: Drop presence, ...
  3. [x] Refactor map-encounter.jsx and presence-map.jsx
- 4. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
- 5. [x] Request profile image using Passport instead of using Facebook Graph API
- 6. [x] Dropped presences screen.
- 7. [ ] Use socket.io to show presence when dropped nearby.
+ 4. [x] Request profile image using Passport instead of using Facebook Graph API.
+ 5. [x] Dropped presences screen.
+ 6. [ ] Use socket.io to show presence when dropped nearby.
+ 7. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world.
 
 Phase 3:
- 1. [ ] Only update the map once the user has moved N distance since the last check.
+ 1. [ ] Only update the map once the user has moved N distance since the last check to avoid hammering server.
  2. [x] Allow pickup of a nearby (closest) presence.
  3. [x] Don't allow clicking on poi.
  4. [x] Don't allow map zoom level to change.

@@ -8,14 +8,14 @@ var flattenChildren = require('react/lib/flattenChildren');
 var Modal = require('./modal');
 var EncounterMapOverlay = require('../map-overlay');
 
-var MapConfig = require('../constants/maps').defaults;
+var Config = require('../config');
 
 var PresenceActions = require('../actions/presence');
 
 var PresenceMap = React.createClass({
   getDefaultProps: function() {
     return {
-      mapOptions: {}, // Config to override MapConfig defaults
+      mapOptions: {}, // Config to override defaults
       center: { lat: 0, lng: 0 }, // LatLngLiteral converted to LatLng by google maps
       bounds: undefined, // Optional LatLngBounds to restrict the map view
       showOverlay: false
@@ -31,8 +31,8 @@ var PresenceMap = React.createClass({
   componentDidMount: function() {
     var self = this;
     var canvasEl = this.refs.map_encounter.getDOMNode();
-    var map = new google.maps.Map(canvasEl, _.extend({}, MapConfig, this.props.mapOptions, { center: this.props.center }));
-    var overlay = this.props.showOverlay ? new EncounterMapOverlay( map.getBounds(), MapConfig.overlayImage, map ) : null;
+    var map = new google.maps.Map(canvasEl, _.extend({}, Config.map, this.props.mapOptions, { center: this.props.center }));
+    var overlay = this.props.showOverlay ? new EncounterMapOverlay( map.getBounds(), Config.map.overlayImage, map ) : null;
 
     // Since markers are generated lower in the component hierarchy, we store them as a global so we can access them here
     window.markers = [];

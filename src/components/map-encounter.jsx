@@ -3,7 +3,7 @@ var _ = require('lodash');
 
 var socket = io.connect();
 
-var MapConfig = require('../constants/maps').encounter; // Encounter map config
+var Config = require('../config');
 
 var Navigation = require('react-router').Navigation;
 
@@ -23,8 +23,8 @@ var MapEncounter = React.createClass({
     return {
       nearbyPresences: [],
       userPosition: { lat: 0, lng: 0 },
-      searchRadius: MapConfig.searchRadius,
-      pickupRadius: MapConfig.pickupRadius,
+      searchRadius: Config.map.searchRadius,
+      pickupRadius: Config.map.pickupRadius,
       showMapMenu: false,
       showReleaseModal: false,
       showPickupModal: false
@@ -48,7 +48,7 @@ var MapEncounter = React.createClass({
         console.log({ lat: position.coords.latitude, lng: position.coords.longitude }, 'position determined');
 
         // If the found position is outside of our threshold, it's too inaccurate to show
-        if( position.coords.accuracy <= MapConfig.accuracyThreshold ) {
+        if( position.coords.accuracy <= Config.map.accuracyThreshold ) {
           self.setState({
             userPosition: { lat: position.coords.latitude, lng: position.coords.longitude }
           });
@@ -117,13 +117,13 @@ var MapEncounter = React.createClass({
 
   handleSearchRadiusChange: function() {
     this.setState({
-      searchRadius: parseInt(this.refs.search_radius.getDOMNode().value) || MapConfig.searchRadius
+      searchRadius: parseInt(this.refs.search_radius.getDOMNode().value) || Config.map.searchRadius
     }, this.findNearbyPresences);
   },
 
   handlePickupRadiusChange: function() {
     this.setState({
-      pickupRadius: parseInt(this.refs.pickup_radius.getDOMNode().value) || MapConfig.pickupRadius
+      pickupRadius: parseInt(this.refs.pickup_radius.getDOMNode().value) || Config.map.pickupRadius
     });
   },
 
@@ -217,7 +217,7 @@ var MapEncounter = React.createClass({
         return (
           <Marker
             key={presence._id}
-            icon={MapConfig.hotspotImage}
+            icon={Config.map.hotspotImage}
             position={position}
             id={presence._id}
             uid={presence.user._id} />
@@ -237,7 +237,7 @@ var MapEncounter = React.createClass({
     return (
       <div>
         <PresenceMap
-          mapOptions={MapConfig.options}
+          mapOptions={Config.map.options}
           center={this.state.userPosition}
           showOverlay={true}
           {...this.props}>
