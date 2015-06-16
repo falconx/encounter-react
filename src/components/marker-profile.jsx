@@ -83,8 +83,6 @@ var MarkerProfile = React.createClass({
 
     // Create or update marker
     // if( this.state && this.state.marker ) {
-    //   console.log('update marker-profile', this.props.position);
-
     //   this.state.marker.setOptions( this.props );
     // } else {
       var marker = new CustomMarker( this.props.map, this.props.position, this.props.photo, this.props.classes );

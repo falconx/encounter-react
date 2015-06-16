@@ -128,7 +128,7 @@ router.route('/auth/facebook/callback')
 
 // Logout
 router.route('/auth/logout')
-  .get(isAuthenticated, function( req, res ) {
+  .get(function( req, res ) {
     req.logout();
     res.redirect('/');
   });
