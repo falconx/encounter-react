@@ -96,6 +96,6 @@ Phase 9:
  2. [ ] Show help screen for first time users.
  3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.
 
- Phase 10:
+Phase 10:
  1. [ ] Get a PhoneGap client build working.
  2. [ ] https only server.
