@@ -12,19 +12,15 @@
 - initializeTouchEvents(boolean shouldUseTouch)
 
 # Notes & Questions
-- Visually disable/hide pickup menu item when not near another presence.
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
 - FacebookId is revealed in response data - Will be fixed in Phase 4 with encryption and proxy on server.
 - nearbyPresence query returns photo - should this be a separate query?
-- How can we make it more obvious that you are close enough to a presence to pick it up:
--- Visually indicate radius.
--- Notification/buzz phone if possible.
-
-- https
 
 Luke:
- 1. [ ] Design favicon
- 2. [ ] Design app icon
+ 1. [ ] Design favicon.
+ 2. [ ] Design app icon.
+ 3. [ ] Visually disable/hide pickup menu item when not near another presence.
+ 4. [ ] How can we make it more obvious that you are close enough to a presence to pick it up?
 
 # Sprints
 Phase 1:
@@ -42,6 +38,7 @@ Phase 2:
  4. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world
  5. [x] Request profile image using Passport instead of using Facebook Graph API
  6. [x] Dropped presences screen.
+ 7. [ ] Use socket.io to show presence when dropped nearby.
 
 Phase 3:
  1. [ ] Only update the map once the user has moved N distance since the last check.
@@ -98,3 +95,7 @@ Phase 9:
  1. [ ] Quiz system.
  2. [ ] Show help screen for first time users.
  3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.
+
+ Phase 10:
+ 1. [ ] Get a PhoneGap client build working.
+ 2. [ ] https only server.
