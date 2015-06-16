@@ -227,6 +227,8 @@ var MapEncounter = React.createClass({
   },
 
   render: function() {
+    console.log('render map-encounter');
+
     var userPosition = new google.maps.LatLng( this.state.userPosition.lat, this.state.userPosition.lng );
     var closest = this.getClosest();
 
