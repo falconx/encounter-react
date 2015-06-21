@@ -2,8 +2,7 @@ var React = require('react');
 var _ = require('lodash');
 
 var Config = require('../config');
-
-var socket = ( Config.sockets ) ? io.connect() : undefined;
+var socket = io.connect();
 
 var Navigation = require('react-router').Navigation;
 
@@ -36,6 +35,13 @@ var MapEncounter = React.createClass({
     PresenceActions.findWithinRadius( this.state.userPosition.lng, this.state.userPosition.lat, this.state.searchRadius );
   },
 
+  getDistanceBetween: function( latLngA, latLngB ) {
+    var pointA = new google.maps.LatLng( latLngA.lat, latLngA.lng );
+    var pointB = new google.maps.LatLng( latLngB.lat, latLngB.lng );
+
+    return google.maps.geometry.spherical.computeDistanceBetween( pointA, pointB );
+  },
+
   componentDidMount: function() {
     var self = this;
 
@@ -58,16 +64,13 @@ var MapEncounter = React.createClass({
 
           // Only perform an update if we have moved a specified distance from our last search to avoid hammering the server
           if( self.state.lastSearch ) {
-            var pointA = new google.maps.LatLng( coords.lat, coords.lng );
-            var pointB = new google.maps.LatLng( self.state.lastSearch.lat, self.state.lastSearch.lng );
-            var distance = google.maps.geometry.spherical.computeDistanceBetween( pointA, pointB );
+            var distance = self.getDistanceBetween( coords, self.state.lastSearch );
 
-            console.log('distance', distance);
             if( distance >= Config.map.searchThreshold ) {
-              alert('update');
               self.setState({ lastSearch: coords }, self.findNearbyPresences);
             }
           } else {
+            // Initial search
             self.setState({ lastSearch: coords }, self.findNearbyPresences);
           }
         } else {
@@ -110,12 +113,14 @@ var MapEncounter = React.createClass({
     });
 
     // Update preference references if we find one has been released nearby
-    if( socket ) {
-      socket.on('presence:released', function() {
-        // Todo: This will happen too frequently in the real-world
+    socket.on('presence:release', function( presence ) {
+      var distance = self.getDistanceBetween(self.state.userPosition, { lat: presence.location[1], lng: presence.location[0] });
+
+      // Perform another search if the newly released presence is within our search range
+      if( Config.debug || distance <= Config.map.searchRadius ) {
         self.findNearbyPresences();
-      });
-    }
+      }
+    });
   },
 
   componentWillUnmount: function() {
@@ -155,11 +160,11 @@ var MapEncounter = React.createClass({
     this.setState({ showPickupModal: true });
   },
 
-  handlePickupModalClose: function( response ) {
+  handlePickupModalClose: function() {
     var closest = this.getClosest();
 
     if( closest ) {
-      PresenceActions.pickup( closest._id, response );
+      PresenceActions.pickup( closest._id );
     }
 
     this.setState({
@@ -170,8 +175,16 @@ var MapEncounter = React.createClass({
 
   handlePickupModalPickup: function() {
     var response = this.refs.release_answer.getDOMNode().value || undefined;
+    var closest = this.getClosest();
 
-    this.handlePickupModalClose( response );
+    if( closest ) {
+      PresenceActions.pickup( closest._id, response );
+    }
+
+    this.setState({
+      showPickupModal: false,
+      showMapMenu: false
+    });
   },
 
   handleReleaseModalClose: function() {

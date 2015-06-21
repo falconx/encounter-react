@@ -16,6 +16,9 @@
 - FacebookId is revealed in response data - Will be fixed in Phase 4 with encryption and proxy on server.
 - nearbyPresence query returns photo - should this be a separate query?
 
+# Bugs
+ 1. Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on.
+
 Luke:
  1. [ ] Design favicon.
  2. [ ] Design app icon.
@@ -36,19 +39,19 @@ Phase 2:
  2. [x] On clicking the image/current position, show a menu: Drop presence, ...
  3. [x] Refactor map-encounter.jsx and presence-map.jsx
  4. [x] Request profile image using Passport instead of using Facebook Graph API.
- 5. [x] Dropped presences screen.
- 6. [ ] Use socket.io to show presence when dropped nearby.
- 7. [ ] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world.
+ 5. [x] Released presences screen.
+ 6. [x] Use socket.io to show presence when dropped nearby.
+ 7. [x] map-encounter.jsx: Updating on socket listeners will happen too frequently in the real world.
 
 Phase 3:
- 1. [ ] Only update the map once the user has moved N distance since the last check to avoid hammering server.
+ 1. [x] Only update the map once the user has moved N distance since the last check to avoid hammering server.
  2. [x] Allow pickup of a nearby (closest) presence.
  3. [x] Don't allow clicking on poi.
  4. [x] Don't allow map zoom level to change.
  5. [x] Confirmation screen when releasing presence.
  6. [ ] Remove presence data in real-time once they have been removed.
  7. [x] Don't allow map panning.
- 8. [ ] Dropped presences screen stats.
+ 8. [ ] Released presences screen stats.
  9. [x] Show account photo as presence icon for found presenecs.
  10. [x] Hide all other presences that belong to a user after finding one that belongs to them.
  11. [x] Redraw marker icons after picking up a presence.
@@ -67,7 +70,7 @@ Phase 4:
  6. [ ] Encrypt facebookId or entire account photo url path on the server via proxy.
 
 Phase 5:
- 1. [ ] Only allow 3 presences to be released at any one time, per user.
+ 1. [x] Only allow 3 presences to be released at any one time, per user.
  2. [ ] Expire presences over time.
  3. [ ] Visually indicate time remaining on dropped presences screen.
  4. [ ] Visually indicate time remaining on found presences screen.

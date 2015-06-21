@@ -252,9 +252,9 @@ var server = app.start();
 var io = require('socket.io').listen(server);
 
 io.sockets.on('connection', function( socket ) {
-  // Presence dropped
-  socket.on('presence:dropped', function( data ) {
-    io.sockets.emit('presence:dropped', data);
+  // Presence released
+  socket.on('presence:release', function( data ) {
+    io.sockets.emit('presence:release', data);
   });
 
   // Presence expired

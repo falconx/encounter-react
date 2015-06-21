@@ -14,6 +14,24 @@ var presenceSchema = Schema({
 
 presenceSchema.index({ location: '2dsphere' });
 
+presenceSchema.pre('save', function( next ) {
+  var self = this;
+
+  User.findOne({ _id: this.user }, 'released', function( err, user ) {
+    if( err ) {
+      next(err);
+    } else if( user.released.length >= 3 ) {
+      var message = 'Max released count reached';
+
+      console.log('fail');
+      self.invalidate('released', message);
+      next(new Error(message));
+    } else {
+      next();
+    }
+  });
+});
+
 /**
  * Finds a collection of surrounding presences which has been dropped by other users (sorted by closest first)
  *

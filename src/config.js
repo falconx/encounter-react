@@ -1,5 +1,5 @@
 module.exports = {
-  sockets: true, // Communicate presence data over sockets
+  debug: false,
   map: {
     overlayImage: '/images/mapbg.png',
     hotspotImage: {
@@ -8,7 +8,7 @@ module.exports = {
       origin: new google.maps.Point(0, 0),
       scaledSize: new google.maps.Size(50, 50)
     },
-    searchThreshold: 20, // How many meters to move before searching for nearby presences
+    searchThreshold: 100, // How many meters to move before searching for nearby presences
     accuracyThreshold: 250, // Meters
     searchRadius: 750, // The radius range in which presences will appear on the map (meters)
     pickupRadius: 250, // The radius range in which a user can pickup a presence (meters)
