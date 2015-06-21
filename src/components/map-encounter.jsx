@@ -1,9 +1,9 @@
 var React = require('react');
 var _ = require('lodash');
 
-var socket = io.connect();
-
 var Config = require('../config');
+
+var socket = ( Config.sockets ) ? io.connect() : undefined;
 
 var Navigation = require('react-router').Navigation;
 
@@ -45,17 +45,31 @@ var MapEncounter = React.createClass({
     (function() {
 
       function success( position ) {
-        console.log({ lat: position.coords.latitude, lng: position.coords.longitude }, 'position determined');
+        var coords = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude
+        };
+
+        console.log(coords, 'position determined');
 
         // If the found position is outside of our threshold, it's too inaccurate to show
         if( position.coords.accuracy <= Config.map.accuracyThreshold ) {
-          self.setState({
-            userPosition: { lat: position.coords.latitude, lng: position.coords.longitude }
-          });
+          self.setState({ userPosition: coords });
 
-          // Todo: Only perform an update if we have moved a specified distance from our last search to avoid hammering
-          // the server
-          self.findNearbyPresences();
+          // Only perform an update if we have moved a specified distance from our last search to avoid hammering the server
+          if( self.state.lastSearch ) {
+            var pointA = new google.maps.LatLng( coords.lat, coords.lng );
+            var pointB = new google.maps.LatLng( self.state.lastSearch.lat, self.state.lastSearch.lng );
+            var distance = google.maps.geometry.spherical.computeDistanceBetween( pointA, pointB );
+
+            console.log('distance', distance);
+            if( distance >= Config.map.searchThreshold ) {
+              alert('update');
+              self.setState({ lastSearch: coords }, self.findNearbyPresences);
+            }
+          } else {
+            self.setState({ lastSearch: coords }, self.findNearbyPresences);
+          }
         } else {
           // Todo: Handle location not found
           console.log('Position could not be determined');
@@ -96,10 +110,12 @@ var MapEncounter = React.createClass({
     });
 
     // Update preference references if we find one has been released nearby
-    socket.on('presence:released', function() {
-      // Todo: This will happen too frequently in the real-world
-      self.findNearbyPresences();
-    });
+    if( socket ) {
+      socket.on('presence:released', function() {
+        // Todo: This will happen too frequently in the real-world
+        self.findNearbyPresences();
+      });
+    }
   },
 
   componentWillUnmount: function() {
