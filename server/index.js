@@ -245,6 +245,21 @@ router.route('/presences/:id/messages')
 
         res.send(messages);
       });
+  })
+  .post(function( req, res, next ) {
+    // Todo: Validate the user has permissions to post this message
+
+    var message = {
+      user: req.user._id,
+      presence: req.body.presenceId,
+      message: req.body.message
+    };
+
+    new Message(message).save(function( err, message ) {
+      if( err ) { console.log(err); next(); } // Handle error
+
+      res.send(message);
+    });
   });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

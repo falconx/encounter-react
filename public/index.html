@@ -51,6 +51,42 @@
       width: 75px;
     }
 
+    .message-thread ul:after {
+      content: '';
+      display: table;
+      clear: both;
+    }
+
+    .message-thread li {
+      clear: both;
+      float: right;
+      max-width: 80%;
+      list-style: none;
+    }
+
+    .message-thread li > div {
+      padding: .5rem .75rem;
+      color: #fff;
+      background-color: #000;
+    }
+
+    .message-thread li.own {
+      float: left;
+    }
+
+    .message-thread li.own > div {
+      color: inherit;
+      background-color: #eaeaea;
+    }
+
+    .message-thread label {
+      display: block;
+    }
+
+    .message-thread p:last-child {
+      margin-bottom: 0;
+    }
+
     /* Modal ------------------------------ */
 
     .modal {

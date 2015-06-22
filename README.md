@@ -102,3 +102,6 @@ Phase 9:
 Phase 10:
  1. [ ] Get a PhoneGap client build working.
  2. [ ] https only server.
+
+ Phase 11:
+ 1. [ ] Message system via sockets
