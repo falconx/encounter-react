@@ -1,5 +1,4 @@
 var Flux = require('../flux');
-var Config = require('../config');
 var socket = io.connect();
 
 var AccountStore = require('./account');

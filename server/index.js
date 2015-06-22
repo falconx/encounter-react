@@ -288,4 +288,9 @@ io.sockets.on('connection', function( socket ) {
   socket.on('presence:expired', function( data ) {
     io.sockets.emit('presence:expired', data);
   });
+
+  // Message sent
+  socket.on('message:sent', function( data ) {
+    io.sockets.emit('message:sent', data);
+  })
 });

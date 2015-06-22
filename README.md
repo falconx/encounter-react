@@ -15,6 +15,7 @@
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
 - FacebookId is revealed in response data - Will be fixed in Phase 4 with encryption and proxy on server.
 - nearbyPresence query returns photo - should this be a separate query?
+- How to handle encountered display when you have a presence to a user who found a different presence which you released.
 
 # Bugs
  1. Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on.
@@ -60,6 +61,7 @@ Phase 3:
  14. [x] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a separate radius check to determine if the user is close enough to the presence to pick it up.
  15. [x] Have nearest query return distance away.
  16. [x] Don't allow pickup of presences which belong to a user they have already found.
+ 17. [ ] Encountered list should show when people have responded to your own released presences.
 
 Phase 4:
  1. [x] Create found presences page and list found presences.

@@ -12,6 +12,8 @@ var Encountered = React.createClass({
 	},
 
 	render: function() {
+		// Todo: List people have responded to your own released presences.
+
 		return (
 			<div className="encountered">
 				<ul>

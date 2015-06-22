@@ -1,6 +1,8 @@
 var React = require('react');
 var moment = require('moment');
 
+var socket = io.connect();
+
 var MessageActions = require('../actions/message');
 var MessageStore = require('../stores/message');
 
@@ -23,7 +25,13 @@ var MessageThread = React.createClass({
 	},
 
 	componentDidMount: function() {
+		var self = this;
+
 		MessageActions.getMessageThread( this.props.params.presenceId );
+
+		socket.on('message:sent', function( message ) {
+			MessageActions.getMessageThread( self.props.params.presenceId );
+		});
 	},
 
 	storeDidChange: function() {

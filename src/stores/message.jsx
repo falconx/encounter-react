@@ -1,4 +1,5 @@
 var Flux = require('../flux');
+var socket = io.connect();
 
 var AccountStore = require('./account');
 var AccountActions = require('../actions/account');
@@ -19,6 +20,9 @@ var MessageStore = Flux.createStore({
 
 		case 'SEND_MESSAGE': {
 			_messageThread.push( payload.message );
+
+			socket.emit('message:sent', payload.message);
+
 			MessageStore.emitChange();
 		}
 	}
