@@ -62,6 +62,26 @@ var PresenceActions = Flux.createActions({
 				presences: data || []
 			};
 		});
+	},
+
+	getMessageThread: function( presenceId ) {
+		return new Promise(function( resolve, rej ) {
+			request
+				.get('/api/presences/' + presenceId + '/messages')
+				.set('Accept', 'application/json')
+				.end(function( err, res ) {
+					if( !err && res.status === 200 ) {
+						resolve(JSON.parse( res.text ));
+					}
+
+					rej();
+				});
+		}).then(function( data ) {
+			return {
+				actionType: 'GET_MESSAGE_THREAD',
+				messages: data
+			};
+		});
 	}
 });
 

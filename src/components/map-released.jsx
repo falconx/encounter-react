@@ -36,15 +36,20 @@ var MapReleased = React.createClass({
       });
 
       return (
-        <PresenceMap
-          mapOptions={Config.map.options}
-          center={bounds.getCenter()}
-          bounds={bounds}
-          {...this.props}>
+        <div>
+          <PresenceMap
+            mapOptions={Config.map.options}
+            center={bounds.getCenter()}
+            bounds={bounds}
+            {...this.props}>
 
-          {this.renderMarkers()}
+            {this.renderMarkers()}
 
-        </PresenceMap>
+          </PresenceMap>
+          <ul>
+            <li>Released: { this.props.account.released.length }. <small>You have {3 - this.props.account.released.length} remaining.</small></li>
+          </ul>
+        </div>
       );
     }
 

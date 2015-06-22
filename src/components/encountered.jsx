@@ -1,6 +1,8 @@
 var React = require('react');
 var moment = require('moment');
 
+var Link = require('react-router').Link;
+
 var Encountered = React.createClass({
 	// Todo: Would this be more appropritate in a Mixin?
 	statics: {
@@ -18,8 +20,10 @@ var Encountered = React.createClass({
 
 						return (
 							<li key={presence._id}>
-								<div className="account-photo" style={style}></div>
-								<p>Released: {Encountered.dateFromObjectId( presence._id )}</p>
+								<Link to="message-thread" params={{ presenceId: presence._id }}>
+									<div className="account-photo" style={style}></div>
+									<p>Released: {Encountered.dateFromObjectId( presence._id )}</p>
+								</Link>
 							</li>
 						);
 					})}

@@ -8,8 +8,7 @@ var _ = require('lodash');
 
 var presenceSchema = Schema({
       user: { type: ObjectId, ref: 'User' },
-      location: [{ type: Number, required: true }], // [lng, lat]
-      message: { type: ObjectId, ref: 'Message' } // Reference to the initial question
+      location: [{ type: Number, required: true }] // [lng, lat]
     });
 
 presenceSchema.index({ location: '2dsphere' });
@@ -64,7 +63,7 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
       }
     }
   ], function( err, nearbyPresences ) {
-    self.populate(nearbyPresences, [{ path: 'user', select: '_id photo' }, { path: 'message' }], function() {
+    self.populate(nearbyPresences, [{ path: 'user', select: '_id photo' }], function() {
       User
         .findOne({ _id: params.userId })
         .populate('encountered')
@@ -77,11 +76,27 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
             return encountered.user.toString();
           });
 
-          _.each(nearbyPresences, function( presence ) {
-            presences.push( presence );
-          });
+          var i = 0;
 
-          cb(err, presences);
+          _.each(nearbyPresences, function( presence ) {
+            new Promise(function( resolve, rej ) {
+              // Add question to response
+              Message.getQuestion(presence, function( err, question ) {
+                _.extend(presence, { question: question });
+
+                presences.push( presence );
+
+                i++;
+
+                resolve();
+              });
+            }).then(function() {
+              // Loop until we have pushed all nearby presences
+              if( i === nearbyPresences.length ) {
+                cb(err, presences);
+              }
+            });
+          });
         });
     });
   });

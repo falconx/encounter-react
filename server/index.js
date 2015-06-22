@@ -164,39 +164,37 @@ router.route('/presences/find/:lng/:lat/:distance')
     });
   });
 
-// Release presence
 router.route('/presences/release')
   .post(isAuthenticated, function( req, res, next ) {
-    var message = {
-      user: req.user._id,
-      message: req.body.presence.question
-    };
+    var presence = _.extend({}, req.body.presence, {
+      user: req.user._id
+    });
 
-    // Create message thread with question
-    new Message(message).save(function( err, message ) {
+    new Presence(presence).save(function( err, presence ) {
       if( err ) { console.log(err); next(); } // Handle error
 
-      // Update presence with message
-      var presence = _.extend({}, req.body.presence, {
-        user: req.user._id,
-        message: message._id
-      });
+      // Reference presence in users released presences collection
+      User.findOneAndUpdate(
+        { _id : req.user._id },
+        { $push: { released: presence } },
+        { safe: true, upsert: true },
+        function( err ) {
+          if( err ) { console.log(err); next(); } // Handle error
 
-      new Presence(presence).save(function( err, presence ) {
-        if( err ) { console.log(err); next(); } // Handle error
+          var message = {
+            user: req.user._id,
+            presence: presence._id,
+            message: req.body.presence.question
+          };
 
-        // Reference presence in users released presences collection
-        User.findOneAndUpdate(
-          { _id : req.user._id },
-          { $push: { released: presence } },
-          { safe: true, upsert: true },
-          function( err ) {
+          // Create message thread with question
+          new Message(message).save(function( err, message ) {
             if( err ) { console.log(err); next(); } // Handle error
 
             res.send(presence);
-          }
-        );
-      });
+          });
+        }
+      );
     });
   });
 
@@ -232,6 +230,20 @@ router.route('/presences/:id/encounter')
             res.send(presence);
           }
         )
+      });
+  });
+
+// Retrieve message thread
+router.route('/presences/:id/messages')
+  .get(function( req, res, next ) {
+    // Todo: Validate the user has permissions to view these messages
+
+    Message
+      .find({ presence: req.params.id })
+      .exec(function( err, messages ) {
+        if( err ) { console.log(err); next(); } // Handle error
+
+        res.send(messages);
       });
   });
 

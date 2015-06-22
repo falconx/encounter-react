@@ -332,7 +332,7 @@ var MapEncounter = React.createClass({
             <p>
               <div style={accountPhotoStyle} className="account-photo"></div>
             </p>
-            <p>{closest.message.message}</p>
+            <p>{closest.question}</p>
             <p><textarea ref="release_answer"></textarea></p>
             <p>
               <button onClick={this.handlePickupModalPickup}>Pickup</button>
@@ -345,4 +345,4 @@ var MapEncounter = React.createClass({
   }
 });
 
- module.exports = MapEncounter;
+module.exports = MapEncounter;

@@ -6,10 +6,15 @@ var AccountStore = require('./account');
 var AccountActions = require('../actions/account');
 
 var _nearbyPresences = [];
+var _messageThread = [];
 
 var PresenceStore = Flux.createStore({
 	getNearbyPresences: function() {
 		return _nearbyPresences;
+	},
+
+	getMessageThread: function() {
+		return _messageThread;
 	}
 }, function( payload ) {
 	switch( payload.actionType ) {
@@ -32,6 +37,12 @@ var PresenceStore = Flux.createStore({
 
 		case 'FIND_PRESENCES': {
 			_nearbyPresences = payload.presences;
+			PresenceStore.emitChange();
+			break;
+		}
+
+		case 'GET_MESSAGE_THREAD': {
+			_messageThread = payload.messages;
 			PresenceStore.emitChange();
 			break;
 		}
