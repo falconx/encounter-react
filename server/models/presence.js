@@ -7,7 +7,7 @@ var Promise = require('es6-promise').Promise;
 var _ = require('lodash');
 
 var presenceSchema = Schema({
-      user: { type: ObjectId, ref: 'User' },
+      creator: { type: ObjectId, ref: 'User' },
       location: [{ type: Number, required: true }] // [lng, lat]
     });
 
@@ -57,13 +57,13 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
     },
     {
       $match: {
-        user: {
+        creator: {
           $ne: params.userId
         }
       }
     }
   ], function( err, nearbyPresences ) {
-    self.populate(nearbyPresences, [{ path: 'user', select: '_id photo' }], function() {
+    self.populate(nearbyPresences, [{ path: 'creator', select: 'photo' }], function() {
       User
         .findOne({ _id: params.userId })
         .populate('encountered')

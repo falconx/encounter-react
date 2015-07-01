@@ -1,9 +1,15 @@
 var React = require('react');
 var moment = require('moment');
+var _ = require('lodash');
 
 var Link = require('react-router').Link;
 
+var MessageActions = require('../actions/message');
+var MessageStore = require('../stores/message');
+
 var Encountered = React.createClass({
+	mixins: [MessageStore.mixin],
+
 	// Todo: Would this be more appropritate in a Mixin?
 	statics: {
 		dateFromObjectId: function( id, format ) {
@@ -11,13 +17,27 @@ var Encountered = React.createClass({
 		}
 	},
 
-	render: function() {
-		// Todo: List people have responded to your own released presences.
+	getInitialState: function() {
+		return {
+			directory: []
+		}
+	},
 
+	componentDidMount: function() {
+		MessageActions.getMessageDirectory();
+	},
+
+	storeDidChange: function() {
+		this.setState({
+			directory: MessageStore.getMessageDirectory()
+		});
+	},
+
+	render: function() {
 		return (
-			<div className="encountered">
+			<div className="message-directory">
 				<ul>
-					{this.props.account.encountered.map(function( presence ) {
+					{this.state.directory.map(function( presence ) {
 						var style = { backgroundImage: 'url(' + presence.user.photo + ')' };
 
 						return (

@@ -23,6 +23,7 @@ require('node-jsx').install({
 var User = require('./models/user');
 var Presence = require('./models/presence');
 var Message = require('./models/message');
+var Encounter = require('./models/encounter');
 
 // Connect to data store
 mongoose.connect('mongodb://localhost/encounter-react');
@@ -71,7 +72,7 @@ passport.use(
       }
 
       if( user ) {
-        // User record found
+        // Existing user record found
         done(null, user);
       } else {
         // Create new user record
@@ -103,9 +104,6 @@ function isAuthenticated( req, res, next ) {
   res.sendStatus(403);
 }
 
-// var routes = require('./routes/index')(passport);
-// app.use('/', routes);
-
 // Auth routes
 
 app.use('/api', router);
@@ -134,133 +132,171 @@ router.route('/auth/logout')
   });
 
 // Retrieve account
-router.route('/account')
-  .get(isAuthenticated, function( req, res, next ) {
-    User
-      .findOne({ _id: req.user._id })
-      .populate('released encountered')
-      .exec(function( err, presences ) {
-        if( err ) { console.log(err); next(); } // Handle error
-
-        Presence.populate(presences, [
-          { path: 'encountered.user', model: 'User', select: '_id photo' }
-        ], function( err, presences ) {
-          if( err ) { console.log(err); next(); } // Handle error
-
-          res.send(presences);
+router.route('/account').get(isAuthenticated, function( req, res ) {
+  User.findOne({ '_id': req.user._id }).exec(function( err, user ) {
+    // Add 'released' and 'encountered' presence collections
+    Encounter.find({ 'creator': req.user._id }).exec(function( err, released ) {
+      Encounter.find({ 'discoverer': req.user._id }).exec(function( err, encountered ) {
+        _.extend(user, {
+          'encountered': encountered,
+          'released': released
         });
+
+        res.send(user);
       });
+    });
   });
+});
 
 // Retrieve all the presences found within the specified distance from the provided location
-router.route('/presences/find/:lng/:lat/:distance')
-  .get(isAuthenticated, function( req, res, next ) {
-    var params = _.extend(req.params, { userId: req.user._id });
+router.route('/presences/find/:lng/:lat/:distance').get(isAuthenticated, function( req, res ) {
+  var params = _.extend(req.params, { userId: req.user._id });
 
-    Presence.findWithinRadius(params, function( err, presences ) {
-      if( err ) { console.log(err); next(); } // Handle error
-
-      res.send(presences);
-    });
+  Presence.findWithinRadius(params, function( err, presences ) {
+    res.send(presences);
   });
+});
 
-router.route('/presences/release')
-  .post(isAuthenticated, function( req, res, next ) {
-    var presence = _.extend({}, req.body.presence, {
-      user: req.user._id
-    });
-
-    new Presence(presence).save(function( err, presence ) {
-      if( err ) { console.log(err); next(); } // Handle error
-
-      // Reference presence in users released presences collection
-      User.findOneAndUpdate(
-        { _id : req.user._id },
-        { $push: { released: presence } },
-        { safe: true, upsert: true },
-        function( err ) {
-          if( err ) { console.log(err); next(); } // Handle error
-
-          var message = {
-            user: req.user._id,
-            presence: presence._id,
-            message: req.body.presence.question
-          };
-
-          // Create message thread with question
-          new Message(message).save(function( err, message ) {
-            if( err ) { console.log(err); next(); } // Handle error
-
-            res.send(presence);
-          });
-        }
-      );
-    });
+// Message directory
+// Todo: Where released presences have been responded to
+router.route('/encounters').get(isAuthenticated, function( req, res ) {
+  Encounter.find({
+    '$or': [
+      { 'creator': req.user._id }, // Released
+      { 'discoverer': req.user._id } // Encountered
+    ]
+  })
+  .exec(function( err, encounters ) {
+    res.send(encounters);
   });
-
-// Add a presence to the users encountered collection
-router.route('/presences/:id/encounter')
-  .post(function( req, res, next ) {
-    // Todo: Validate distance from presence?
-
-    Presence
-      .findOne({ _id: req.params.id })
-      .exec(function( err, presence ) {
-        if( err ) { console.log(err); next(); } // Handle error
-
-        User.findOneAndUpdate(
-          { _id : req.user._id },
-          { $push: { encountered: presence } },
-          { safe: true, upsert: true, new: true },
-          function( err ) {
-            if( err ) { console.log(err); next(); } // Handle error
-
-            if( req.body.response ) {
-              var message = {
-                user: req.user._id,
-                presence: presence._id,
-                message: req.body.response
-              };
-
-              new Message(message).save(function( err, message ) {
-                if( err ) { console.log(err); next(); } // Handle error
-              });
-            }
-
-            res.send(presence);
-          }
-        )
-      });
-  });
+});
 
 // Retrieve message thread
-router.route('/presences/:id/messages')
-  .get(function( req, res, next ) {
-    // Todo: Validate the user has permissions to view these messages
+router.route('/encounters/:id/messages').get(isAuthenticated, function( req, res ) {
+  Encounter.findOne({ '_id': req.params.id }).exec(function( err, encounter ) {
+    Message.find({
+      '$and': [
+        {
+          '$or': [
+            { 'from': encounter.creator },
+            { 'from': encounter.discoverer }
+          ]
+        },
+        { 'presence': encounter.presence }
+      ]
+    })
+    .exec(function( err, messages ) {
+      res.send(messages);
+    });
+  });
+});
 
-    Message
-      .find({ presence: req.params.id })
-      .exec(function( err, messages ) {
-        if( err ) { console.log(err); next(); } // Handle error
+// Encounter presence
+router.route('/encounters/:id').post(isAuthenticated, function( req, res ) {
+  Presence.findOne({ '_id': req.body.presenceId }).exec(function( err, presence ) {
+    var encounter = {
+      'presence': presence._id,
+      'creator': presence.user,
+      'discoverer': req.user._id
+    };
 
-        res.send(messages);
-      });
-  })
-  .post(function( req, res, next ) {
-    // Todo: Validate the user has permissions to post this message
+    new Encounter(encounter).save(function( err, encounter ) {
+      res.send(encounter);
+    });
+  });
+});
 
+// Reply to message
+router.route('/presences/:id/messages').post(isAuthenticated, function( req, res ) {
+  Presence.findOne({ '_id': req.params.id }).exec(function( err, presence ) {
     var message = {
-      user: req.user._id,
-      presence: req.body.presenceId,
-      message: req.body.message
+      'from': req.user._id,
+      'presence': req.params.id,
+      'message': req.body.message
     };
 
     new Message(message).save(function( err, message ) {
-      if( err ) { console.log(err); next(); } // Handle error
-
       res.send(message);
     });
   });
+});
+
+// Release presence
+router.route('/presences').post(isAuthenticated, function( req, res ) {
+  var presence = {
+    'creator': req.user._id,
+    'location': req.body.location
+  };
+
+  new Presence(presence).save(function( err, presence ) {
+    res.send(presence);
+  });
+});
+
+/*
+
+
+MESSAGE
+---------------
+_id
+from
+presence
+
+
+PRESENCE
+---------------
+_id
+creator
+
+
+USER
+---------------
+_id
+
+
+ENCOUNTER
+---------------
+_id
+presence
+creator
+discoverer
+
+
+*/
+
+/*
+
+// Account
+GET /api/account
+
+// Encountered
+encountered = select from ENCOUNTER where creator = req.user._id
+
+// Released
+released = select from ENCOUNTER where discoverer = req.user._id
+
+// TODO: WHERE released have a response
+// Message directory
+GET /api/encounters
+directory = encountered + released
+
+// Retrieve message thread
+GET /api/encounters/:id/messages
+messages = select from MESSAGE where (ENCOUNTER.creator = MESSAGE.from OR ENCOUNTER.discoverer = MESSAGE.from) AND (ENCOUNTER.presence = MESSAGE.presence)
+
+// Encounter presence
+POST /api/encounters/:id
+
+// Reply to message
+POST /api/presences/:id/messages
+
+// Release presence
+POST /api/presences
+
+// Find nearby presences
+GET /presences/find/:lng/:lat/:distance
+
+*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

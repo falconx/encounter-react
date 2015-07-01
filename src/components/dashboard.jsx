@@ -20,9 +20,9 @@ var Dashboard = React.createClass({
 			<div>
 				<p>Hi {account.name} ({account._id}) <a href="/api/auth/logout">Logout</a></p>
 				<p><div className="account-photo" style={accountPhotoStyle}></div></p>
-				<p><Link to="map-encounter">Encounter Map</Link></p>
-				<p><Link to="map-released">Released Presences Map</Link></p>
-				<p><Link to="encountered">Encountered</Link></p>
+				<p><Link to="map-encounter">Encounter</Link></p>
+				<p><Link to="map-released">My Presences</Link></p>
+				<p><Link to="encountered">Messages</Link></p>
 
 				<h2>Released Presences</h2>
 				<ol>

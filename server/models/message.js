@@ -5,10 +5,10 @@ var User = require('./user');
 var Presence = require('./presence');
 
 var messageSchema = Schema({
-      user: { type: ObjectId, ref: 'User' },
-      presence: { type: ObjectId, ref: 'Presence' },
-      message: String
-    });
+		from: { type: ObjectId, ref: 'User' },
+		presence: { type: ObjectId, ref: 'Presence' },
+		message: String
+	});
 
 messageSchema.statics.getQuestion = function( presence, cb ) {
 	this.findOne({ presence: presence._id }).exec(function( err, message ) {

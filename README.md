@@ -25,6 +25,8 @@ Luke:
  2. [ ] Design app icon.
  3. [ ] Visually disable/hide pickup menu item when not near another presence.
  4. [ ] How can we make it more obvious that you are close enough to a presence to pick it up?
+ 5. [ ] Indicate unread state on messages screen.
+ 6. [ ] Update Invision screens e.g. Dashboard.
 
 # Sprints
 Phase 1:
@@ -52,7 +54,7 @@ Phase 3:
  5. [x] Confirmation screen when releasing presence.
  6. [ ] Remove presence data in real-time once they have been removed.
  7. [x] Don't allow map panning.
- 8. [ ] Released presences screen stats.
+ 8. [x] Released presences screen stats.
  9. [x] Show account photo as presence icon for found presenecs.
  10. [x] Hide all other presences that belong to a user after finding one that belongs to them.
  11. [x] Redraw marker icons after picking up a presence.
@@ -106,4 +108,4 @@ Phase 10:
  2. [ ] https only server.
 
  Phase 11:
- 1. [ ] Message system via sockets
+ 1. [T] Message system via sockets

@@ -36,7 +36,7 @@ var MessageThread = React.createClass({
 
 	storeDidChange: function() {
 		this.setState({
-			messages: MessageStore.getMessageThread()
+			messages: MessageStore.getMessageThread( this.props.params.presenceId )
 		});
 	},
 
@@ -71,7 +71,7 @@ var MessageThread = React.createClass({
 				</ul>
 				<form onSubmit={this.submitMessageHandler}>
 					<label htmlFor="message">Message:</label>
-					<textarea name="message" ref="message"></textarea>
+					<textarea name="message" ref="message" placeholder="type a message"></textarea>
 					<div>
 						<input type="submit" value="Send" />
 					</div>
