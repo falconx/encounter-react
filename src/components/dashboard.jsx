@@ -11,10 +11,7 @@ var Dashboard = React.createClass({
 	render: function() {
 		var account = this.props.account;
 		var accountPhotoStyle = { backgroundImage: 'url(' + account.photo + ')' };
-
-		var usersFound = _.uniq(_.map(account.encountered, function( presence ) {
-			return presence.user._id;
-		}));
+		var usersFound = _.uniq(_.map(account.encountered, function( presence ) { return presence.creator; }));
 
 		return (
 			<div>
@@ -22,7 +19,7 @@ var Dashboard = React.createClass({
 				<p><div className="account-photo" style={accountPhotoStyle}></div></p>
 				<p><Link to="map-encounter">Encounter</Link></p>
 				<p><Link to="map-released">My Presences</Link></p>
-				<p><Link to="encountered">Messages</Link></p>
+				<p><Link to="messages">Messages</Link></p>
 
 				<h2>Released Presences</h2>
 				<ol>

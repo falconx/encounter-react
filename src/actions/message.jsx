@@ -4,10 +4,10 @@ var Promise = require('es6-promise').Promise;
 var request = require('superagent');
 
 var MessageActions = Flux.createActions({
-	getMessageDirectory: function() {
+	getEncounters: function() {
 		return new Promise(function( resolve, rej ) {
 			request
-				.get('/api/messages/')
+				.get('/api/encounters')
 				.set('Accept', 'application/json')
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
@@ -18,16 +18,16 @@ var MessageActions = Flux.createActions({
 				});
 		}).then(function( data ) {
 			return {
-				actionType: 'GET_MESSAGE_DIRECTORY',
-				directory: data
+				actionType: 'GET_ENCOUNTERS',
+				encounters: data
 			};
 		});
 	},
 
-	getMessageThread: function( presenceId ) {
+	getMessageThread: function( encounterId ) {
 		return new Promise(function( resolve, rej ) {
 			request
-				.get('/api/presences/' + presenceId + '/messages')
+				.get('/api/encounters/' + encounterId + '/messages')
 				.set('Accept', 'application/json')
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
@@ -39,7 +39,6 @@ var MessageActions = Flux.createActions({
 		}).then(function( data ) {
 			return {
 				actionType: 'GET_MESSAGE_THREAD',
-				presenceId: presenceId,
 				messages: data
 			};
 		});
@@ -49,10 +48,8 @@ var MessageActions = Flux.createActions({
 		return new Promise(function( resolve, rej ) {
 			request
 				.post('/api/presences/' + presenceId + '/messages')
-				.send({
-					presenceId: presenceId,
-					message: message
-				})
+				.send({ message: message })
+				.set('Accept', 'application/json')
 				.end(function( err, res ) {
 					if( !err && res.status === 200 ) {
 						resolve(JSON.parse( res.text ));
@@ -66,7 +63,7 @@ var MessageActions = Flux.createActions({
 				message: data
 			};
 		});
-	}
+	},
 });
 
 module.exports = MessageActions;

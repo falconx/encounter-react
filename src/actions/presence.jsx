@@ -4,27 +4,13 @@ var Promise = require('es6-promise').Promise;
 var request = require('superagent');
 
 var PresenceActions = Flux.createActions({
-	release: function( presence ) {
-		return new Promise(function( resolve, rej ) {
-			request
-				.post('/api/presences/release')
-				.send({ presence: presence })
-				.end(function( err, res ) {
-					if( !err && res.status === 200 ) {
-						resolve(JSON.parse( res.text ));
-					}
-
-					rej();
-				});
-		}).then(function( data ) {
-			return {
-				actionType: 'RELEASE_PRESENCE',
-				presence: data
-			};
-		});
-	},
-
-	pickup: function( presenceId, response ) {
+	/**
+	 * @function encounter
+	 *
+	 * @param presenceId {String} Id of the presence to encounter
+	 * @param response {optional:String} Response message
+	 */
+	encounter: function( presenceId, response ) {
 		return new Promise(function( resolve, rej ) {
 			request
 				.post('/api/presences/' + presenceId + '/encounter')
@@ -38,7 +24,30 @@ var PresenceActions = Flux.createActions({
 				});
 		}).then(function( data ) {
 			return {
-				actionType: 'PICKUP_PRESENCE',
+				actionType: 'ENCOUNTER_PRESENCE',
+				presence: data
+			};
+		});
+	},
+
+	release: function( location, question ) {
+		return new Promise(function( resolve, rej ) {
+			request
+				.post('/api/presences')
+				.send({
+					location: location,
+					question: question
+				})
+				.end(function( err, res ) {
+					if( !err && res.status === 200 ) {
+						resolve(JSON.parse( res.text ));
+					}
+
+					rej();
+				});
+		}).then(function( data ) {
+			return {
+				actionType: 'RELEASE_PRESENCE',
 				presence: data
 			};
 		});

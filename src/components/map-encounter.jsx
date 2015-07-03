@@ -109,7 +109,7 @@ var MapEncounter = React.createClass({
 
     $('body').on('click', '.menu-item-encountered', function( e ) {
       e.stopImmediatePropagation();
-      self.transitionTo('encountered');
+      self.transitionTo('messages');
     });
 
     // Update preference references if we find one has been released nearby
@@ -164,7 +164,7 @@ var MapEncounter = React.createClass({
     var closest = this.getClosest();
 
     if( closest ) {
-      PresenceActions.pickup( closest._id );
+      PresenceActions.encounter( closest._id );
     }
 
     this.setState({
@@ -178,7 +178,7 @@ var MapEncounter = React.createClass({
     var closest = this.getClosest();
 
     if( closest ) {
-      PresenceActions.pickup( closest._id, response );
+      PresenceActions.encounter( closest._id, response );
     }
 
     this.setState({
@@ -195,10 +195,10 @@ var MapEncounter = React.createClass({
   },
 
   handleReleaseModal: function() {
-    PresenceActions.release({
-      question: this.refs.release_question.getDOMNode().value,
-      location: [ this.state.userPosition.lng, this.state.userPosition.lat ]
-    });
+    var question = this.refs.release_question.getDOMNode().value;
+    var location = [ this.state.userPosition.lng, this.state.userPosition.lat ];
+
+    PresenceActions.release( location, question );
 
     this.handleReleaseModalClose();
   },
@@ -239,7 +239,7 @@ var MapEncounter = React.createClass({
           <MarkerProfile
             key={presence._id}
             position={position}
-            photo={presence.user.photo}
+            photo={presence.creator.photo}
             classes={['encountered']} />
         );
       } else {
@@ -249,7 +249,7 @@ var MapEncounter = React.createClass({
             icon={Config.map.hotspotImage}
             position={position}
             id={presence._id}
-            uid={presence.user._id} />
+            uid={presence.creator._id} />
         );
       }
     });
@@ -260,7 +260,7 @@ var MapEncounter = React.createClass({
     var closest = this.getClosest();
 
     if( closest ) {
-      var accountPhotoStyle = { backgroundImage: 'url(' + closest.user.photo + ')' };
+      var accountPhotoStyle = { backgroundImage: 'url(' + closest.creator.photo + ')' };
     }
 
     return (

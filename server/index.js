@@ -109,40 +109,45 @@ function isAuthenticated( req, res, next ) {
 app.use('/api', router);
 
 // Login
-router.route('/auth/facebook')
-  .get(function( req, res, next ) {
-    return passport.authenticate('facebook', {
-      scope: facebookAuth.scope
-    })(req, res, next);
-  });
+router.route('/auth/facebook').get(function( req, res, next ) {
+  return passport.authenticate('facebook', {
+    scope: facebookAuth.scope
+  })(req, res, next);
+});
 
-router.route('/auth/facebook/callback')
-  .get(function( req, res, next ) {
-    return passport.authenticate('facebook', {
-      successRedirect: facebookAuth.successURL,
-      failureRedirect: facebookAuth.failureURL
-    })(req, res, next);
-  });
+router.route('/auth/facebook/callback').get(function( req, res, next ) {
+  return passport.authenticate('facebook', {
+    successRedirect: facebookAuth.successURL,
+    failureRedirect: facebookAuth.failureURL
+  })(req, res, next);
+});
 
 // Logout
-router.route('/auth/logout')
-  .get(function( req, res ) {
-    req.logout();
-    res.redirect('/');
-  });
+router.route('/auth/logout').get(function( req, res ) {
+  req.logout();
+  res.redirect('/');
+});
 
 // Retrieve account
 router.route('/account').get(isAuthenticated, function( req, res ) {
   User.findOne({ '_id': req.user._id }).exec(function( err, user ) {
     // Add 'released' and 'encountered' presence collections
-    Encounter.find({ 'creator': req.user._id }).exec(function( err, released ) {
-      Encounter.find({ 'discoverer': req.user._id }).exec(function( err, encountered ) {
+    Presence.find({ 'creator': req.user._id }).exec(function( err, released ) {
+      Encounter.find({ 'discoverer': req.user._id }).select('-_id presence').exec(function( err, encountered ) {
+        // Extract presence Ids
+        encountered = encountered.map(function( item ) { return item.presence; });
+
         _.extend(user, {
           'encountered': encountered,
           'released': released
         });
 
-        res.send(user);
+        User.populate(user, [
+          { path: 'released', select: 'creator location' },
+          { path: 'encountered', select: 'creator location' }
+        ], function() {
+          res.send(user);
+        });
       });
     });
   });
@@ -150,7 +155,9 @@ router.route('/account').get(isAuthenticated, function( req, res ) {
 
 // Retrieve all the presences found within the specified distance from the provided location
 router.route('/presences/find/:lng/:lat/:distance').get(isAuthenticated, function( req, res ) {
-  var params = _.extend(req.params, { userId: req.user._id });
+  var params = _.extend(req.params, {
+    'userId': req.user._id
+  });
 
   Presence.findWithinRadius(params, function( err, presences ) {
     res.send(presences);
@@ -166,6 +173,7 @@ router.route('/encounters').get(isAuthenticated, function( req, res ) {
       { 'discoverer': req.user._id } // Encountered
     ]
   })
+  .populate('creator discoverer presence')
   .exec(function( err, encounters ) {
     res.send(encounters);
   });
@@ -192,17 +200,31 @@ router.route('/encounters/:id/messages').get(isAuthenticated, function( req, res
 });
 
 // Encounter presence
-router.route('/encounters/:id').post(isAuthenticated, function( req, res ) {
-  Presence.findOne({ '_id': req.body.presenceId }).exec(function( err, presence ) {
+router.route('/presences/:id/encounter').post(isAuthenticated, function( req, res ) {
+  Presence.findOne({ '_id': req.params.id }).exec(function( err, presence ) {
     var encounter = {
       'presence': presence._id,
-      'creator': presence.user,
+      'creator': presence.creator,
       'discoverer': req.user._id
     };
 
-    new Encounter(encounter).save(function( err, encounter ) {
-      res.send(encounter);
-    });
+    if( req.body.response ) {
+      var message = {
+        'from': req.user._id,
+        'presence': presence._id,
+        'message': req.body.response
+      };
+
+      new Message(message).save(done);
+    } else {
+      done();
+    }
+
+    function done() {
+      new Encounter(encounter).save(function( err, encounter ) {
+        res.send(encounter);
+      });
+    }
   });
 });
 
@@ -229,7 +251,15 @@ router.route('/presences').post(isAuthenticated, function( req, res ) {
   };
 
   new Presence(presence).save(function( err, presence ) {
-    res.send(presence);
+    var message = {
+      'from': req.user._id,
+      'presence': presence._id,
+      'message': req.body.question
+    };
+
+    new Message(message).save(function() {
+      res.send(presence);
+    });
   });
 });
 
@@ -285,7 +315,7 @@ GET /api/encounters/:id/messages
 messages = select from MESSAGE where (ENCOUNTER.creator = MESSAGE.from OR ENCOUNTER.discoverer = MESSAGE.from) AND (ENCOUNTER.presence = MESSAGE.presence)
 
 // Encounter presence
-POST /api/encounters/:id
+POST /api/presences/:id/encounter
 
 // Reply to message
 POST /api/presences/:id/messages
@@ -295,6 +325,8 @@ POST /api/presences
 
 // Find nearby presences
 GET /presences/find/:lng/:lat/:distance
+
+// Todo: Rewrite presenceSchema.statics.findWithinRadius
 
 */
 

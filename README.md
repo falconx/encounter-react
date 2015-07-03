@@ -74,7 +74,7 @@ Phase 4:
  6. [ ] Encrypt facebookId or entire account photo url path on the server via proxy.
 
 Phase 5:
- 1. [x] Only allow 3 presences to be released at any one time, per user.
+ 1. [ ] Only allow 3 presences to be released at any one time, per user.
  2. [ ] Expire presences over time.
  3. [ ] Visually indicate time remaining on dropped presences screen.
  4. [ ] Visually indicate time remaining on found presences screen.

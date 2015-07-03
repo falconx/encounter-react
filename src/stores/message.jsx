@@ -1,45 +1,37 @@
 var Flux = require('../flux');
-var _ = require('lodash');
-
 var socket = io.connect();
 
-var AccountStore = require('./account');
-var AccountActions = require('../actions/account');
-
-var _directory = [];
-
-// Map indexed by presenceId
-var _messages = {};
+var _encounters = [];
+var _messages = [];
 
 var MessageStore = Flux.createStore({
-	getMessageDirectory: function() {
-		return _directory;
+	getEncounters: function() {
+		return _encounters;
 	},
 
-	getMessageThread: function( presenceId ) {
-		return _messages[presenceId];
+	getEncounter: function( encounterId ) {
+		return _.findWhere(_encounters, { '_id': encounterId });
+	},
+
+	getMessageThread: function() {
+		return _messages;
 	}
 }, function( payload ) {
 	switch( payload.actionType ) {
-		case 'GET_MESSAGE_DIRECTORY': {
-			_directory = payload.directory;
+		case 'GET_ENCOUNTERS':
+			_encounters = payload.encounters;
 			MessageStore.emitChange();
 			break;
-		}
 
-		case 'GET_MESSAGE_THREAD': {
-			_messages[payload.presenceId] = payload.messages;
+		case 'GET_MESSAGE_THREAD':
+			_messages = payload.messages;
 			MessageStore.emitChange();
 			break;
-		}
 
-		case 'SEND_MESSAGE': {
-			_messages.push( payload.message );
-
+		case 'SEND_MESSAGE':
+			MessageStore.emitChange();
 			socket.emit('message:sent', payload.message);
-
-			MessageStore.emitChange();
-		}
+			break;
 	}
 });
 

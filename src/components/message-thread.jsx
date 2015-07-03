@@ -26,27 +26,32 @@ var MessageThread = React.createClass({
 
 	componentDidMount: function() {
 		var self = this;
+		var encounterId = this.props.params.encounterId;
 
-		MessageActions.getMessageThread( this.props.params.presenceId );
+		MessageActions.getMessageThread( encounterId );
 
 		socket.on('message:sent', function( message ) {
-			MessageActions.getMessageThread( self.props.params.presenceId );
+			MessageActions.getMessageThread( encounterId );
 		});
+
+		MessageActions.getEncounters();
 	},
 
 	storeDidChange: function() {
+		var encounterId = this.props.params.encounterId;
+
 		this.setState({
-			messages: MessageStore.getMessageThread( this.props.params.presenceId )
+			encounter: MessageStore.getEncounter( encounterId ),
+			messages: MessageStore.getMessageThread( encounterId )
 		});
 	},
 
 	submitMessageHandler: function( e ) {
 		e.preventDefault();
 
-		var presenceId = this.props.params.presenceId;
 		var message = this.refs.message.getDOMNode().value;
 
-		MessageActions.sendMessage( presenceId, message );
+		MessageActions.sendMessage( this.state.encounter.presence._id, message );
 
 		// Clear message field
 		this.refs.message.getDOMNode().value = '';
@@ -59,7 +64,7 @@ var MessageThread = React.createClass({
 			<div className="message-thread">
 				<ul>
 					{this.state.messages.map(function( message ) {
-						var className = message.user === self.props.account._id ? 'own' : '';
+						var className = message.from === self.props.account._id ? 'own' : '';
 
 						return (
 							<li key={message._id} className={className}>

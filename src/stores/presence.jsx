@@ -12,17 +12,18 @@ var PresenceStore = Flux.createStore({
 	}
 }, function( payload ) {
 	switch( payload.actionType ) {
+		case 'ENCOUNTER_PRESENCE': {
+			PresenceStore.emitChange();
+
+			// We've manipulated data attached to the account so reload it
+			AccountActions.loadAccount();
+			break;
+		}
+
 		case 'RELEASE_PRESENCE': {
 			PresenceStore.emitChange();
 
 			socket.emit('presence:release', payload.presence);
-
-			// We've manipulated data attached to the account so reload it
-			AccountActions.loadAccount();
-		}
-
-		case 'PICKUP_PRESENCE': {
-			PresenceStore.emitChange();
 
 			// We've manipulated data attached to the account so reload it
 			AccountActions.loadAccount();

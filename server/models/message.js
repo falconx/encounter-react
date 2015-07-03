@@ -10,10 +10,4 @@ var messageSchema = Schema({
 		message: String
 	});
 
-messageSchema.statics.getQuestion = function( presence, cb ) {
-	this.findOne({ presence: presence._id }).exec(function( err, message ) {
-		cb(err, message.message);
-	});
-}
-
 module.exports = mongoose.model('Message', messageSchema);
