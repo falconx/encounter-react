@@ -47,5 +47,11 @@ module.exports = {
         }
       ]
     }
+  },
+  presence: {
+    lifespan: 60 * 60 * 24 * 3 // 3 Days
+  },
+  messaging: {
+    maxlength: 140
   }
 };

@@ -10,6 +10,9 @@
 - Dev mode switch
 - Stylesheet/Radium
 - initializeTouchEvents(boolean shouldUseTouch)
+- Upgrade React
+- Upgrade ReactRouter
+- Share config between client and server
 
 # Notes & Questions
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
@@ -18,7 +21,7 @@
 - How to handle encountered display when you have a presence to a user who found a different presence which you released.
 
 # Bugs
- 1. Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on.
+ 1. [ ] Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on.
 
 Luke:
  1. [ ] Design favicon.
@@ -52,18 +55,17 @@ Phase 3:
  3. [x] Don't allow clicking on poi.
  4. [x] Don't allow map zoom level to change.
  5. [x] Confirmation screen when releasing presence.
- 6. [ ] Remove presence data in real-time once they have been removed.
- 7. [x] Don't allow map panning.
- 8. [x] Released presences screen stats.
- 9. [x] Show account photo as presence icon for found presenecs.
- 10. [x] Hide all other presences that belong to a user after finding one that belongs to them.
- 11. [x] Redraw marker icons after picking up a presence.
- 12. [ ] Make menu overlay follow the user position.
- 13. [x] Don't allow pickup of already found presences.
- 14. [x] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a separate radius check to determine if the user is close enough to the presence to pick it up.
- 15. [x] Have nearest query return distance away.
- 16. [x] Don't allow pickup of presences which belong to a user they have already found.
- 17. [ ] Encountered list should show when people have responded to your own released presences.
+ 6. [x] Don't allow map panning.
+ 7. [x] Released presences screen stats.
+ 8. [x] Show account photo as presence icon for found presenecs.
+ 9. [x] Hide all other presences that belong to a user after finding one that belongs to them.
+ 10. [x] Redraw marker icons after picking up a presence.
+ 11. [x] Make menu overlay follow the user position.
+ 12. [x] Don't allow pickup of already found presences.
+ 13. [x] Currently we allow the user to pickup a presence that is anywhere within the search radius - we should have a separate radius check to determine if the user is close enough to the presence to pick it up.
+ 14. [x] Have nearest query return distance away.
+ 15. [x] Don't allow pickup of presences which belong to a user they have already found.
+ 16. [x] Encountered list should show when people have responded to your own released presences.
 
 Phase 4:
  1. [x] Create found presences page and list found presences.
@@ -76,9 +78,10 @@ Phase 4:
 Phase 5:
  1. [ ] Only allow 3 presences to be released at any one time, per user.
  2. [ ] Expire presences over time.
- 3. [ ] Visually indicate time remaining on dropped presences screen.
- 4. [ ] Visually indicate time remaining on found presences screen.
- 5. [ ] Visually indicate time remaining on question prompt screen (when collecting a presence).
+ 3. [ ] Remove presence data in real-time once they have been expired.
+ 4. [ ] Visually indicate time remaining on dropped presences screen.
+ 5. [ ] Visually indicate time remaining on found presences screen.
+ 6. [ ] Visually indicate time remaining on question prompt screen (when collecting a presence).
 
 Phase 6:
  1. [ ] Handle devices which don’t support GeoLocation.
@@ -88,24 +91,24 @@ Phase 6:
  5. [ ] Dashboard - Link stats.
 
 Phase 7:
- 1. [ ] Allow messaging between users - Limit character count to 140.
- 2. [ ] Drop presence - Limit character count to 140.
- 3. [ ] Allow removing specific messages.
- 4. [ ] Dashboard - Show unread messages stat.
- 5. [ ] Dashboard - Show unreplied messages stat.
+ 1. [x] Allow messaging between users
+ 2. [x[ Limit character count to 140.
+ 3. [ ] Drop presence - Limit character count to 140 (component for textarea's with limit counter?)
+ 4. [ ] Add server-side character count validation.
+ 5. [ ] Allow removing specific messages.
+ 6. [ ] Dashboard - Show unread messages stat.
+ 7. [ ] Dashboard - Show unreplied messages stat.
 
 Phase 8:
- 1. [ ] Allow user to override user profile image?
- 2. [ ] Remove / block user.
-
-Phase 9:
  1. [ ] Quiz system.
- 2. [ ] Show help screen for first time users.
+ 2. [ ] Help screen for first time users.
  3. [ ] Prevent the user from exposing their name until some circumstance(s) - Quiz system.
 
-Phase 10:
+Phase 9:
  1. [ ] Get a PhoneGap client build working.
  2. [ ] https only server.
 
- Phase 11:
- 1. [T] Message system via sockets
+ Phase 10:
+ 1. [x] Message system via sockets
+ 2. [ ] Allow user to override user profile image?
+ 3. [ ] Remove / block user.

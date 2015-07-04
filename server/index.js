@@ -9,6 +9,11 @@ var session = require('cookie-session');
 var mongoose = require('mongoose');
 var _ = require('lodash');
 
+var request = require('superagent');
+
+// Allow superagent to proxy
+require('superagent-proxy')(request);
+
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var facebookAuth = require('./config/providers.json').facebook;
@@ -80,7 +85,7 @@ passport.use(
           facebookId: profile.id,
           token: accessToken,
           name: profile.name.givenName + ' ' + profile.name.familyName,
-          photo: 'http://graph.facebook.com/' + profile.id + '/picture?type=large'
+          photo: 'http://graph.facebook.com/' + encrypt(profile.id) + '/picture?type=large'
         });
 
         newUser.save(function( err ) {
@@ -90,6 +95,54 @@ passport.use(
     });
   })
 );
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Encrypt Facebook Id with Node CTR
+var crypto = require('crypto');
+var algorithm = 'aes-256-ctr';
+var password = 'd6F3Efeq';
+
+function encrypt( text ) {
+  var cipher = crypto.createCipher(algorithm, password);
+  var crypted = cipher.update(text, 'utf8', 'hex');
+
+  crypted += cipher.final('hex');
+
+  return crypted;
+}
+ 
+function decrypt( text ) {
+  var decipher = crypto.createDecipher(algorithm, password);
+  var decrypted = decipher.update(text, 'hex', 'utf8');
+
+  decrypted += decipher.final('utf8');
+
+  return decrypted;
+}
+
+// Proxy Facebook picture requests 
+var proxy = process.env.http_proxy || 'http://localhost:' + app.get('port');
+
+request
+  .get(process.argv[2] || 'http://graph.facebook.com/56d682c6702429266411b35ba7b74f/picture?type=large')
+  .proxy(proxy)
+  .end(function( err, res ) {
+    console.log(res.status);
+    console.log(res.body);
+  });
+
+app.route('/:id/picture').get(function( req, res, next ) {
+  var facebookId = decrypt(req.params.id);
+
+  console.log('facebookId', facebookId);
+
+  request
+    .get('http://graph.facebook.com/' + facebookId + '/picture?type=large')
+    .end(function( err, _res ) {
+      res.send(_res);
+    });
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

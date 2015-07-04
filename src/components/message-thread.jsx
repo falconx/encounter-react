@@ -1,8 +1,8 @@
 var React = require('react');
 var moment = require('moment');
-
 var socket = io.connect();
 
+var Config = require('../config');
 var MessageActions = require('../actions/message');
 var MessageStore = require('../stores/message');
 
@@ -20,7 +20,8 @@ var MessageThread = React.createClass({
 
 	getInitialState: function() {
 		return {
-			messages: []
+			messages: [],
+			charCount: Config.messaging.maxlength
 		};
 	},
 
@@ -57,6 +58,12 @@ var MessageThread = React.createClass({
 		this.refs.message.getDOMNode().value = '';
 	},
 
+	handleMessageChange: function() {
+		this.setState({
+			charCount: Config.messaging.maxlength - this.refs.message.getDOMNode().value.length
+		});
+	},
+
 	render: function() {
 		var self = this;
 
@@ -76,7 +83,10 @@ var MessageThread = React.createClass({
 				</ul>
 				<form onSubmit={this.submitMessageHandler}>
 					<label htmlFor="message">Message:</label>
-					<textarea name="message" ref="message" placeholder="type a message"></textarea>
+					<div>
+						<small>{this.state.charCount} Characters remaining</small>
+					</div>
+					<textarea name="message" ref="message" placeholder="type a message" maxLength={Config.messaging.maxlength} onChange={this.handleMessageChange}></textarea>
 					<div>
 						<input type="submit" value="Send" />
 					</div>
