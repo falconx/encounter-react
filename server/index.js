@@ -98,51 +98,51 @@ passport.use(
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Encrypt Facebook Id with Node CTR
-var crypto = require('crypto');
-var algorithm = 'aes-256-ctr';
-var password = 'd6F3Efeq';
+// // Encrypt Facebook Id with Node CTR
+// var crypto = require('crypto');
+// var algorithm = 'aes-256-ctr';
+// var password = 'd6F3Efeq';
 
-function encrypt( text ) {
-  var cipher = crypto.createCipher(algorithm, password);
-  var crypted = cipher.update(text, 'utf8', 'hex');
+// function encrypt( text ) {
+//   var cipher = crypto.createCipher(algorithm, password);
+//   var crypted = cipher.update(text, 'utf8', 'hex');
 
-  crypted += cipher.final('hex');
+//   crypted += cipher.final('hex');
 
-  return crypted;
-}
+//   return crypted;
+// }
  
-function decrypt( text ) {
-  var decipher = crypto.createDecipher(algorithm, password);
-  var decrypted = decipher.update(text, 'hex', 'utf8');
+// function decrypt( text ) {
+//   var decipher = crypto.createDecipher(algorithm, password);
+//   var decrypted = decipher.update(text, 'hex', 'utf8');
 
-  decrypted += decipher.final('utf8');
+//   decrypted += decipher.final('utf8');
 
-  return decrypted;
-}
+//   return decrypted;
+// }
 
-// Proxy Facebook picture requests 
-var proxy = process.env.http_proxy || 'http://localhost:' + app.get('port');
+// // Proxy Facebook picture requests 
+// var proxy = process.env.http_proxy || 'http://localhost:' + app.get('port');
 
-request
-  .get(process.argv[2] || 'http://graph.facebook.com/56d682c6702429266411b35ba7b74f/picture?type=large')
-  .proxy(proxy)
-  .end(function( err, res ) {
-    console.log(res.status);
-    console.log(res.body);
-  });
+// request
+//   .get(process.argv[2] || 'http://graph.facebook.com/56d682c6702429266411b35ba7b74f/picture?type=large')
+//   .proxy(proxy)
+//   .end(function( err, res ) {
+//     console.log(res.status);
+//     console.log(res.body);
+//   });
 
-app.route('/:id/picture').get(function( req, res, next ) {
-  var facebookId = decrypt(req.params.id);
+// app.route('/:id/picture').get(function( req, res, next ) {
+//   var facebookId = decrypt(req.params.id);
 
-  console.log('facebookId', facebookId);
+//   console.log('facebookId', facebookId);
 
-  request
-    .get('http://graph.facebook.com/' + facebookId + '/picture?type=large')
-    .end(function( err, _res ) {
-      res.send(_res);
-    });
-});
+//   request
+//     .get('http://graph.facebook.com/' + facebookId + '/picture?type=large')
+//     .end(function( err, _res ) {
+//       res.send(_res);
+//     });
+// });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
