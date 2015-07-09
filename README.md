@@ -22,6 +22,7 @@
 
 # Bugs
  1. [ ] Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on.
+ 2. [ ] Char count doesn't reset after sending a message.
 
 Luke:
  1. [ ] Design favicon.
