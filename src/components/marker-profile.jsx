@@ -1,5 +1,4 @@
 var React = require('react');
-var _ = require('lodash');
 
 /**
  * Special case Google Map Marker to show profile image and attach a class name

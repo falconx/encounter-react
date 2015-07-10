@@ -1,5 +1,4 @@
 var React = require('react');
-var _ = require('lodash');
 
 var Circle = React.createClass({
 	componentDidMount: function() {

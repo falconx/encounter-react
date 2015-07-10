@@ -5,6 +5,7 @@
 
 # Todo
  - Bundle vendor files separately
+ - Make momment and lodash available as globals via webpack
  - Sourcemaps
  - Tests
  - Dev mode switch

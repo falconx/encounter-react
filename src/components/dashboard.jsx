@@ -5,8 +5,6 @@ var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 var PresenceMixin = require('../mixins/presence');
 
-var _ = require('lodash');
-
 var Dashboard = React.createClass({
 	mixins: ['PresenceMixin'],
 

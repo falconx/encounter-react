@@ -2,9 +2,6 @@ var React = require('react');
 var Navigation = require('react-router').Navigation;
 var Link = require('react-router').Link;
 
-var moment = require('moment');
-var _ = require('lodash');
-
 var Modal = require('./modal');
 var MessageActions = require('../actions/message');
 var MessageStore = require('../stores/message');

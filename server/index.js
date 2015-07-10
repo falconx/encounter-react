@@ -43,9 +43,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/', express.static(path.resolve(__dirname + '/../public')));
 app.use('/images', express.static(path.resolve(__dirname + '/../public/images')));
 
-// Todo: Don't require from src
-app.use('/vendor', express.static(path.resolve(__dirname + '/../src/vendor')));
-
 // Express session
 app.use(session({ secret: 'secret-encounter' }));
 

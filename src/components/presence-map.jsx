@@ -1,6 +1,5 @@
 var React = require('react');
 var addons = require('react/addons').addons;
-var _ = require('lodash');
 
 // Note this is an internal method that is not explicitly exposed by React
 var flattenChildren = require('react/lib/flattenChildren');

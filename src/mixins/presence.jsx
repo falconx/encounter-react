@@ -1,4 +1,3 @@
-var moment = require('moment');
 var Config = require('../config');
 
 module.exports.dateFromObjectId = dateFromObjectId = function( id, format ) {

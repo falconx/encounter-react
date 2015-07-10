@@ -1,6 +1,5 @@
 var React = require('react');
 var Navigation = require('react-router').Navigation;
-var _ = require('lodash');
 
 var Config = require('../config');
 

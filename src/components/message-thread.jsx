@@ -1,5 +1,4 @@
 var React = require('react');
-var moment = require('moment');
 var socket = io.connect();
 
 var Config = require('../config');
