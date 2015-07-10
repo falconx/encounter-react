@@ -1,6 +1,8 @@
 var React = require('react');
 var Link = require('react-router').Link;
 
+var Config = require('../config');
+
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
 var PresenceMixin = require('../mixins/presence');
@@ -24,7 +26,17 @@ var Dashboard = React.createClass({
 				<h2>Released Presences</h2>
 				<ol>
 					{account.released.map(function( presence ) {
-						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)} {this.timeRemaining(presence)} days remaining</li>;
+						return (
+							<li key={presence._id}>
+								<ul>
+									<li>{presence._id}</li>
+									<li>{JSON.stringify(presence.location)}</li>
+									<li>Released {this.dateFromObjectId(presence._id, 'MMM D YYYY')}</li>
+									<li>Expires {this.dateFromObjectId(presence._id).add(Config.presence.lifespan, 'seconds').format('MMM D YYYY')}</li>
+									<li>{parseInt(this.timeRemaining(presence))} days / {parseInt(this.timeRemaining(presence, 'minutes'))} minutes remaining</li>
+								</ul>
+							</li>
+						);
 					})}
 				</ol>
 
