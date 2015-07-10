@@ -1,14 +1,14 @@
 var webpack = require('webpack');
 var path = require('path');
 
-// http://stackoverflow.com/questions/28969861/managing-jquery-plugin-dependency-in-webpack
-
 module.exports = {
   cache: true,
   context: path.join(__dirname, 'src'),
   entry: {
     app: './app.js',
-    vendors: './vendors/infobox.js'
+    vendors: [
+      './vendors/infobox.js'
+    ]
   },
   module: {
   	loaders: [
@@ -34,7 +34,7 @@ module.exports = {
       _: 'lodash',
       moment: 'moment'
       // InfoBox: 'InfoBox'
-    }),
+    })
 
     // Optimize
     // new webpack.optimize.DedupePlugin(),
