@@ -1,13 +1,15 @@
 var React = require('react');
-
 var Link = require('react-router').Link;
 
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
+var PresenceMixin = require('../mixins/presence');
 
 var _ = require('lodash');
 
 var Dashboard = React.createClass({
+	mixins: ['PresenceMixin'],
+
 	render: function() {
 		var account = this.props.account;
 		var accountPhotoStyle = { backgroundImage: 'url(' + account.photo + ')' };
@@ -24,7 +26,7 @@ var Dashboard = React.createClass({
 				<h2>Released Presences</h2>
 				<ol>
 					{account.released.map(function( presence ) {
-						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)}</li>;
+						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)} {this.timeRemaining(presence)} days remaining</li>;
 					})}
 				</ol>
 

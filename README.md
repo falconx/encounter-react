@@ -1,28 +1,43 @@
 # Deploy
-1. ```npm install```
-2. Create a ```server/config/providers.json```
-3. ```npm start```
+ 1. ```npm install```
+ 2. Create a ```server/config/providers.json```
+ 3. ```npm start```
 
 # Todo
-- Sourcemaps
-- Tests
-- Bundle vendor files separately
-- Dev mode switch
-- Stylesheet/Radium
-- initializeTouchEvents(boolean shouldUseTouch)
-- Upgrade React
-- Upgrade ReactRouter
-- Share config between client and server
+ - Bundle vendor files separately
+ - Sourcemaps
+ - Tests
+ - Dev mode switch
+ - Stylesheet/Radium
+ - initializeTouchEvents(boolean shouldUseTouch)
+ - Upgrade React
+ - Upgrade ReactRouter
+ - Share config between client and server
+
+# Folder structure
+
+- dist
+-- bundle.js
+-- vendors.js
+-- index.html
+-- images
+
+- src
+-- index.html
+-- infobox.js // Special case vendor file
+-- js
+--- vendors
+-- images
 
 # Notes & Questions
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
 - FacebookId is revealed in response data - Will be fixed in Phase 4 with encryption and proxy on server.
 - nearbyPresence query returns photo - should this be a separate query?
-- How to handle encountered display when you have a presence to a user who found a different presence which you released.
+- How to handle encountered display when you have a presence to a user who found a presence which you released - currently this would cause two chats.
 
 # Bugs
- 1. [ ] Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on.
- 2. [ ] Char count doesn't reset after sending a message.
+ 1. [ ] Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on. (Note we have 1000 zIndex)
+ 2. [T] Char count doesn't reset after sending a message.
 
 Luke:
  1. [ ] Design favicon.

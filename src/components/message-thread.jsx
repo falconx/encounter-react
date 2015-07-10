@@ -56,6 +56,11 @@ var MessageThread = React.createClass({
 
 		// Clear message field
 		this.refs.message.getDOMNode().value = '';
+
+		// Reset remaining character count
+		this.setState({
+			charCount: Config.messaging.maxlength
+		});
 	},
 
 	handleMessageChange: function() {
