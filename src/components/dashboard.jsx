@@ -48,6 +48,7 @@ var Dashboard = React.createClass({
 								<ul>
 									<li>{presence._id}</li>
 									<li>{JSON.stringify(presence.location)}</li>
+									<li>Released {self.getDateReleased(presence)}</li>
 									<li>Expires {self.getDateExpiry(presence)}</li>
 									<li>{parseInt(self.getTimeRemaining(presence))} days / {parseInt(self.getTimeRemaining(presence, 'minutes'))} minutes remaining</li>
 								</ul>
