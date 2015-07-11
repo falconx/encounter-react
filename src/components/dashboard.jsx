@@ -14,7 +14,6 @@ var Dashboard = React.createClass({
 		var self = this;
 		var account = this.props.account;
 		var accountPhotoStyle = { backgroundImage: 'url(' + account.photo + ')' };
-		var usersFound = _.uniq(_.map(account.encountered, function( presence ) { return presence.creator; }));
 
 		return (
 			<div>
@@ -44,14 +43,16 @@ var Dashboard = React.createClass({
 				<h2>Encounterd Presences</h2>
 				<ol>
 					{account.encountered.map(function( presence ) {
-						return <li key={presence._id}>{presence._id} {JSON.stringify(presence.location)}</li>;
-					})}
-				</ol>
-
-				<h2>Encounterd Users</h2>
-				<ol>
-					{usersFound.map(function( userId ) {
-						return <li key={userId}>{userId}</li>
+						return (
+							<li key={presence._id}>
+								<ul>
+									<li>{presence._id}</li>
+									<li>{JSON.stringify(presence.location)}</li>
+									<li>Expires {self.getDateExpiry(presence)}</li>
+									<li>{parseInt(self.getTimeRemaining(presence))} days / {parseInt(self.getTimeRemaining(presence, 'minutes'))} minutes remaining</li>
+								</ul>
+							</li>
+						);
 					})}
 				</ol>
 			</div>

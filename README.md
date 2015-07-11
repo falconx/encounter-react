@@ -40,6 +40,7 @@
 # Bugs
  1. [ ] Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on. (Note we have 1000 zIndex)
  2. [T] Char count doesn't reset after sending a message.
+ 3. [ ] Reponding to a message doesn't appear as a encountered user for the creator. Update fn HelperMixins.getEncounteredUsers.
 
 Luke:
  1. [ ] Design favicon.
@@ -111,11 +112,12 @@ Phase 6:
 Phase 7:
  1. [x] Allow messaging between users
  2. [x] Limit character count to 140.
- 3. [ ] Drop presence - Limit character count to 140 (component for textarea's with limit counter?)
- 4. [ ] Add server-side character count validation.
- 5. [ ] Allow removing specific messages.
- 6. [ ] Dashboard - Show unread messages stat.
- 7. [ ] Dashboard - Show unreplied messages stat.
+ 3. [ ] Release presence - Limit character count to 140 (component for textarea's with limit counter?)
+ 4. [ ] Encoounter presence - Limit character count to 140 (component for textarea's with limit counter?)
+ 5. [ ] Add server-side character count validation.
+ 6. [ ] Allow removing specific messages.
+ 7. [ ] Dashboard - Show unread messages stat.
+ 8. [ ] Dashboard - Show unreplied messages stat.
 
 Phase 8:
  1. [ ] Quiz system.

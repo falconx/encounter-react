@@ -26,6 +26,13 @@ var HelpersMixin = {
     var expiry = created.clone().add(Config.presence.lifespan, 'seconds');
 
     return (raw) ? expiry : expiry.format(Config.dateFormat);
+  },
+
+  getEncounteredUsers: function( account ) {
+    // Todo: Reponding to a message doesn't appear as a encountered user for the creator
+    return _.uniq(_.map(account.encountered, function( encounter ) {
+      return encounter.creator;
+    }));
   }
 };
 
