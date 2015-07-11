@@ -4,8 +4,7 @@
  3. ```npm start```
 
 # Todo
- - Bundle vendor files separately
- - Make momment and lodash available as globals via webpack
+ - Copy index.html file from src to public
  - Sourcemaps
  - Tests
  - Dev mode switch
