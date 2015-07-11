@@ -13,6 +13,7 @@
  - Upgrade React
  - Upgrade ReactRouter
  - Share config between client and server
+ - Handle timezones?
 
 # Folder structure
 
@@ -24,7 +25,6 @@
 
 - src
 -- index.html
--- infobox.js // Special case vendor file
 -- js
 --- vendors
 -- images

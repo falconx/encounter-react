@@ -22,7 +22,6 @@ presenceSchema.index({ location: '2dsphere' });
  * @param params
  *    Object contianing 'lng', 'lat', 'distance', and 'userId' keys
  */
-
 presenceSchema.statics.findWithinRadius = function( params, cb ) {
   var self = this;
 
