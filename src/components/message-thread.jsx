@@ -2,20 +2,15 @@ var React = require('react');
 var socket = io.connect();
 
 var Config = require('../config');
+
 var MessageActions = require('../actions/message');
 var MessageStore = require('../stores/message');
+var HelpersMixin = require('../mixins/helpers');
 
 // Todo: Ensure user has encountered this user
 
 var MessageThread = React.createClass({
-	mixins: [MessageStore.mixin],
-
-	// Todo: Would this be more appropritate in a Mixin?
-	statics: {
-		dateFromObjectId: function( id, format ) {
-			return moment(parseInt(id.substring(0, 8), 16) * 1000).format(format || 'MMM D YYYY');
-		}
-	},
+	mixins: [MessageStore.mixin, HelpersMixin],
 
 	getInitialState: function() {
 		return {
@@ -79,7 +74,7 @@ var MessageThread = React.createClass({
 
 						return (
 							<li key={message._id} className={className}>
-								<small>{MessageThread.dateFromObjectId(message._id)}</small>
+								<small>{self.getDateCreated(message._id)}</small>
 								<div>{message.message}</div>
 							</li>
 						);

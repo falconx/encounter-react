@@ -5,16 +5,10 @@ var Link = require('react-router').Link;
 var Modal = require('./modal');
 var MessageActions = require('../actions/message');
 var MessageStore = require('../stores/message');
+var HelpersMixin = require('../mixins/helpers');
 
 var Messages = React.createClass({
-  mixins: [Navigation, MessageStore.mixin],
-
-  // Todo: Would this be more appropritate in a Mixin?
-  statics: {
-    dateFromObjectId: function( id, format ) {
-      return moment(parseInt(id.toString().substring(0, 8), 16) * 1000).format(format || 'MMM D YYYY');
-    }
-  },
+  mixins: [Navigation, MessageStore.mixin, HelpersMixin],
 
   getInitialState: function() {
     return {
@@ -33,6 +27,8 @@ var Messages = React.createClass({
   },
 
   render: function() {
+    var self = this;
+
     if( this.state.encounters.length ) {
       return (
         <div className="message-directory">
@@ -44,7 +40,7 @@ var Messages = React.createClass({
                 <li key={encounter._id}>
                   <Link to="message-thread" params={{ encounterId: encounter._id }}>
                     <div className="account-photo" style={style}></div>
-                    <p>Released: {Messages.dateFromObjectId( encounter.presence._id )}</p>
+                    <p>Released: {self.getDateReleased( encounter.presence )}</p>
                   </Link>
                 </li>
               );

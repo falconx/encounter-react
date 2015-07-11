@@ -48,6 +48,7 @@ module.exports = {
       ]
     }
   },
+  dateFormat: 'MMM D YYYY',
   presence: {
     lifespan: 60 * 60 * 24 * 3 // 3 Days
   },

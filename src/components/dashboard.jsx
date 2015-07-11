@@ -5,12 +5,13 @@ var Config = require('../config');
 
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
-var PresenceMixin = require('../mixins/presence');
+var HelpersMixing = require('../mixins/helpers');
 
 var Dashboard = React.createClass({
-	mixins: ['PresenceMixin'],
+	mixins: [HelpersMixing],
 
 	render: function() {
+		var self = this;
 		var account = this.props.account;
 		var accountPhotoStyle = { backgroundImage: 'url(' + account.photo + ')' };
 		var usersFound = _.uniq(_.map(account.encountered, function( presence ) { return presence.creator; }));
@@ -31,9 +32,9 @@ var Dashboard = React.createClass({
 								<ul>
 									<li>{presence._id}</li>
 									<li>{JSON.stringify(presence.location)}</li>
-									<li>Released {this.dateFromObjectId(presence._id, 'MMM D YYYY')}</li>
-									<li>Expires {this.dateFromObjectId(presence._id).add(Config.presence.lifespan, 'seconds').format('MMM D YYYY')}</li>
-									<li>{parseInt(this.timeRemaining(presence))} days / {parseInt(this.timeRemaining(presence, 'minutes'))} minutes remaining</li>
+									<li>Released {self.getDateReleased(presence)}</li>
+									<li>Expires {self.getDateExpiry(presence)}</li>
+									<li>{parseInt(self.getTimeRemaining(presence))} days / {parseInt(self.getTimeRemaining(presence, 'minutes'))} minutes remaining</li>
 								</ul>
 							</li>
 						);
