@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 var session = require('cookie-session');
 var mongoose = require('mongoose');
 var _ = require('lodash');
+// var crontab = require('node-crontab');
 
 var request = require('superagent');
 
@@ -82,7 +83,8 @@ passport.use(
           facebookId: profile.id,
           token: accessToken,
           name: profile.name.givenName + ' ' + profile.name.familyName,
-          photo: 'http://graph.facebook.com/' + encrypt(profile.id) + '/picture?type=large'
+          photo: 'http://graph.facebook.com/' + profile.id + '/picture?type=large'
+          // photo: 'http://graph.facebook.com/' + encrypt(profile.id) + '/picture?type=large'
         });
 
         newUser.save(function( err ) {
@@ -92,6 +94,15 @@ passport.use(
     });
   })
 );
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Cleanup database by removing any expired presences
+ */
+// crontab.scheduleJob('* * *', function() { /* Every day */
+//   // Presence.find()
+// });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

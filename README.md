@@ -31,6 +31,7 @@
 -- images
 
 # Notes & Questions
+- If a presence has expired should it be removed from the database? What impact will this have?
 - Possible solution to avoiding clustering and too many markers in one location is to not allow a release near another.
 - FacebookId is revealed in response data - Will be fixed in Phase 4 with encryption and proxy on server.
 - nearbyPresence query returns photo - should this be a separate query?
@@ -109,7 +110,7 @@ Phase 6:
 
 Phase 7:
  1. [x] Allow messaging between users
- 2. [x[ Limit character count to 140.
+ 2. [x] Limit character count to 140.
  3. [ ] Drop presence - Limit character count to 140 (component for textarea's with limit counter?)
  4. [ ] Add server-side character count validation.
  5. [ ] Allow removing specific messages.

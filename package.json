@@ -24,6 +24,7 @@
     "mcfly": "0.0.10",
     "moment": "^2.10.3",
     "mongoose": "^4.0.1",
+    "node-crontab": "0.0.8",
     "node-jsx": "^0.12.4",
     "passport": "^0.2.1",
     "passport-facebook": "^2.0.0",
