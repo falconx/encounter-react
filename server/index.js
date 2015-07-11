@@ -20,10 +20,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var facebookAuth = require('./config/providers.json').facebook;
 
 // Transparently require() jsx
-require('node-jsx').install({
-  extension: '.jsx',
-  harmony: true
-});
+require('node-jsx').install({ extension: '.jsx', harmony: true });
 
 // Models
 var User = require('./models/user');
@@ -261,6 +258,7 @@ router.route('/encounters/:id/messages').get(isAuthenticated, function( req, res
 });
 
 // Encounter presence
+// Todo: Validation: Ensure presence hasn't expired
 router.route('/presences/:id/encounter').post(isAuthenticated, function( req, res ) {
   Presence.findOne({ '_id': req.params.id }).exec(function( err, presence ) {
     var encounter = {
@@ -307,6 +305,7 @@ router.route('/presences/:id/messages').post(isAuthenticated, function( req, res
 // Release presence
 router.route('/presences').post(isAuthenticated, function( req, res ) {
   var presence = {
+    'created': new Date(),
     'creator': req.user._id,
     'location': req.body.location
   };
@@ -323,73 +322,6 @@ router.route('/presences').post(isAuthenticated, function( req, res ) {
     });
   });
 });
-
-/*
-
-
-MESSAGE
----------------
-_id
-from
-presence
-
-
-PRESENCE
----------------
-_id
-creator
-
-
-USER
----------------
-_id
-
-
-ENCOUNTER
----------------
-_id
-presence
-creator
-discoverer
-
-
-*/
-
-/*
-
-// Account
-GET /api/account
-
-// Encountered
-encountered = select from ENCOUNTER where creator = req.user._id
-
-// Released
-released = select from ENCOUNTER where discoverer = req.user._id
-
-// TODO: WHERE released have a response
-// Message directory
-GET /api/encounters
-directory = encountered + released
-
-// Retrieve message thread
-GET /api/encounters/:id/messages
-messages = select from MESSAGE where (ENCOUNTER.creator = MESSAGE.from OR ENCOUNTER.discoverer = MESSAGE.from) AND (ENCOUNTER.presence = MESSAGE.presence)
-
-// Encounter presence
-POST /api/presences/:id/encounter
-
-// Reply to message
-POST /api/presences/:id/messages
-
-// Release presence
-POST /api/presences
-
-// Find nearby presences
-GET /presences/find/:lng/:lat/:distance
-
-// Todo: Rewrite presenceSchema.statics.findWithinRadius
-
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

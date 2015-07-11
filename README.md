@@ -5,6 +5,7 @@
 
 # Todo
  - Copy index.html file from src to public
+ - Copy images directory from src to public
  - Sourcemaps
  - Tests
  - Dev mode switch
@@ -23,6 +24,7 @@
 -- index.html
 -- images
 
+- config.js
 - src
 -- index.html
 -- js

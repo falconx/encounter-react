@@ -1,12 +1,17 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var ObjectId = Schema.Types.ObjectId;
-var User = require('./user');
-var Message = require('./message');
 var Promise = require('es6-promise').Promise;
 var _ = require('lodash');
+var moment = require('moment');
+
+var User = require('./user');
+var Message = require('./message');
+
+// Todo: Get moment().add value from a global config
 
 var presenceSchema = Schema({
+      created: { type: Date, default: Date.now, required: true },
       creator: { type: ObjectId, ref: 'User' },
       location: [{ type: Number, required: true }] // [lng, lat]
     });
@@ -39,7 +44,8 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
     },
     {
       '$match': {
-        'creator': { '$ne': params.userId }
+        'created': { '$lt': moment().add(3, 'days').toDate() }, // Exclude expired presences
+        'creator': { '$ne': params.userId } // Exclude own presences
       }
     }
   ], function( err, nearbyPresences ) {
