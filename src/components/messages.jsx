@@ -54,7 +54,7 @@ var Messages = React.createClass({
                   </div>
                   <ul>
                     <li>Released: {self.getDateReleased( encounter.presence )}</li>
-                    <li>{Math.round(self.getTimeRemaining(encounter.presence, 'hours'))} hours remaining</li>
+                    <li>{self.getTimeRemaining(encounter.presence)} remaining</li>
                   </ul>
                 </li>
               );

@@ -1,5 +1,7 @@
 var Config = require('../config');
 
+require('moment-duration-format');
+
 var HelpersMixin = {
   dateFromObjectId: function( id, format ) {
     var date = moment(parseInt(id.substring(0, 8), 16) * 1000);
@@ -9,8 +11,13 @@ var HelpersMixin = {
 
   getTimeRemaining: function( presence, unit ) {
     var expiry = this.getDateExpiry(presence, true);
+    var diff = expiry.diff(moment());
 
-    return expiry.diff(moment(), unit || 'days', true);
+    if( unit ) {
+      return expiry.diff(moment(), unit, true);
+    }
+
+    return moment.duration(diff).format('h[h] mm[m]');
   },
 
   getDateCreated: function( objectId, format ) {

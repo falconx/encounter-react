@@ -5,10 +5,10 @@ var Config = require('../config');
 
 var PresenceActions = require('../actions/presence');
 var PresenceStore = require('../stores/presence');
-var HelpersMixing = require('../mixins/helpers');
+var HelpersMixin = require('../mixins/helpers');
 
 var Dashboard = React.createClass({
-	mixins: [HelpersMixing],
+	mixins: [HelpersMixin],
 
 	render: function() {
 		var self = this;
@@ -33,7 +33,7 @@ var Dashboard = React.createClass({
 									<li>{JSON.stringify(presence.location)}</li>
 									<li>Released {self.getDateReleased(presence)}</li>
 									<li>Expires {self.getDateExpiry(presence)}</li>
-									<li>{parseInt(self.getTimeRemaining(presence))} days / {parseInt(self.getTimeRemaining(presence, 'minutes'))} minutes remaining</li>
+									<li>{self.getTimeRemaining(presence)} remaining</li>
 								</ul>
 							</li>
 						);
@@ -50,7 +50,7 @@ var Dashboard = React.createClass({
 									<li>{JSON.stringify(presence.location)}</li>
 									<li>Released {self.getDateReleased(presence)}</li>
 									<li>Expires {self.getDateExpiry(presence)}</li>
-									<li>{parseInt(self.getTimeRemaining(presence))} days / {parseInt(self.getTimeRemaining(presence, 'minutes'))} minutes remaining</li>
+									<li>{self.getTimeRemaining(presence)} remaining</li>
 								</ul>
 							</li>
 						);

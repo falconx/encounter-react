@@ -17,9 +17,6 @@
  - Handle timezones?
  - Isomorphic rendering
 
- - Format presence time remaining by hours and minutes
- -- https://github.com/jsmreese/moment-duration-format
-
 # Folder structure
 
 - dist
