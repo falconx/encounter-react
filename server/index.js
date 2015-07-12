@@ -223,17 +223,29 @@ router.route('/presences/find/:lng/:lat/:distance').get(isAuthenticated, functio
 });
 
 // Message directory
-// Todo: Where released presences have been responded to
+// Show discovered presences and created presences which have been responded to
 router.route('/encounters').get(isAuthenticated, function( req, res ) {
-  Encounter.find({
-    '$or': [
-      { 'creator': req.user._id }, // Released
-      { 'discoverer': req.user._id } // Encountered
-    ]
-  })
-  .populate('creator discoverer presence')
-  .exec(function( err, encounters ) {
-    res.send(encounters);
+  Encounter.find({ 'discoverer': req.user._id }).populate('creator discoverer presence').exec(function( err, discoverered ) {
+    Encounter.find({ 'creator': req.user._id }).populate('creator discoverer presence').exec(function( err, released ) {
+      var encounters = discoverered;
+      var i = released.length;
+
+      if( released.length ) {
+        _.each(released, function( err, encounter ) {
+          Message.find({ 'presence': encounter.presence }).exec(function( err, messages ) {
+            if( messages.length > 1 ) {
+              encounters.push(encounter);
+            }
+
+            if( --i === 0 ) {
+              res.send(encounters);
+            }
+          });
+        });
+      } else {
+        res.send(encounters);
+      }
+    });
   });
 });
 

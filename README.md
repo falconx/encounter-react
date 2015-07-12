@@ -15,6 +15,10 @@
  - Upgrade ReactRouter
  - Share config between client and server
  - Handle timezones?
+ - Isomorphic rendering
+
+ - Format presence time remaining by hours and minutes
+ -- https://github.com/jsmreese/moment-duration-format
 
 # Folder structure
 
@@ -93,11 +97,11 @@ Phase 4:
  3. [x] Leave a question when releasing a presence.
  4. [x] Show presence question when on confirmation page before collecting a presence.
  5. [x] Show profile image of presence uid on confirmation page before collecting a presence.
- 6. [ ] Encrypt facebookId or entire account photo url path on the server via proxy.
+ 6. [!] Encrypt facebookId or entire account photo url path on the server via proxy.
 
 Phase 5:
  1. [ ] Only allow 3 presences to be released at any one time, per user.
- 2. [ ] Expire presences over time.
+ 2. [T] Expire presences over time.
  3. [ ] Remove presence data in real-time once they have been expired.
  4. [ ] Visually indicate time remaining on dropped presences screen.
  5. [ ] Visually indicate time remaining on found presences screen.

@@ -2,6 +2,8 @@ var React = require('react');
 var Navigation = require('react-router').Navigation;
 var Link = require('react-router').Link;
 
+var Config = require('../config');
+
 var Modal = require('./modal');
 var MessageActions = require('../actions/message');
 var MessageStore = require('../stores/message');
@@ -28,20 +30,32 @@ var Messages = React.createClass({
 
   render: function() {
     var self = this;
+    var style, progress, remaining, progressClassName;
+    var lifespan = Config.presence.lifespan / 60; // Minutes
 
     if( this.state.encounters.length ) {
       return (
         <div className="message-directory">
           <ul>
             {this.state.encounters.map(function( encounter ) {
-              var style = { backgroundImage: 'url(' + encounter.creator.photo + ')' };
+              style = { backgroundImage: 'url(' + encounter.creator.photo + ')' };
+              progress = self.getTimeRemaining(encounter.presence, 'minutes') / lifespan * 100;
+              remaining = Math.round((100 - progress) / 5) * 5; // Round to nearest 5
+              progressClassName = 'progress-radial progress-' + remaining;
 
               return (
                 <li key={encounter._id}>
-                  <Link to="message-thread" params={{ encounterId: encounter._id }}>
-                    <div className="account-photo" style={style}></div>
-                    <p>Released: {self.getDateReleased( encounter.presence )}</p>
-                  </Link>
+                  <div className={progressClassName}>
+                    <div className="overlay">
+                      <Link to="message-thread" params={{ encounterId: encounter._id }}>
+                        <span className="account-photo" style={style}></span>
+                      </Link>
+                    </div>
+                  </div>
+                  <ul>
+                    <li>Released: {self.getDateReleased( encounter.presence )}</li>
+                    <li>{Math.round(self.getTimeRemaining(encounter.presence, 'hours'))} hours remaining</li>
+                  </ul>
                 </li>
               );
             })}
