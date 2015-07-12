@@ -66,7 +66,7 @@ var Messages = React.createClass({
 
     return (
       <Modal closeHandler={this.goBack}>
-        <p>You've not yet encountered anyone or had any of your own presences encountered.</p>
+        <p>You've not yet encountered anyone or had any of your presences encountered.</p>
       </Modal>
     );
   }

@@ -9,13 +9,14 @@
  - Sourcemaps
  - Tests
  - Dev mode switch
- - Stylesheet/Radium
+ - Stylesheet/Radium/Sass
  - initializeTouchEvents(boolean shouldUseTouch)
  - Upgrade React
  - Upgrade ReactRouter
  - Share config between client and server
  - Handle timezones?
  - Isomorphic rendering
+ - Translations
 
 # Folder structure
 
@@ -24,6 +25,7 @@
 -- vendors.js
 -- index.html
 -- images
+-- css
 
 - config.js
 - src
@@ -31,6 +33,7 @@
 -- js
 --- vendors
 -- images
+-- sass
 
 # Notes & Questions
 - If a presence has expired should it be removed from the database? What impact will this have?
@@ -38,6 +41,7 @@
 - FacebookId is revealed in response data - Will be fixed in Phase 4 with encryption and proxy on server.
 - nearbyPresence query returns photo - should this be a separate query?
 - How to handle encountered display when you have a presence to a user who found a presence which you released - currently this would cause two chats.
+- See Phase 11.
 
 # Bugs
  1. [ ] Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on. (Note we have 1000 zIndex)
@@ -103,6 +107,7 @@ Phase 5:
  4. [ ] Visually indicate time remaining on dropped presences screen.
  5. [ ] Visually indicate time remaining on found presences screen.
  6. [ ] Visually indicate time remaining on question prompt screen (when collecting a presence).
+ 7. [x] Visually indicate time remaining on messages screen.
 
 Phase 6:
  1. [ ] Handle devices which don’t support GeoLocation.
@@ -134,3 +139,7 @@ Phase 9:
  1. [x] Message system via sockets
  2. [ ] Allow user to override user profile image?
  3. [ ] Remove / block user.
+
+ Phase 11:
+  - Click on presence from my-presences screen to view question and a list of users who have encountered it
+  -- Q. What happens if a presence has expired? If we leave it there the screen will be cluttered but if we don't, we lose the functionality.
