@@ -1,0 +1,10 @@
+{
+	"facebook": {
+		"clientID": "325620640934953",
+		"clientSecret": "d2191fc195b4d2ad8fbfc4d272253570",
+		"callbackURL": "http://localhost:3000/api/auth/facebook/callback",
+		"successURL": "/",
+		"failureURL": "/",
+		"scope": ["email"]
+	}
+}
