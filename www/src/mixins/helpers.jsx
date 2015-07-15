@@ -17,7 +17,7 @@ var HelpersMixin = {
       return expiry.diff(moment(), unit, true);
     }
 
-    return moment.duration(diff).format('h[h] mm[m]');
+    return moment.duration(diff).format('d[d] h[h] mm[m]');
   },
 
   getDateCreated: function( objectId, format ) {
@@ -29,19 +29,19 @@ var HelpersMixin = {
   },
 
   getDateExpiry: function( presence, raw ) {
-    var created = this.dateFromObjectId(presence._id);
-    // var created = moment(presence.created);
+    // var created = this.dateFromObjectId(presence._id);
+    var created = moment(presence.created);
     var expiry = created.clone().add(Config.presence.lifespan, 'seconds');
 
     return (raw) ? expiry : expiry.format(Config.dateFormat);
-  },
-
-  getEncounteredUsers: function( account ) {
-    // Todo: Reponding to a message doesn't appear as a encountered user for the creator
-    return _.uniq(_.map(account.encountered, function( encounter ) {
-      return encounter.creator;
-    }));
   }
+
+  // getEncounteredUsers: function( account ) {
+  //   // Todo: Reponding to a message doesn't appear as a encountered user for the creator
+  //   return _.uniq(_.map(account.encountered, function( encounter ) {
+  //     return encounter.creator;
+  //   }));
+  // }
 };
 
 module.exports = HelpersMixin;
