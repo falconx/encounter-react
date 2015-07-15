@@ -10,6 +10,7 @@ var mongoose = require('mongoose');
 var _ = require('lodash');
 // var crontab = require('node-crontab');
 
+var async = require('async');
 var request = require('superagent');
 
 // Allow superagent to proxy
@@ -132,9 +133,7 @@ var proxy = process.env.http_proxy || 'http://localhost:' + app.get('port');
 app.route('/photo/:id').get(function( req, res, next ) {
   var facebookId = decrypt(req.params.id);
 
-  request
-    .get('http://graph.facebook.com/' + facebookId + '/picture?type=large')
-    .pipe(res);
+  request.get('http://graph.facebook.com/' + facebookId + '/picture?type=large').pipe(res);
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -211,14 +210,43 @@ router.route('/presences/find/:lng/:lat/:distance').get(isAuthenticated, functio
 });
 
 // Message directory
-// Show discovered presences and created presences which have been responded to
+// Show discovered presences and released presences which have been responded to
+
+// Todo: Exclude discovered presences which have expired and the user has not responded to
 router.route('/encounters').get(isAuthenticated, function( req, res ) {
   Encounter.find({ 'discoverer': req.user._id }).populate('creator discoverer presence').exec(function( err, discoverered ) {
     Encounter.find({ 'creator': req.user._id }).populate('creator discoverer presence').exec(function( err, released ) {
       var encounters = discoverered;
       var i = released.length;
 
+      // async.waterfall([
+      //   function() {
+      //     if( discoverered.length ) {
+      //       // Exclude discovered presences which have expired and the user has not responded to
+      //     }
+      //   },
+      //   function() {
+      //     if( released.length ) {
+      //       // Find released presences which have been responded to
+      //       _.each(released, function( err, encounter ) {
+      //         Message.find({ 'presence': encounter.presence }).exec(function( err, messages ) {
+      //           if( messages.length > 1 ) {
+      //             encounters.push(encounter);
+      //           }
+      //         });
+      //       });
+      //     }
+      //   }
+      // ], function() {
+      //   res.send(encounters);
+      // });
+
+      if( discoverered.length ) {
+        // Exclude discovered presences which have expired and the user has not responded to
+      }
+
       if( released.length ) {
+        // Find released presences which have been responded to
         _.each(released, function( err, encounter ) {
           Message.find({ 'presence': encounter.presence }).exec(function( err, messages ) {
             if( messages.length > 1 ) {

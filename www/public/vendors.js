@@ -183,6 +183,8 @@
 	 * @constructor
 	 * @param {InfoBoxOptions} [opt_opts]
 	 */
+	"use strict";
+
 	function InfoBox(opt_opts) {
 
 	  opt_opts = opt_opts || {};
@@ -247,7 +249,7 @@
 
 	  // This handler prevents an event in the InfoBox from being passed on to the map.
 	  //
-	  var cancelHandler = function (e) {
+	  var cancelHandler = function cancelHandler(e) {
 	    e.cancelBubble = true;
 	    if (e.stopPropagation) {
 	      e.stopPropagation();
@@ -257,7 +259,7 @@
 	  // This handler ignores the current event in the InfoBox and conditionally prevents
 	  // the event from being passed on to the map. It is used for the contextmenu event.
 	  //
-	  var ignoreHandler = function (e) {
+	  var ignoreHandler = function ignoreHandler(e) {
 
 	    e.returnValue = false;
 
@@ -293,7 +295,6 @@
 	    if (this.div_.style.width) {
 
 	      this.fixedWidthSet_ = true;
-
 	    } else {
 
 	      if (this.maxWidth_ !== 0 && this.div_.offsetWidth > this.maxWidth_) {
@@ -301,12 +302,12 @@
 	        this.div_.style.width = this.maxWidth_;
 	        this.div_.style.overflow = "auto";
 	        this.fixedWidthSet_ = true;
-
-	      } else { // The following code is needed to overcome problems with MSIE
+	      } else {
+	        // The following code is needed to overcome problems with MSIE
 
 	        bw = this.getBoxWidths_();
 
-	        this.div_.style.width = (this.div_.offsetWidth - bw.left - bw.right) + "px";
+	        this.div_.style.width = this.div_.offsetWidth - bw.left - bw.right + "px";
 	        this.fixedWidthSet_ = false;
 	      }
 	    }
@@ -320,14 +321,13 @@
 	      // Cancel event propagation.
 	      //
 	      // Note: mousemove not included (to resolve Issue 152)
-	      events = ["mousedown", "mouseover", "mouseout", "mouseup",
-	      "click", "dblclick", "touchstart", "touchend", "touchmove"];
+	      events = ["mousedown", "mouseover", "mouseout", "mouseup", "click", "dblclick", "touchstart", "touchend", "touchmove"];
 
 	      for (i = 0; i < events.length; i++) {
 
 	        this.eventListeners_.push(google.maps.event.addDomListener(this.div_, events[i], cancelHandler));
 	      }
-	      
+
 	      // Workaround for Google bug that causes the cursor to change to a pointer
 	      // when the mouse moves over a marker underneath InfoBox.
 	      this.eventListeners_.push(google.maps.event.addDomListener(this.div_, "mouseover", function (e) {
@@ -356,7 +356,7 @@
 
 	  if (this.closeBoxURL_ !== "") {
 
-	    img  = "<img";
+	    img = "<img";
 	    img += " src='" + this.closeBoxURL_ + "'";
 	    img += " align=right"; // Do this because Opera chokes on style='float: right;'
 	    img += " style='";
@@ -381,7 +381,6 @@
 
 	    closeBox = this.div_.firstChild;
 	    this.closeListener_ = google.maps.event.addDomListener(closeBox, "click", this.getCloseClickHandler_());
-
 	  } else {
 
 	    this.closeListener_ = null;
@@ -425,17 +424,19 @@
 
 	  var map;
 	  var bounds;
-	  var xOffset = 0, yOffset = 0;
+	  var xOffset = 0,
+	      yOffset = 0;
 
 	  if (!disablePan) {
 
 	    map = this.getMap();
 
-	    if (map instanceof google.maps.Map) { // Only pan if attached to map, not panorama
+	    if (map instanceof google.maps.Map) {
+	      // Only pan if attached to map, not panorama
 
 	      if (!map.getBounds().contains(this.position_)) {
-	      // Marker not in visible area of map, so set center
-	      // of map to the marker position first.
+	        // Marker not in visible area of map, so set center
+	        // of map to the marker position first.
 	        map.setCenter(this.position_);
 	      }
 
@@ -452,21 +453,21 @@
 	      var padY = this.infoBoxClearance_.height;
 	      var pixPosition = this.getProjection().fromLatLngToContainerPixel(this.position_);
 
-	      if (pixPosition.x < (-iwOffsetX + padX)) {
+	      if (pixPosition.x < -iwOffsetX + padX) {
 	        xOffset = pixPosition.x + iwOffsetX - padX;
-	      } else if ((pixPosition.x + iwWidth + iwOffsetX + padX) > mapWidth) {
+	      } else if (pixPosition.x + iwWidth + iwOffsetX + padX > mapWidth) {
 	        xOffset = pixPosition.x + iwWidth + iwOffsetX + padX - mapWidth;
 	      }
 	      if (this.alignBottom_) {
-	        if (pixPosition.y < (-iwOffsetY + padY + iwHeight)) {
+	        if (pixPosition.y < -iwOffsetY + padY + iwHeight) {
 	          yOffset = pixPosition.y + iwOffsetY - padY - iwHeight;
-	        } else if ((pixPosition.y + iwOffsetY + padY) > mapHeight) {
+	        } else if (pixPosition.y + iwOffsetY + padY > mapHeight) {
 	          yOffset = pixPosition.y + iwOffsetY + padY - mapHeight;
 	        }
 	      } else {
-	        if (pixPosition.y < (-iwOffsetY + padY)) {
+	        if (pixPosition.y < -iwOffsetY + padY) {
 	          yOffset = pixPosition.y + iwOffsetY - padY;
-	        } else if ((pixPosition.y + iwHeight + iwOffsetY + padY) > mapHeight) {
+	        } else if (pixPosition.y + iwHeight + iwOffsetY + padY > mapHeight) {
 	          yOffset = pixPosition.y + iwHeight + iwOffsetY + padY - mapHeight;
 	        }
 	      }
@@ -517,14 +518,14 @@
 	    //
 	    if (typeof this.div_.style.opacity !== "undefined" && this.div_.style.opacity !== "") {
 	      // See http://www.quirksmode.org/css/opacity.html
-	      this.div_.style.MsFilter = "\"progid:DXImageTransform.Microsoft.Alpha(Opacity=" + (this.div_.style.opacity * 100) + ")\"";
-	      this.div_.style.filter = "alpha(opacity=" + (this.div_.style.opacity * 100) + ")";
+	      this.div_.style.MsFilter = "\"progid:DXImageTransform.Microsoft.Alpha(Opacity=" + this.div_.style.opacity * 100 + ")\"";
+	      this.div_.style.filter = "alpha(opacity=" + this.div_.style.opacity * 100 + ")";
 	    }
 
 	    // Apply required styles:
 	    //
 	    this.div_.style.position = "absolute";
-	    this.div_.style.visibility = 'hidden';
+	    this.div_.style.visibility = "hidden";
 	    if (this.zIndex_ !== null) {
 
 	      this.div_.style.zIndex = this.zIndex_;
@@ -540,7 +541,7 @@
 	InfoBox.prototype.getBoxWidths_ = function () {
 
 	  var computedStyle;
-	  var bw = {top: 0, bottom: 0, left: 0, right: 0};
+	  var bw = { top: 0, bottom: 0, left: 0, right: 0 };
 	  var box = this.div_;
 
 	  if (document.defaultView && document.defaultView.getComputedStyle) {
@@ -555,8 +556,8 @@
 	      bw.left = parseInt(computedStyle.borderLeftWidth, 10) || 0;
 	      bw.right = parseInt(computedStyle.borderRightWidth, 10) || 0;
 	    }
-
-	  } else if (document.documentElement.currentStyle) { // MSIE
+	  } else if (document.documentElement.currentStyle) {
+	    // MSIE
 
 	    if (box.currentStyle) {
 
@@ -592,18 +593,17 @@
 
 	  var pixPosition = this.getProjection().fromLatLngToDivPixel(this.position_);
 
-	  this.div_.style.left = (pixPosition.x + this.pixelOffset_.width) + "px";
-	  
+	  this.div_.style.left = pixPosition.x + this.pixelOffset_.width + "px";
+
 	  if (this.alignBottom_) {
 	    this.div_.style.bottom = -(pixPosition.y + this.pixelOffset_.height) + "px";
 	  } else {
-	    this.div_.style.top = (pixPosition.y + this.pixelOffset_.height) + "px";
+	    this.div_.style.top = pixPosition.y + this.pixelOffset_.height + "px";
 	  }
 
 	  if (this.isHidden_) {
 
 	    this.div_.style.visibility = "hidden";
-
 	  } else {
 
 	    this.div_.style.visibility = "visible";
@@ -618,12 +618,14 @@
 	 * @param {InfoBoxOptions} opt_opts
 	 */
 	InfoBox.prototype.setOptions = function (opt_opts) {
-	  if (typeof opt_opts.boxClass !== "undefined") { // Must be first
+	  if (typeof opt_opts.boxClass !== "undefined") {
+	    // Must be first
 
 	    this.boxClass_ = opt_opts.boxClass;
 	    this.setBoxStyle_();
 	  }
-	  if (typeof opt_opts.boxStyle !== "undefined") { // Must be second
+	  if (typeof opt_opts.boxStyle !== "undefined") {
+	    // Must be second
 
 	    this.boxStyle_ = opt_opts.boxStyle;
 	    this.setBoxStyle_();
@@ -791,7 +793,7 @@
 
 	  this.isHidden_ = !isVisible;
 	  if (this.div_) {
-	    this.div_.style.visibility = (this.isHidden_ ? "hidden" : "visible");
+	    this.div_.style.visibility = this.isHidden_ ? "hidden" : "visible";
 	  }
 	};
 
@@ -830,7 +832,7 @@
 
 	  var isVisible;
 
-	  if ((typeof this.getMap() === "undefined") || (this.getMap() === null)) {
+	  if (typeof this.getMap() === "undefined" || this.getMap() === null) {
 	    isVisible = false;
 	  } else {
 	    isVisible = !this.isHidden_;
@@ -902,7 +904,7 @@
 	  }
 
 	  if (this.eventListeners_) {
-	    
+
 	    for (i = 0; i < this.eventListeners_.length; i++) {
 
 	      google.maps.event.removeListener(this.eventListeners_[i]);

@@ -30,6 +30,7 @@ var HelpersMixin = {
 
   getDateExpiry: function( presence, raw ) {
     var created = this.dateFromObjectId(presence._id);
+    // var created = moment(presence.created);
     var expiry = created.clone().add(Config.presence.lifespan, 'seconds');
 
     return (raw) ? expiry : expiry.format(Config.dateFormat);

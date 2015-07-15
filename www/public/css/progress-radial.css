@@ -17,85 +17,85 @@
 }
 
 .progress-0 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(90deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(90deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-5 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(108deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(108deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-10 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(126deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(126deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-15 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(144deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(144deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-20 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(162deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(162deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-25 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(180deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(180deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-30 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(198deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(198deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-35 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(216deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(216deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-40 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(234deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(234deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-45 {
-  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(252deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(252deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-50 {
-  background-image: linear-gradient(-90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(-90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-55 {
-  background-image: linear-gradient(-72deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(-72deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-60 {
-  background-image: linear-gradient(-54deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(-54deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-65 {
-  background-image: linear-gradient(-36deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(-36deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-70 {
-  background-image: linear-gradient(-18deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(-18deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-75 {
-  background-image: linear-gradient(0deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(0deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-80 {
-  background-image: linear-gradient(18deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(18deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-85 {
-  background-image: linear-gradient(36deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(36deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-90 {
-  background-image: linear-gradient(54deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(54deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-95 {
-  background-image: linear-gradient(72deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(72deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }
 
 .progress-100 {
-  background-image: linear-gradient(90deg, #000 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #000 50%, #fff 50%, #fff);
+  background-image: linear-gradient(90deg, #fff 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0)), linear-gradient(270deg, #fff 50%, #000 50%, #000);
 }

@@ -56,6 +56,7 @@ bash studio.sh
  1. [ ] Pickup presence. Actual result: Users marker appears below the encountered marker until clicked on. (Note we have 1000 zIndex)
  2. [T] Char count doesn't reset after sending a message.
  3. [ ] Reponding to a message doesn't appear as a encountered user for the creator. Update fn HelperMixins.getEncounteredUsers.
+ 4. [ ] Expired presences appear on messages screen. 
 
 Luke:
  1. [ ] Design favicon.
