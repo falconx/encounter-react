@@ -178,21 +178,53 @@ router.route('/auth/logout').get(function( req, res ) {
 router.route('/account').get(isAuthenticated, function( req, res ) {
   User.findOne({ '_id': req.user._id }).exec(function( err, user ) {
     // Add 'released' and 'encountered' presence collections
-    Presence.find({ 'creator': req.user._id }).exec(function( err, released ) {
-      Encounter.find({ 'discoverer': req.user._id }).select('-_id presence').exec(function( err, encountered ) {
-        // Extract presence Ids
-        encountered = encountered.map(function( item ) { return item.presence; });
+    // Exclude expired released presences
+    Presence.find({ 'creator': req.user._id, 'created': { '$gt': moment().subtract(3, 'days').toDate() } }).exec(function( err, released ) {
+      Encounter.find({ 'discoverer': req.user._id }).select('-_id presence').populate('presence').exec(function( err, discovered ) {
+        var promises = [];
+        var promise;
 
-        _.extend(user, {
-          'encountered': encountered,
-          'released': released
-        });
+        if( discovered.length ) {
+          // Only allow discovered presences that have expired if the user has responded to it
+          _.each(discovered, function( encounter ) {
+            promise = new Promise(function( resolve, reject ) {
+              // Has the presence expired?
+              if( moment(encounter.presence.created).add(3, 'days').diff(moment()) > 0 ) {
+                // The presence hasn't expired and therefore can be added
+                resolve(encounter);
+              } else {
+                // Include expired presences which have been responded to
+                Message.find({ 'presence': encounter.presence, 'from': req.user._id }).exec(function( err, messages ) {
+                  if( messages.length ) {
+                    resolve(encounter);
+                  }
 
-        User.populate(user, [
-          { path: 'released', select: 'creator location' },
-          { path: 'encountered', select: 'creator location' }
-        ], function() {
-          res.send(user);
+                  resolve(null);
+                });
+              }
+            });
+
+            promises.push(promise);
+          });
+        }
+
+        Promise.all(promises).then(function( encounters ) {
+          encounters = _.reject(encounters, function( encounter ) { return !encounter });
+
+          // Extract presence Ids
+          discovered = encounters.map(function( item ) { return item.presence; });
+
+          _.extend(user, {
+            'encountered': discovered,
+            'released': released
+          });
+
+          User.populate(user, [
+            { path: 'released', select: 'creator location' },
+            { path: 'encountered', select: 'creator location' }
+          ], function() {
+            res.send(user);
+          });
         });
       });
     });
@@ -216,23 +248,24 @@ router.route('/encounters').get(isAuthenticated, function( req, res ) {
   Encounter.find({ 'discoverer': req.user._id }).populate('creator discoverer presence').exec(function( err, discovered ) {
     Encounter.find({ 'creator': req.user._id }).populate('creator discoverer presence').exec(function( err, released ) {
       var promises = [];
+      var promise;
 
       if( discovered.length ) {
         // Only allow discovered presences that have expired if the user has responded to it
         _.each(discovered, function( encounter ) {
-          var promise = new Promise(function( resolve, reject ) {
+          promise = new Promise(function( resolve, reject ) {
             // Has the presence expired?
-
-            if( encounter.presence.created < moment().add(3, 'days').toDate() ) {
+            if( moment(encounter.presence.created).add(3, 'days').diff(moment()) > 0 ) {
               // The presence hasn't expired and therefore can be added
               resolve(encounter);
             } else {
+              // Include expired presences which have been responded to
               Message.find({ 'presence': encounter.presence, 'from': req.user._id }).exec(function( err, messages ) {
                 if( messages.length ) {
                   resolve(encounter);
                 }
 
-                reject();
+                resolve(null);
               });
             }
           });
@@ -244,13 +277,13 @@ router.route('/encounters').get(isAuthenticated, function( req, res ) {
       if( released.length ) {
         // Find released presences which have been responded to
         _.each(released, function( encounter ) {
-          var promise = new Promise(function( resolve, reject ) {
+          promise = new Promise(function( resolve, reject ) {
             Message.find({ 'presence': encounter.presence }).exec(function( err, messages ) {
               if( messages.length > 1 ) {
                 resolve(encounter);
               }
 
-              reject();
+              resolve(null);
             });
           });
 
@@ -259,7 +292,9 @@ router.route('/encounters').get(isAuthenticated, function( req, res ) {
       }
 
       Promise.all(promises).then(function( encounters ) {
-        res.send(encounters);
+        res.send(_.reject(encounters, function( encounter ) {
+          return !encounter
+        }));
       });
     });
   });

@@ -9,6 +9,10 @@ var HelpersMixin = {
     return (format) ? date.format(format) : date;
   },
 
+  getDateCreated: function( objectId, format ) {
+    return this.dateFromObjectId(objectId, format || Config.dateFormat);
+  },
+
   getTimeRemaining: function( presence, unit ) {
     var expiry = this.getDateExpiry(presence, true);
     var diff = expiry.diff(moment());
@@ -20,17 +24,12 @@ var HelpersMixin = {
     return moment.duration(diff).format('d[d] h[h] mm[m]');
   },
 
-  getDateCreated: function( objectId, format ) {
-    return this.dateFromObjectId(objectId, format || Config.dateFormat);
-  },
-
   getDateReleased: function( presence ) {
     return this.getDateCreated(presence._id);
   },
 
   getDateExpiry: function( presence, raw ) {
-    // var created = this.dateFromObjectId(presence._id);
-    var created = moment(presence.created);
+    var created = this.dateFromObjectId(presence._id);
     var expiry = created.clone().add(Config.presence.lifespan, 'seconds');
 
     return (raw) ? expiry : expiry.format(Config.dateFormat);

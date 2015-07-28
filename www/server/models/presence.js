@@ -44,14 +44,14 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
     },
     {
       '$match': {
-        'created': { '$lt': moment().add(3, 'days').toDate() }, // Exclude expired presences
+        'created': { '$gt': moment().subtract(3, 'days').toDate() }, // Exclude expired presences
         'creator': { '$ne': params.userId } // Exclude own presences
       }
     }
   ], function( err, nearbyPresences ) {
     self.populate(nearbyPresences, [{ path: 'creator', select: 'photo' }], function() {
-      var presences = [];
-      var i = 0;
+      var promises = [];
+      var promise;
 
       // No presences found nearby
       if( !nearbyPresences.length ) {
@@ -60,23 +60,20 @@ presenceSchema.statics.findWithinRadius = function( params, cb ) {
 
       // Attach question for each presence
       _.each(nearbyPresences, function( presence ) {
-        new Promise(function( resolve, rej ) {
+        promise = new Promise(function( resolve, rej ) {
           // Add question to response
           Message.findOne({ 'presence': presence._id }).select('message').exec(function( err, message ) {
             _.extend(presence, { 'question': message.message });
 
-            presences.push( presence );
-
-            i++;
-
-            resolve();
+            resolve(presence);
           });
-        }).then(function() {
-          // Loop until we have pushed all nearby presences
-          if( i === nearbyPresences.length ) {
-            cb(err, presences);
-          }
         });
+
+        promises.push(promise);
+      });
+
+      Promise.all(promises).then(function( presences ) {
+        cb(err, presences);
       });
     });
   });
